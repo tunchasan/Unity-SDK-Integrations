@@ -26,8 +26,10 @@ public class FBScript : MonoBehaviour
             }, isGameShown =>
             {
                 if (!isGameShown)
+                    // Pause the game - we will need to hide
                     Time.timeScale = 0;
                 else
+                    // Resume the game - we're getting focus again
                     Time.timeScale = 1;
             });
                 
@@ -59,12 +61,16 @@ public class FBScript : MonoBehaviour
 
     #region Share
 
-    public void FacebookShare()
+    public void FacebookShare(string URL)
     {
-        FB.ShareLink(new System.Uri("https://store.steampowered.com/app/1174200/Lands_of_Pharaoh_Episode_1/"),
-            "Check it Out!",
-            "Good Egypt Game",
-            new System.Uri("https://i.hizliresim.com/hxxahO.jpg")
+        //
+        URL = "https://play.google.com/store/apps/details?id=com.lilithgame.roc.gp";
+        //
+
+        FB.ShareLink(
+            
+            new System.Uri(URL)
+
             );
     }
 
@@ -72,14 +78,26 @@ public class FBScript : MonoBehaviour
 
     #region Invite
 
-    public void FacebookGameRequest()
-    {
-        FB.AppRequest("Hey! Come and play this awesome game!", title: "Lands of Pharaoh");
+    public void FacebookInviteFriends(string Message, string Title)
+    {   //
+        Message = "Hey! Come and play this awesome game!";
+
+        Title = "Invite your friends to join you";
+        //
+        FB.AppRequest(
+            
+            message: Message,
+            
+            title: Title
+            
+            );
+
+        
     }
 
     #endregion
 
-    #region Share
+    #region Friends
 
     public void GetFriendsOnline()
     {

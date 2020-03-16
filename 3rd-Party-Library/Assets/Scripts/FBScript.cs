@@ -72,6 +72,7 @@ public class FBScript : MonoBehaviour
             new System.Uri(URL)
 
             );
+
     }
 
     #endregion
@@ -92,7 +93,6 @@ public class FBScript : MonoBehaviour
             
             );
 
-        
     }
 
     #endregion

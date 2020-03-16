@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class FBScript : MonoBehaviour
 {
+    public Text FriendsText;
+
     /******************************FB INITIALIZATION PART******************************/
     private void Awake()
     {
@@ -73,6 +75,31 @@ public class FBScript : MonoBehaviour
     public void FacebookGameRequest()
     {
         FB.AppRequest("Hey! Come and play this awesome game!", title: "Lands of Pharaoh");
+    }
+
+    #endregion
+
+    #region Share
+
+    public void GetFriendsOnline()
+    {
+        string query = "/me/friends";
+        FB.API(query, HttpMethod.GET, result =>
+         {
+             var dictionary = (Dictionary<string,object>)Facebook.MiniJSON.Json.Deserialize(result.RawResult);
+
+             var friendList = (List<object>)dictionary["data"];
+
+             FriendsText.text = string.Empty;
+
+             //Get Player name whose play this game.
+             foreach(var dict in friendList)
+             {
+                 FriendsText.text += ((Dictionary<string,object>)dict)["name"];
+             }
+
+         });
+
     }
 
     #endregion

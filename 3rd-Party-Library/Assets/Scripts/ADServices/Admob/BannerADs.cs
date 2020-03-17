@@ -23,18 +23,9 @@ public class BannerADs : AdmobADs
 
     public AdType _BannerType;
 
-    //Load Default Banner as SmartBanner
-    private void Start()
-    {
-        RequestBanner();
-    }
-
     //Request Banner depends on platforms and Load the AD.
     private void RequestBanner()
     {
-        //Handle which Platform is using on by device and Update BANNER_ID.
-        PlatformHandler();
-
         //Create & Assign New Instance of BannerAD
         _bannerAD = new BannerView(_BANNER_ID, AdTypeHandler(), _BannerPosition);
 
@@ -46,7 +37,6 @@ public class BannerADs : AdmobADs
 
         //Load BannerAD
         _bannerAD.LoadAd(adRequest);
-
     }
 
     //AdType Selection Based On _AdType

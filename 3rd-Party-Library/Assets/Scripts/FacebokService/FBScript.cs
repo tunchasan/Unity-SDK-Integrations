@@ -81,9 +81,9 @@ public class FBScript : MonoBehaviour
 
     public void FacebookInviteFriends(string Message, string Title)
     {   //
-        Message = "Hey! Come and play this awesome game!";
+       Message = "Hey! Come and play this awesome game!";
 
-        Title = "Invite your friends to join you";
+       Title = "Invite your friends to join you";
         //
         FB.AppRequest(
             
@@ -94,6 +94,23 @@ public class FBScript : MonoBehaviour
             );
 
     }
+
+    public void FacebookInviteFriends()
+    {   //
+        string Message = "Hey! Come and play this awesome game!";
+
+        string Title = "Invite your friends to join you";
+        //
+        FB.AppRequest(
+
+            message: Message,
+
+            title: Title
+
+            );
+
+    }
+
 
     #endregion
 

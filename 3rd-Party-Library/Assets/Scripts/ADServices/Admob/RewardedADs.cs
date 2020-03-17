@@ -64,26 +64,29 @@ public class RewardedADs : AdmobADs
     // Called when an ad request failed to load.
     public void HandleRewardedAdFailedToLoad(object sender, AdErrorEventArgs args)
     {
-        //AD failed to Load, Load it Again.
-        //RequestRewardedVideoAD();
+        Debug.LogError(
+            "HandleRewardedAdFailedToLoad event received with message: "
+                             + args.Message);
     }
 
     // Called when an ad is shown.
     public void HandleRewardedAdOpening(object sender, EventArgs args)
     {
-        
+        Debug.LogError("HandleRewardedAdOpening event received");
     }
 
     // Called when an ad request failed to show.
     public void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs args)
     {
-        
+        Debug.LogError(
+            "HandleRewardedAdFailedToShow event received with message: "
+                             + args.Message);
     }
 
     // Called when the user should be rewarded for interacting with the ad.
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
-        //RequestRewardedVideoAD();
+        Debug.LogError("HandleRewardedAdClosed event received");
     }
 
     // Called when the ad is closed.
@@ -91,7 +94,7 @@ public class RewardedADs : AdmobADs
     {
         string type = args.Type;
         double amount = args.Amount;
-        MonoBehaviour.print(
+        Debug.LogError(
             "HandleRewardedAdRewarded event received for "
                         + amount.ToString() + " " + type);
     }
@@ -118,7 +121,7 @@ public class RewardedADs : AdmobADs
 
             // Called when the ad is closed.
             this._RewardedAD.OnAdClosed += HandleRewardedAdClosed;
-            ;
+            
 
         } else {
 

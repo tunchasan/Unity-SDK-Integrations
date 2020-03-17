@@ -83,7 +83,7 @@ public class RewardedADs : AdmobADs
     // Called when the user should be rewarded for interacting with the ad.
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
-        RequestRewardedVideoAD();
+        //RequestRewardedVideoAD();
     }
 
     // Called when the ad is closed.

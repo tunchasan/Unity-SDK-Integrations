@@ -6,9 +6,21 @@ using System;
 
 public class BannerADs : AdmobADs
 {
-    private BannerView bannerAD;
+    private BannerView _bannerAD;
 
-    public string BANNER_ID;
+    private string _BANNER_ID;
+
+    //Enum Types
+    public enum AdType { Banner_320x50, MediumRectangle_300x250, IABBanner_468x60, Leaderboard_728x90, SmartBanner };
+
+    [Header("Banner AD Properties")]
+    public string _AndroidBannerID;
+
+    public string _IOSBannerID;
+
+    public AdPosition _BannerPosition;
+
+    public AdType _BannerType;
 
     //Request Banner depends on platforms and Load the AD.
     public void RequestBanner()
@@ -17,7 +29,7 @@ public class BannerADs : AdmobADs
         PlatformHandler();
 
         //Create & Assign New Instance of BannerAD
-        bannerAD = new BannerView(BANNER_ID, AdSize.SmartBanner, AdPosition.Bottom);
+        _bannerAD = new BannerView(_BANNER_ID, AdTypeHandler(), _BannerPosition);
 
         //FOR REAL APP
         //AdRequest adRequest = new AdRequest.Builder().Build();
@@ -26,20 +38,62 @@ public class BannerADs : AdmobADs
         AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();
 
         //Load BannerAD
-        bannerAD.LoadAd(adRequest);
+        _bannerAD.LoadAd(adRequest);
+
+    }
+
+    //AdType Selection Based On _AdType
+    private AdSize AdTypeHandler()
+    {
+        switch (_BannerType)
+        {
+            case AdType.Banner_320x50: //320x50
+                {
+                    return AdSize.Banner;
+                }        
+
+            case AdType.IABBanner_468x60: //468x60
+                {
+                    return AdSize.IABBanner;
+                }
+
+            case AdType.Leaderboard_728x90: //728x90
+                {
+                    return AdSize.Leaderboard;
+                }
+
+            case AdType.MediumRectangle_300x250:
+                {
+                    return AdSize.MediumRectangle; //300x250
+                }
+
+            case AdType.SmartBanner:
+                {
+                    //Smart Banners detect the width of the device in its current orientation and create the ad view that size.
+                    return AdSize.SmartBanner;
+                }
+
+            default:
+                {
+                    //Smart Banners detect the width of the device in its current orientation and create the ad view that size.
+                    return AdSize.SmartBanner;
+                }
+
+        }
+
     }
 
     //Handle Banner_ID depends on Platform.
     private void PlatformHandler()
     {
         #if UNITY_ANDROID //ANDROID
-                BANNER_ID = "ca-app-pub-3940256099942544/6300978111";   // This BannerID is for Testing.
+                _BANNER_ID = _AndroidBannerID;   // This BannerID is for Testing.
 
         #elif UNITY_IPHONE // IOS
-                BANNER_ID = "ca-app-pub-3940256099942544/2934735716";   // This BannerID is for Testing.
+                _BANNER_ID = _IOSBannerID;   // This BannerID is for Testing.
 
         #else //Other
-                BANNER_ID = "unexpected_platform";
+                _BANNER_ID = "unexpected_platform";
 
         #endif
     }
@@ -47,7 +101,13 @@ public class BannerADs : AdmobADs
     //Show the BannerAD
     public void DisplayBanner()
     {
-        bannerAD.Show();
+        _bannerAD.Show();
+    }
+
+    //Hide the BannerAD
+    public void HideBanner()
+    {
+        _bannerAD.Hide();
     }
 
     // Called when an ad request has successfully loaded.
@@ -83,55 +143,61 @@ public class BannerADs : AdmobADs
     }
 
     //Handle all ADEvents for BannerAD
-    public void HandleBannerADEvents(bool Active)
+    private void HandleBannerADEvents(bool Active)
     {
         if(Active) {
 
             // Called when an ad request has successfully loaded.
-            this.bannerAD.OnAdLoaded += this.HandleOnAdLoaded;
+            this._bannerAD.OnAdLoaded += this.HandleOnAdLoaded;
 
             // Called when an ad request failed to load.
-            this.bannerAD.OnAdFailedToLoad += this.HandleOnAdFailedToLoad;
+            this._bannerAD.OnAdFailedToLoad += this.HandleOnAdFailedToLoad;
 
             // Called when an ad is clicked.
-            this.bannerAD.OnAdOpening += this.HandleOnAdOpened;
+            this._bannerAD.OnAdOpening += this.HandleOnAdOpened;
 
             // Called when the user returned from the app after an ad click.
-            this.bannerAD.OnAdClosed += this.HandleOnAdClosed;
+            this._bannerAD.OnAdClosed += this.HandleOnAdClosed;
 
             // Called when the ad click caused the user to leave the application.
-            this.bannerAD.OnAdLeavingApplication += this.HandleOnAdLeavingApplication;
+            this._bannerAD.OnAdLeavingApplication += this.HandleOnAdLeavingApplication;
 
         } else {
 
             // Called when an ad request has successfully loaded.
-            this.bannerAD.OnAdLoaded -= this.HandleOnAdLoaded;
+            this._bannerAD.OnAdLoaded -= this.HandleOnAdLoaded;
 
             // Called when an ad request failed to load.
-            this.bannerAD.OnAdFailedToLoad -= this.HandleOnAdFailedToLoad;
+            this._bannerAD.OnAdFailedToLoad -= this.HandleOnAdFailedToLoad;
 
             // Called when an ad is clicked.
-            this.bannerAD.OnAdOpening -= this.HandleOnAdOpened;
+            this._bannerAD.OnAdOpening -= this.HandleOnAdOpened;
 
             // Called when the user returned from the app after an ad click.
-            this.bannerAD.OnAdClosed -= this.HandleOnAdClosed;
+            this._bannerAD.OnAdClosed -= this.HandleOnAdClosed;
 
             // Called when the ad click caused the user to leave the application.
-            this.bannerAD.OnAdLeavingApplication -= this.HandleOnAdLeavingApplication;
+            this._bannerAD.OnAdLeavingApplication -= this.HandleOnAdLeavingApplication;
         }
        
     }
 
     //If the script is enabled, we activete the ADEvents.
-    public void OnEnable()
+    private void OnEnable()
     {
         HandleBannerADEvents(true);
     }
 
     //If the script is disabled, we deactivete the ADEvents.
-    public void OnDisable()
+    private void OnDisable()
     {
         HandleBannerADEvents(false);
+    }
+
+    //Destory the Banner Ad
+    public void DestoryBanner()
+    {
+        _bannerAD.Destroy();
     }
 
 }

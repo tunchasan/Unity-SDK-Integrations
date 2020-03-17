@@ -9,6 +9,7 @@ public class AdmobADs : MonoBehaviour
 
     public string _IOSAppID;
 
+    //Initialize some stuff.
     private void Awake()
     {
         PlatformHandler();

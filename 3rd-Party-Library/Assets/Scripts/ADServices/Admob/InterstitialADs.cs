@@ -15,23 +15,16 @@ public class InterstitialADs : AdmobADs
 
     public string _IOSInterstitialAdID;
 
-    //Load Default Interstitial
-    private void Start()
-    {
-        RequestInterstitial();
-    }
-
     //Request Banner depends on platforms and Load the AD.
     public void RequestInterstitial()
     {
-        //Handle which Platform is using on by device and Update BANNER_ID.
-        PlatformHandler();
-
-        //Create & Assign New Instance of BannerAD
+        //Create & Assign New Instance of InterstitialAD
         _InterstitialAD = new InterstitialAd(_Interstitial_ID);
 
         //FOR REAL APP
         //AdRequest adRequest = new AdRequest.Builder().Build();
+
+        HandleInterstitialADEvents(true);
 
         //FOR TEST APP
         AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();

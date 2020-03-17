@@ -112,6 +112,8 @@ public class BannerADs : AdmobADs
     {
         //AD is Loaded, Can Be Shown.
         DisplayBanner();
+
+        Debug.Log("HandleAdLoaded event received");
     }
 
     // Called when an ad request failed to load.
@@ -119,24 +121,27 @@ public class BannerADs : AdmobADs
     {
         //AD failed to Load, Load it Again.
         RequestBanner();
+
+        Debug.LogError("HandleFailedToReceiveAd event received with message: "
+                            + args.Message);
     }
 
     // Called when an ad is clicked.
     public void HandleOnAdOpened(object sender, EventArgs args)
     {
-        
+        Debug.Log("HandleAdOpened event received");
     }
 
     // Called when the user returned from the app after an ad click.
     public void HandleOnAdClosed(object sender, EventArgs args)
     {
-        
+        Debug.Log("HandleAdClosed event received");
     }
 
     // Called when the ad click caused the user to leave the application.
     public void HandleOnAdLeavingApplication(object sender, EventArgs args)
     {
-        
+        Debug.Log("HandleAdLeavingApplication event received");
     }
 
     //Handle all ADEvents for BannerAD

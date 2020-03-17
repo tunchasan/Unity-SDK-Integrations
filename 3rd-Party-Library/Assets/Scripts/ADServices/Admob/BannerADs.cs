@@ -13,11 +13,12 @@ public class BannerADs : AdmobADs
     //Enum Types
     public enum AdType { Banner_320x50, MediumRectangle_300x250, IABBanner_468x60, Leaderboard_728x90, SmartBanner };
 
-    [Header("Banner AD Properties")]
+    [Header("Banner AD Configuration")]
     public string _AndroidBannerID;
 
     public string _IOSBannerID;
 
+    [Header("Banner AD Properties")]
     public AdPosition _BannerPosition;
 
     public AdType _BannerType;

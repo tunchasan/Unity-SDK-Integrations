@@ -23,8 +23,14 @@ public class BannerADs : AdmobADs
 
     public AdType _BannerType;
 
+    //Load Default Banner as SmartBanner
+    private void Start()
+    {
+        RequestBanner();
+    }
+
     //Request Banner depends on platforms and Load the AD.
-    public void RequestBanner()
+    private void RequestBanner()
     {
         //Handle which Platform is using on by device and Update BANNER_ID.
         PlatformHandler();
@@ -85,7 +91,7 @@ public class BannerADs : AdmobADs
     }
 
     //Handle Banner_ID depends on Platform.
-    private void PlatformHandler()
+    public override void PlatformHandler()
     {
         #if UNITY_ANDROID //ANDROID
                 _BANNER_ID = _AndroidBannerID;   // This BannerID is for Testing.

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class AdmobADs : MonoBehaviour
 {
-    private string _OtherPlatformID;
-
     [Header("Google Admob Service Configuration")]
     public string _AndroidAppID;
 
@@ -13,12 +11,18 @@ public class AdmobADs : MonoBehaviour
 
     private void Awake()
     {
+        PlatformHandler();
+    }
+
+    //Handle APPID depends on Platform.
+    public virtual void PlatformHandler()
+    {
         #if UNITY_ANDROID
                  string appId = _AndroidAppID;
         #elif UNITY_IPHONE
                  string appId = _IOSAppID;
         #else
-                 string appId = _OtherPlatformID;
+                 string appId = "unexpected_platform";
         #endif
     }
 

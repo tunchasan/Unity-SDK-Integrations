@@ -18,6 +18,9 @@ public class InterstitialADs : AdmobADs
     //Request Banner depends on platforms and Load the AD.
     public void RequestInterstitial()
     {
+        //Detect Platform
+        PlatformADHandler();
+
         //Create & Assign New Instance of InterstitialAD
         _InterstitialAD = new InterstitialAd(_Interstitial_ID);
 
@@ -34,7 +37,7 @@ public class InterstitialADs : AdmobADs
     }
 
     //Handle Interstitial_ID depends on Platform.
-    public override void PlatformHandler()
+    public void PlatformADHandler()
     {
         #if UNITY_ANDROID //ANDROID
                 _Interstitial_ID = _AndroidInterstitialAdID;   // This InterstitialID is for Testing.

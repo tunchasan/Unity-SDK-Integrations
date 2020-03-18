@@ -18,11 +18,11 @@ public class AdmobADs : MonoBehaviour
         PlatformHandler();
 
         // Initialize the Google Mobile Ads SDK. When publish our app, we should use it.
-        // MobileAds.Initialize(appID);
+        //MobileAds.Initialize(appID);
     }
 
     //Handle APPID depends on Platform.
-    public virtual void PlatformHandler()
+    public void PlatformHandler()
     {
         #if UNITY_ANDROID
                   appID = _AndroidAppID;

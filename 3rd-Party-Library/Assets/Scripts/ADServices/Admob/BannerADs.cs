@@ -26,6 +26,9 @@ public class BannerADs : AdmobADs
     //Request Banner depends on platforms and Load the AD.
     public void RequestBanner()
     {
+        //Detect Platform
+        PlatformADHandler();
+
         //Create & Assign New Instance of BannerAD
         _bannerAD = new BannerView(_BANNER_ID, AdTypeHandler(), _BannerPosition);
 
@@ -82,7 +85,7 @@ public class BannerADs : AdmobADs
     }
 
     //Handle Banner_ID depends on Platform.
-    public override void PlatformHandler()
+    public void PlatformADHandler()
     {
         #if UNITY_ANDROID //ANDROID
                 _BANNER_ID = _AndroidBannerID;   // This BannerID is for Testing.

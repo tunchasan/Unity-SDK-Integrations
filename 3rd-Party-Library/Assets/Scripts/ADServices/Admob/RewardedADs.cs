@@ -18,6 +18,9 @@ public class RewardedADs : AdmobADs
     //Request RewardedAd depends on platforms and Load the AD.
     public void RequestRewardedVideoAD()
     {
+        //Detect Platform
+        PlatformADHandler();
+
         //Create & Assign New Instance of RewardedAD
         _RewardedAD = new RewardedAd(_Rewarded_ID);
 
@@ -34,7 +37,7 @@ public class RewardedADs : AdmobADs
     }
 
     //Handle Rewarded_ID depends on Platform.
-    public override void PlatformHandler()
+    public void PlatformADHandler()
     {
         #if UNITY_ANDROID //ANDROID
                 _Rewarded_ID = _AndroidRewardedVideoAdID;   // This RewardedID is for Testing.

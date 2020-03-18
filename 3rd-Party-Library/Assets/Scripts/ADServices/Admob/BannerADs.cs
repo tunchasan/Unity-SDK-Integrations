@@ -24,16 +24,17 @@ public class BannerADs : AdmobADs
     public AdType _BannerType;
 
     //Request Banner depends on platforms and Load the AD.
-    private void RequestBanner()
+    public void RequestBanner()
     {
         //Create & Assign New Instance of BannerAD
         _bannerAD = new BannerView(_BANNER_ID, AdTypeHandler(), _BannerPosition);
 
-        //FOR REAL APP
-        //AdRequest adRequest = new AdRequest.Builder().Build();
-
+        HandleBannerADEvents(true);
         //FOR TEST APP
         AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();
+
+        //FOR REAL APP
+        //AdRequest adRequest = new AdRequest.Builder().Build();
 
         //Load BannerAD
         _bannerAD.LoadAd(adRequest);
@@ -119,9 +120,6 @@ public class BannerADs : AdmobADs
     // Called when an ad request failed to load.
     public void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
     {
-        //AD failed to Load, Load it Again.
-        RequestBanner();
-
         Debug.LogError("HandleFailedToReceiveAd event received with message: "
                             + args.Message);
     }
@@ -182,12 +180,6 @@ public class BannerADs : AdmobADs
             this._bannerAD.OnAdLeavingApplication -= this.HandleOnAdLeavingApplication;
         }
        
-    }
-
-    //If the script is enabled, we activete the ADEvents.
-    private void OnEnable()
-    {
-        HandleBannerADEvents(true);
     }
 
     //If the script is disabled, we deactivete the ADEvents.

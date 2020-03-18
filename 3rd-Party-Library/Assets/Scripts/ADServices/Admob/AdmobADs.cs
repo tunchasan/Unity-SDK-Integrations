@@ -1,36 +1,36 @@
-﻿using System.Collections;
+﻿using GoogleMobileAds.Api;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AdmobADs : MonoBehaviour
 {
+    private string appID;
+
     [Header("Google Admob Service Configuration")]
     public string _AndroidAppID;
 
     public string _IOSAppID;
 
     //Initialize some stuff.
-    private void Awake()
+    private void Start()
     {
         PlatformHandler();
+
+        // Initialize the Google Mobile Ads SDK. When publish our app, we should use it.
+        // MobileAds.Initialize(appID);
     }
 
     //Handle APPID depends on Platform.
     public virtual void PlatformHandler()
     {
         #if UNITY_ANDROID
-                 string appId = _AndroidAppID;
+                  appID = _AndroidAppID;
         #elif UNITY_IPHONE
-                 string appId = _IOSAppID;
+                  appID = _IOSAppID;
         #else
-                 string appId = "unexpected_platform";
+                  appID = "unexpected_platform";
         #endif
-    }
-
-    private void Start()
-    {
-        // Initialize the Google Mobile Ads SDK. When publish our app, we should use it.
-        //MobileAds.Initialize(appId);
     }
 
 }

@@ -21,10 +21,10 @@ public class RewardedADs : AdmobADs
         //Create & Assign New Instance of RewardedAD
         _RewardedAD = new RewardedAd(_Rewarded_ID);
 
+        HandleRewardedVideoADEvents(true);
+
         //FOR REAL APP
         //AdRequest adRequest = new AdRequest.Builder().Build();
-
-        HandleRewardedVideoADEvents(true);
 
         //FOR TEST APP
         AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();
@@ -147,12 +147,6 @@ public class RewardedADs : AdmobADs
 
         }
 
-    }
-
-    //If the script is enabled, we activete the ADEvents.
-    private void OnEnable()
-    {
-        HandleRewardedVideoADEvents(true);
     }
 
     //If the script is disabled, we deactivete the ADEvents.

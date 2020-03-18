@@ -21,10 +21,10 @@ public class InterstitialADs : AdmobADs
         //Create & Assign New Instance of InterstitialAD
         _InterstitialAD = new InterstitialAd(_Interstitial_ID);
 
+        HandleInterstitialADEvents(true);
+
         //FOR REAL APP
         //AdRequest adRequest = new AdRequest.Builder().Build();
-
-        HandleInterstitialADEvents(true);
 
         //FOR TEST APP
         AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();
@@ -66,9 +66,6 @@ public class InterstitialADs : AdmobADs
     // Called when an ad request failed to load.
     public void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
     {
-        //AD failed to Load, Load it Again.
-        RequestInterstitial();
-
         Debug.LogError("HandleFailedToReceiveAd event received with message: "
                         + args.Message);
     }
@@ -130,12 +127,6 @@ public class InterstitialADs : AdmobADs
 
         }
 
-    }
-
-    //If the script is enabled, we activete the ADEvents.
-    private void OnEnable()
-    {
-        HandleInterstitialADEvents(true);
     }
 
     //If the script is disabled, we deactivete the ADEvents.

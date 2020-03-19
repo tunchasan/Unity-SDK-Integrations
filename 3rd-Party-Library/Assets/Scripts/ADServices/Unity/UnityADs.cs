@@ -22,7 +22,6 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
         //Detect Platform
         PlatformHandler();
 
-        //Add Advertisement Listener
         Advertisement.AddListener(this);
 
         // Initialize the Ads listener and service
@@ -46,7 +45,7 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
     {
         return Advertisement.IsReady();
     }
-
+    
     // Called when an ad request has successfully loaded.
     public virtual void OnUnityAdsReady(string placementId)
     {

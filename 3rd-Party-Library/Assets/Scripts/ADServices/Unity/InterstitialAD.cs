@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Advertisements;
-
+/*                                                                                                      CAN NOT BE USED
 public class InterstitialAD : UnityADs
 {
     [Header("Interstitial AD Properties")]
@@ -76,3 +76,4 @@ public class InterstitialAD : UnityADs
         Debug.Log("HandleInterstitialOpening event received");
     }
 }
+*/

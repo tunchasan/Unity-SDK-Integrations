@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class BannerAD : UnityADs
@@ -11,17 +12,29 @@ public class BannerAD : UnityADs
     // Implement a function for showing a Banner ad:
     public void ShowBannerAD()
     {
-        if (Advertisement.IsReady())
+        //Start "ShowBannerAdReady" Coroutine
+        StartCoroutine(ShowBannerAdReady());
+    }
+
+    // Implement an coroutine that controls the Advertisement is ready or not 
+    IEnumerator ShowBannerAdReady()
+    {
+        //Start the while loop for 
+        while (!Advertisement.IsReady(BannerAdID))
         {
-            //Set Position the Banner
-            Advertisement.Banner.SetPosition(_BannerPosition);
-
-            //Display the Ad.
-            Advertisement.Banner.Show(BannerAdID);
-
-            Debug.Log("HandleBannerAdDisplayed event received");
+            yield return new WaitForSeconds(_AdControlRate);
         }
 
+        //Set Position the Banner
+        Advertisement.Banner.SetPosition(_BannerPosition);
+
+        //Display the Ad.
+        Advertisement.Banner.Show(BannerAdID);
+
+        Debug.Log("HandleBannerAdDisplayed event received");
+
+        //Stop "ShowBannerAdReady" Coroutine
+        StopCoroutine(ShowBannerAdReady());
     }
 
     // Called when an ad request has successfully loaded.

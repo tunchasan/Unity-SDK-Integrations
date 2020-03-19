@@ -1,22 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.Advertisements;
 
-public class VideoADs : UnityADs, IUnityAdsListener
+public class VideoADs : UnityADs
 {
     [Header("Video AD Properties")]
     public string VideoAdID;
-    
-    private void Start()
-    {
-        //Detect Platform
-        PlatformHandler();
-
-        //Add Advertisement Listener
-        Advertisement.AddListener(this);
-
-        // Initialize the Ads listener and service
-        Advertisement.Initialize(appID, testMode);
-    }
 
     // Implement a function for showing a video ad:
     public void ShowVideoAD()
@@ -32,7 +20,7 @@ public class VideoADs : UnityADs, IUnityAdsListener
     }
 
     // Called when an ad request has successfully loaded.
-    public void OnUnityAdsReady(string placementId)
+    public override void OnUnityAdsReady(string placementId)
     {
         if (placementId == VideoAdID) {
 
@@ -43,7 +31,8 @@ public class VideoADs : UnityADs, IUnityAdsListener
         }
     }
 
-    public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
+    // Called when an ad has Finished, Skipped or Failed.
+    public override void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
         // Define conditional logic for each ad completion status:
         if (showResult == ShowResult.Finished)
@@ -63,14 +52,15 @@ public class VideoADs : UnityADs, IUnityAdsListener
         }
     }
 
-    public void OnUnityAdsDidError(string message)
+    // Called when an ad request be concluded by an error.
+    public override void OnUnityAdsDidError(string message)
     {
         // Log the error.
         Debug.LogError("HandleVideoAdError event received");
     }
 
     // Called when the end-users triggers an ad.
-    public void OnUnityAdsDidStart(string placementId)
+    public override void OnUnityAdsDidStart(string placementId)
     {
         // Optional actions to take when the end-users triggers an ad.
         Debug.Log("HandleVideoAdOpening event received");

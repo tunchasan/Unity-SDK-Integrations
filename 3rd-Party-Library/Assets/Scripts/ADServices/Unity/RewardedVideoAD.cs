@@ -1,33 +1,8 @@
-﻿//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.Advertisements;
-//using UnityEngine.UI;
-
-//[RequireComponent(typeof(Button))]
-//public class RewardedVideoAD : UnityADs
-//{
-//    private Button myButton;
-
-//    [Header("Rewarded Video AD Properties")]
-//    public string RewardedVideoAdID;
-
-//    private void Start()
-//    {
-//        //Detect Platform
-//        PlatformHandler();
-
-//        // Initialize the Ads service:
-//        Advertisement.Initialize(appID, testMode);
-//    }
-//}
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class RewardedVideoAD : UnityADs, IUnityAdsListener
 {
-
     [Header("Rewarded Video AD Properties")]
     public string RewardedVideoAdID;
     
@@ -38,11 +13,7 @@ public class RewardedVideoAD : UnityADs, IUnityAdsListener
 
         //Add Advertisement Listener
         Advertisement.AddListener(this);
-    }
 
-    //Request RewardedAd to Load it.
-    public void RequestRewardedAD()
-    {
         // Initialize the Ads listener and service
         Advertisement.Initialize(appID, testMode);
     }
@@ -50,8 +21,14 @@ public class RewardedVideoAD : UnityADs, IUnityAdsListener
     // Implement a function for showing a rewarded video ad:
     public void ShowRewardedVideo()
     {
-        //Display the Ad.
-        Advertisement.Show(RewardedVideoAdID);
+        if (Advertisement.IsReady())
+        {
+            //Display the Ad.
+            Advertisement.Show(RewardedVideoAdID);
+
+            Debug.Log("HandleRewardedAdDisplayed event received");
+        }
+        
     }
 
     // Called when an ad request has successfully loaded.
@@ -60,7 +37,7 @@ public class RewardedVideoAD : UnityADs, IUnityAdsListener
         if (placementId == RewardedVideoAdID) {
 
             //AD is Loaded, Can Be Shown.
-            ShowRewardedVideo();
+            //ShowRewardedVideo();
 
             Debug.Log("HandleRewardedAdLoaded event received");
         }

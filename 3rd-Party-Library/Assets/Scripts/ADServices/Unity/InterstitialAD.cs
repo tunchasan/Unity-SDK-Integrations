@@ -20,7 +20,7 @@ public class InterstitialAD : UnityADs
         //Start the while loop for 
         while (!Advertisement.IsReady(InterstitialAdID))
         {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(_AdControlRate);
         }
 
         //Display the Ad.

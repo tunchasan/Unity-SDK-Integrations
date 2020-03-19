@@ -12,7 +12,10 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
 
     public string _IOSAppID;
 
-    public bool testMode;
+    public bool _testMode;
+
+    [Header("Unity ADs Deep Configuration")]
+    public float _AdControlRate;
 
     private void Start()
     {
@@ -23,7 +26,7 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
         Advertisement.AddListener(this);
 
         // Initialize the Ads listener and service
-        Advertisement.Initialize(appID, testMode);
+        Advertisement.Initialize(appID, _testMode);
     }
 
     //Handle APPID depends on Platform.
@@ -36,6 +39,12 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
         #else
                   appID = "unexpected_platform";
         #endif
+    }
+
+    //Control the Ad is ready to display or not
+    public virtual bool isAdReady()
+    {
+        return Advertisement.IsReady();
     }
 
     // Called when an ad request has successfully loaded.

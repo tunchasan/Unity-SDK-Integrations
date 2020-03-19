@@ -14,12 +14,13 @@ public class VideoADs : UnityADs
         StartCoroutine(ShowVideoAdReady());    
     }
 
-
+    // Implement an coroutine that controls the Advertisement is ready or not 
     IEnumerator ShowVideoAdReady()
     {
+        //Start the while loop for 
         while (!Advertisement.IsReady(VideoAdID))
         {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(_AdControlRate);
         }
 
         //Display the Ad.

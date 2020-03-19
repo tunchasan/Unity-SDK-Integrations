@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class VideoADs : UnityADs
@@ -9,14 +10,25 @@ public class VideoADs : UnityADs
     // Implement a function for showing a video ad:
     public void ShowVideoAD()
     {
-        if (Advertisement.IsReady())
-        {
-            //Display the Ad.
-            Advertisement.Show(VideoAdID);
+        //Start "ShowVideoAdReady" Coroutine
+        StartCoroutine(ShowVideoAdReady());    
+    }
 
-            Debug.Log("HandleVideoAdDisplayed event received");
+
+    IEnumerator ShowVideoAdReady()
+    {
+        while (!Advertisement.IsReady(VideoAdID))
+        {
+            yield return new WaitForSeconds(0.25f);
         }
-        
+
+        //Display the Ad.
+        Advertisement.Show(VideoAdID);
+
+        Debug.Log("HandleVideoAdDisplayed event received");
+
+        //Stop "ShowVideoAdReady" Coroutine
+        StopCoroutine(ShowVideoAdReady());
     }
 
     // Called when an ad request has successfully loaded.

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class RewardedVideoAD : UnityADs
@@ -9,14 +10,26 @@ public class RewardedVideoAD : UnityADs
     // Implement a function for showing a rewarded video ad:
     public void ShowRewardedVideo()
     {
-        if (Advertisement.IsReady())
-        {
-            //Display the Ad.
-            Advertisement.Show(RewardedVideoAdID);
+        //Start "ShowRewardedAdReady" Coroutine
+        StartCoroutine(ShowRewardedAdReady());
+    }
 
-            Debug.Log("HandleRewardedAdDisplayed event received");
+    // Implement a coroutine that controls the Advertisement is ready or not 
+    IEnumerator ShowRewardedAdReady()
+    {
+        //Start the while loop for 
+        while (!Advertisement.IsReady(RewardedVideoAdID))
+        {
+            yield return new WaitForSeconds(_AdControlRate);
         }
-        
+
+        //Display the Ad.
+        Advertisement.Show(RewardedVideoAdID);
+
+        Debug.Log("HandleRewardedAdDisplayed event received");
+
+        //Stop "ShowRewardedAdReady" Coroutine
+        StopCoroutine(ShowRewardedAdReady());
     }
 
     // Called when an ad request has successfully loaded.

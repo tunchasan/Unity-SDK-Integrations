@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class InterstitialAD : UnityADs
@@ -9,14 +10,26 @@ public class InterstitialAD : UnityADs
     // Implement a function for showing a Interstitial ad:
     public void ShowInterstitialAD()
     {
-        if (Advertisement.IsReady())
-        {
-            //Display the Ad.
-            Advertisement.Show(InterstitialAdID);
+        //Start "ShowInterstitialAD" Coroutine
+        StartCoroutine(ShowInterstitialAdReady());
+    }
 
-            Debug.Log("HandleInterstitialAdDisplayed event received");
+    // Implement an coroutine that controls the Advertisement is ready or not
+    IEnumerator ShowInterstitialAdReady()
+    {
+        //Start the while loop for 
+        while (!Advertisement.IsReady(InterstitialAdID))
+        {
+            yield return new WaitForSeconds(0.25f);
         }
 
+        //Display the Ad.
+        Advertisement.Show(InterstitialAdID);
+
+        Debug.Log("HandleInterstitialAdDisplayed event received");
+
+        //Stop "ShowInterstitialAD" Coroutine
+        StopCoroutine(ShowInterstitialAdReady());
     }
 
     // Called when an ad request has successfully loaded.

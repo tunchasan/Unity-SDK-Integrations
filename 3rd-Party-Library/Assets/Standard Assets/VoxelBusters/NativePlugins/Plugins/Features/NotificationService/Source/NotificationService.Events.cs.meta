@@ -1,0 +1,35 @@
+fileFormatVersion: 2
+guid: 6dd05eb544b9d45aaa561c68541e5fb3
+labels:
+- Billing
+- FCM
+- Facebook
+- Gallery
+- GameCenter
+- Googleplayservices
+- Icloud
+- Imagepicker
+- Inapp
+- Local
+- LocalNotification
+- Native
+- Notification
+- Notifications
+- Onesignal
+- Push
+- PushNotification
+- Remote
+- Schedule
+- Sharing
+- Signal
+- Twitter
+- Webview
+- Whatsapp
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

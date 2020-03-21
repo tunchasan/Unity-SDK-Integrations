@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: cc4673f947255421ca6e865c2062fdcb
+labels:
+- Billing
+- FCM
+- Facebook
+- Gallery
+- GameCenter
+- Googleplayservices
+- Icloud
+- Imagepicker
+- Inapp
+- Login
+- Message
+- Native
+- NativeDialogs
+- Plugins
+- Sharing
+- Twitter
+- Ui
+- Webview
+- Whatsapp
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

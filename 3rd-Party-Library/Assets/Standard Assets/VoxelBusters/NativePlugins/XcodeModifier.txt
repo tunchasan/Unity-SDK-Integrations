@@ -1,0 +1,249 @@
+{
+  "NativePlugins-AddressBook": {
+    "group": "NativePlugins-AddressBook",
+    "frameworks": [
+      "AddressBook.framework:weak",
+      "Contacts.framework:weak"
+    ],
+    "folders": [
+      "AddressBook/Assets",
+      "AddressBook/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-Billing": {
+    "group": "NativePlugins-Billing",
+    "frameworks": [
+      "StoreKit.framework"
+    ],
+    "headerpaths": [
+      "Billing/External/Libs/openssl-1.0.1e/include"
+    ],
+    "files": [
+      "Billing/External/Libs/openssl-1.0.1e/lib/libcrypto.a",
+      "Billing/External/Libs/openssl-1.0.1e/lib/libssl.a"
+    ],
+    "folders": [
+      "Billing/Assets",
+      "Billing/External/Libs/openssl-1.0.1e/include",
+      "Billing/External/Source/NSData:-fobjc-arc",
+      "Billing/External/Source/RMStore:-fobjc-arc",
+      "Billing/Source/Binding:-fno-objc-arc",
+      "Billing/Source/Extensions:-fno-objc-arc",
+      "Billing/Source/ReceiptVerification/Manager:-fno-objc-arc",
+      "Billing/Source/ReceiptVerification/ServerVerificator:-fobjc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-CloudServices": {
+    "group": "NativePlugins-CloudServices",
+    "folders": [
+      "CloudServices/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-Common": {
+    "group": "NativePlugins-Common",
+    "frameworks": [
+      "WebKit.framework:weak"
+    ],
+    "folders": [
+      "Common/Assets",
+      "Common/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-GameServices": {
+    "group": "NativePlugins-GameServices",
+    "frameworks": [
+      "GameKit.framework"
+    ],
+    "folders": [
+      "GameServices/Assets",
+      "GameServices/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-MediaLibrary": {
+    "group": "NativePlugins-MediaLibrary",
+    "frameworks": [
+      "MobileCoreServices.framework",
+      "AVKit.framework",
+      "AVFoundation.framework"
+    ],
+    "folders": [
+      "MediaLibrary/Assets",
+      "MediaLibrary/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-NetworkConnectivity": {
+    "group": "NativePlugins-NetworkConnectivity",
+    "folders": [
+      "NetworkConnectivity/Assets",
+      "NetworkConnectivity/External:-fobjc-arc",
+      "NetworkConnectivity/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-Notification": {
+    "group": "NativePlugins-Notification",
+    "folders": [
+      "Notification/Assets",
+      "Notification/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-Sharing": {
+    "group": "NativePlugins-Sharing",
+    "frameworks": [
+      "MessageUI.framework",
+      "Social.framework:weak"
+    ],
+    "folders": [
+      "Sharing/Assets",
+      "Sharing/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-Twitter": {
+    "group": "NativePlugins-Twitter",
+    "frameworks": [
+      "Accounts.framework:weak",
+      "Social.framework:weak",
+      "Security.framework:weak",
+      "SafariServices.framework:weak"
+    ],
+    "folders": [
+      "Twitter/Assets",
+      "Twitter/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-TwitterSDK": {
+    "group": "NativePlugins-Twitter",
+    "frameworks": [
+      "CoreData.framework",
+      "CoreText.framework"
+    ],
+    "files": [
+      "Twitter/Fabric.framework",
+      "Twitter/TwitterCore.framework",
+      "Twitter/TwitterKit.framework",
+      "Twitter/TwitterKitResources.bundle"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-WebView": {
+    "group": "NativePlugins-WebView",
+    "frameworks": [
+      "WebKit.framework"
+    ],
+    "folders": [
+      "WebView/Assets",
+      "WebView/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-SoomlaGrow": {
+    "group": "NativePlugins-SoomlaGrow",
+    "frameworks": [
+      "AdSupport.framework:weak"
+    ],
+    "libs": [
+      "libsqlite3.dylib:weak",
+      "libsqlite3.tbd:weak"
+    ],
+    "headerpaths": [
+      "Soomla/External/Libs/Headers"
+    ],
+    "linker_flags": [
+      "-ObjC"
+    ],
+    "folders": [
+      "Soomla/External/Libs/Headers",
+      "Soomla/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  },
+  "NativePlugins-StoreReview": {
+    "group": "NativePlugins-StoreReview",
+    "frameworks": [
+      "StoreKit.framework"
+    ],
+    "folders": [
+      "StoreReview/Source:-fno-objc-arc"
+    ],
+    "excludes": [
+      "^.*.meta$",
+      "^.*.mdown$",
+      "^.*.pdf$",
+      "^.*.DS_Store"
+    ]
+  }
+}

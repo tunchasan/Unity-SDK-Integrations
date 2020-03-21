@@ -1,0 +1,27 @@
+fileFormatVersion: 2
+guid: eb8cf8350c9084363b0d430942153223
+labels:
+- Billing
+- FCM
+- Facebook
+- Gallery
+- GameCenter
+- Googleplayservices
+- Icloud
+- Imagepicker
+- Inapp
+- Native
+- Sharing
+- Twitter
+- Webview
+- Whatsapp
+timeCreated: 1478120503
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

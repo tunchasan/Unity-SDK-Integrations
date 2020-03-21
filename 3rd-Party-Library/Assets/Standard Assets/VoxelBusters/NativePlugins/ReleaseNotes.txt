@@ -1,0 +1,265 @@
+1.5.7
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+***Uninstall (from Window->VoxelBusters Menu) before importing the new update***
+
+[iOS]       Fix for repeated callback of GameCenter Initialisation callback
+[iOS]       Fix for MediaLibrary by removing old classes. Now using AVKit
+[iOS]       Fix related to local path when using webview
+[Android]   Fixed Android Manifest generation when Standard .Net API is selected (2018.3)
+[Android]   Added FCM inplace of GCM
+[Android]   Removed deprecated methods usage in Game Services
+[Android]   Better Proguard setup. No need to enable anywhere, Fully automated!
+[Android]   Removed GSON dependency
+[Android]   Updated Google Play Servies libraries to use 15.0+
+[Android]   Updated Play Services Resolver version 1.2.97
+
+
+
+1.5.6p2
+If you are upgrading from 1.5.6, no need to uninstall the plugin. Else, please follow steps for 1.5.6 upgrade (below)
+[Android] Fix for mime type while sharing
+[Android] Proguard setup with a single click from NPSettings -> Application-> Enable Proguard Setup Settings
+[iOS]Webview destroy crash issue
+[iOS]Compilation fix when RateApp is not enabled
+
+
+1.5.6p1
+[Android] Support for Proguard (should work smoothly without any extra setup)
+
+
+1.5.6
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+***Uninstall (from Window->VoxelBusters Menu) before importing the new update***
+
+
+* [Editor] Updated view of NPSettings for easy access
+* [Editor] Multiple EditorNotification & EditorGameCenter asset files issue fix
+* [Editor] Removed Black List Generator as base version is >= Unity 5.3
+
+* [API] Added RemoveAllKeys method in Cloud Services
+
+* [iOS & Android]CloudServicesInitialise event fix
+
+* [iOS] Added new Apple Review System
+* [iOS] Updated post process exporting
+* [iOS] Fix for Facebook & Twitter Sharing (iOS 11)
+* [iOS]Removed version number dependency for IAP once exported to xcode
+
+* [Android] Oreo Notification Fixes (realted to background limitations)
+* [Android] Updated Play Services Resolver to 1.2.61
+* [Android] Updated Android Dependecies to use XML file
+* [Android] Media Library - Pick Imag - Now max image imported is 2048 - Tested among multiple devices
+* [Android] Media Library - Pick Image - Performance Improvements
+
+1.5.4
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+***Uninstall (from Window->VoxelBusters Menu) before importing the new update***  - Skip if you are upgrading from 1.5.3
+
+* Added new Webkit for iOS
+* iOS Video & Webview Fixes
+* Fix for Android projects on < Unity 5.6 - Export Dex fixes
+* Fixes for Android Media Library where user presses home and launches from launcher again.
+
+
+
+1.5.3
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+
+
+* No more permissions asked for Sharing functionality
+* Runtime Permission Support
+* Support for Proguard
+* Bug fixes for Xcode export issues on specific Windows 10 versions
+* Game Services rare crash issues fixed
+* Support for 2017.1, 2017.2.0f1, 2017.3 (beta)
+* Minimum API for android is set to 14 (can work below 14 too but need to go for lower version of support libraries)
+* Android Oreo Notification support
+* Refined all permissions on Android
+* Supports .Net 4.5 API Compatibility
+* New version of Google Jar Resolver
+* Better compatibility with other plugins
+* iOS 11 & Android Oreo Support
+
+1.5
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+
+***Uninstall (from Window->VoxelBusters Menu) before importing the new update***
+
+• Added delegate system to control RateMyApp dialog presentation
+• Changed Billing Settings configuration interface
+• Added additional toggle buttons for specifying usage of optional subcomponents.
+• Fixed Twitter SDK export issue
+• Fixed Twitter SDK store submission issue
+• Removed deprecated API's from Billing, Game Services
+• Fixed Cloud Services initial sync issue in iOS
+• Modified class design structure for native binding classes
+• Added privacy permission support for native features in iOS platform
+• Modified Network Connectivity settings structure
+• Fixed Default URL to prefix file protocol in all methods
+• Access Token added for Google Play Services (Check ExternalCredentials under Game Services)
+• Amazon Billing Jar disabled when billing is not used.
+• URL now considers jar:file:/ paths as well
+• Fixed Webview to allow Https URLs
+• Fixed minor crashes for Billing in QueryPurchases call internally
+• Fixed Camera scale issue in Media Library
+• Fixed Exif crash issue when picture taken from Google Camera App
+• Removed Default aar files in Plugin. Now Google Jar Resolver needs to resolve on its own
+• Google Play Services Auto Sign In Fixes
+• Unity 5.5 Compatibility
+
+
+
+
+1.4
+Important : UPGRADE INSTRUCTIONS : "https://tutorials.cpnp.voxelbusters.com/Upgrade%20Guide/upgrade_guide.html"
+
+Badge Support for Notifications on Android
+Upgraded Twitter SDK to include bit code files
+Finished Bitcode Support
+Check changed features for Amazon
+Fixed links on Gitbook
+Added Google Jar Resolver Support
+Remove extra permissions for Android Game Services
+Include all bit code files
+Compatibility with 5.4
+Silent Login for Google Play Services (http://android-developers.blogspot.in/2016/01/play-games-permissions-are-changing-in.html)
+IPV6 Support
+Option for Sending an empty Alert notification - Skip notification if alert is empty
+Adding Developer Payload on Android for extra security
+Add needs big text style
+Notification - Making multiple lines
+Get Specific sign in error information/Opt if you want error dialogs from NPSettings
+
+
+
+1.3.1.1
+Important : UPGRADE INSTRUCTIONS : "http://tiny.cc/cpnp_upgrade_1_3"
+
+[Android] Hot fix for Plugin resources copy issue on Android.
+[Android] Copy of Plugin Resources  refreshes instantly now.
+Updated Forum link in NPSettings.
+
+
+
+1.3.1
+Important : UPGRADE INSTRUCTIONS : "http://tiny.cc/cpnp_upgrade_1_3"
+
+Added NPBinding.GameServices.GetNoOfStepsForCompletingAchievement to get max steps for completing an achievement.
+MaxPoints now deprecated. You need to set in NPSettings how many points required to complete an achievement.
+Changed ReportProgress to take Percentage in double type instead of integer.
+PointsScored property deprecated. Instead use PercentageCompleted.
+Address Book contact display issue resolved.
+Game Services editor support issue fixes.
+Webplayer compilation issue  fixes.
+
+1.3
+Important : UPGRADE INSTRUCTIONS : "http://tiny.cc/cpnp_upgrade_1_3"
+
+Added Cloud Services
+
+Added Soomla Grow Support
+
+Added Playmaker Support
+
+Added OneSignal Support
+
+Android now exports only selected feature class files
+
+Bug Fixes
+
+1.2
+Important: Delete package folders before updating.[blogs.voxelbusters.com/products/cross-platform-native-plugins/folder-structure]
+
+Feature Request:
+	- Implemented a new system, which makes it possible for user to remove unused features completely.
+	- Mail sharing now includes 2 new fields CC and BCC recipients.
+	- Billing Products includes currency code and currency symbol.
+	- Added menu item for uninstalling plugin which can be used before importing an update.
+	- Signout added for Game Services. On iOS it just ignores the call as its not possible to signout.
+	- [iOS] Native files are hard copied to exported build, inorder to avoid compilation issues caused by moving files.
+	- [Android] Vibration setting optional for notifications. Now can enable/disable from NPSettings.
+
+Changes:
+	- Game Services: Callback now includes error description information.
+	- Game Services: Included Global Identifier support for easy access of Leaderboard and Achievement objects.
+	- Billing: Existing callbacks are deprecated. Use the new ones instead.
+	- Billing: Included new static API to create product at runtime.
+	- Sharing: Existing API's are deprecated. Now it makes use of composer object for accessing sharing functionality.
+	- NPSettings: Changed interface to provide better user experience.
+	- Macro Symbols are now added to player settings for supporting Cloud builds.
+	- Option to place plugin resources under Assets/PluginResources/NativePlugins for each platform.
+	- Demo scenes provides info about key points related to feature usage.
+	- [Android] Network Connectivity: Changed from ping to socket connection. Now it expects a port number in NPSettings.
+	- [Android] Notification images & sounds no more uses Streaming assets and deprecated. Place your resources under Assets/PluginResources/NativePlugins/[Android / Common] folder.
+
+Fixes:
+	- [Media Library] Exif data considered for images which are picked from Library and handled automatically.
+	- [iOS] Fixed major bug related to IAP validation.
+	- [iOS] Fixed notification issues.
+	- [iOS] Share intent window is not showed for sharing using FB or Twitter only.
+	- [iOS] Not using Unity's implementation anymore for Notification and Game Center feature.
+	- [Android] Fixed loadData call for webview.
+	- [Android] Fixed JSON conversion crashes on Samsung and HTC devices.
+	- [Android] Fixed Notification custom sound volume.
+	- [Android] Fixed stop video callback for youtube play.
+	- [Android] Fixed Raw purchase data for Billing Transaction.
+	- [Android] Fixed Ping access failure on Samsung Galaxy devices.
+	- [Android] Fixed Twitter SDK crash on pressing cancel while logging in.
+
+
+
+
+Important: Delete package folders before updating.
+
+1.1
+New Features:
+	- Game Services feature: Game application will make use Game Center, Google Play Services in iOS, Android platforms respectively for Leaderboard, Achievement, Score reporting etc.
+
+Feature Request:
+	- Added repeat functionality for Notifications. (Request: ksolo)
+	- Added launch notifications support. (Request: notnotalan)
+
+Changes:
+	- [iOS] Notification payload format change.
+	- [Android] Small icon for notifications selectable from inspector.
+	- [Android] Removed conflicts with other plugins regarding Billing interface.
+	- [Android] Cancel Notification, Local Notification bug fixes. Thanks Craig for reporting!
+	- [Android] Restore transaction state fix. Thanks notnotalan for reporting!
+	- [Android] Added support for billing items more than 20. Thanks notnotalan for reporting!
+
+Important: Delete package folders before updating.
+
+1.04
+	- *Delete* package folders before updating.
+	- Auto Android Manifest Generator based on features used within the game. Just Make sure you have the required flags in your root manifest file. Check sample file for flags.
+	- Added options in NPSettings/Application settings to select features which are required.
+	- Twitter framework inclusion is selective i.e, from now its added only if required on iOS.
+	- Fixed random crashes related to feature initialisation.
+	- Fixed issues related to il2cpp iOS builds. Now works well on 4.6.7 and 5.1.1 .Thanks to Brian Su for reporting.
+	- Fixed issues related to singleton component. Thanks to Brian Su for reporting.
+	- Fixed other minor issues.
+
+
+1.03
+	- *Delete* package folders before updating.
+	- [Android] Added new features for Notification customization. Now can configure LargeIcon and Custom Sound
+	- [Android] Pick Image and Camera access fixes on Android 4.4 versions. Thanks to *Kino Lam* for reporting!
+	- [Android] Network Data Usage fix. Thanks to *Sauli Kiviranta* for reporting!
+	- [Android] Now for sharing files, it picks external directory if available. Else it will use content provider.
+	- Changed from hostName to IPAddress in NetoworkConnectivity.
+	- Added method to initialize Network Connectivity instead of making default call.
+	- Some Minor bug fixes.
+
+
+1.02
+	- *Delete* package folders before updating.
+	- Critical issue fix in notifications
+	- Added RemoteNotificationDemo
+
+1.01
+	- [Android] Fileprovider authority issue bug fix
+	- Moved reusable code to Common folder. Now it won’t conflict with future VB plugins.
+	- Added PASTE_BUILD_IDENTIFIER_HERE to replace with project’s build identifier in AndroidManifest.xml of native_plugins_lib. Now .apk won’t install until identifier is updated which is intended for easy integration and functionality.
+
+1.0
+	- Initial Release

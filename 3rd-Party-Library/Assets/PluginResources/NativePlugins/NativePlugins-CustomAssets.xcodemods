@@ -1,0 +1,13 @@
+{
+    "group": "NativePlugins-CustomAssets",
+    "folders": [
+        "iOS",
+        "Common"
+    ],
+    "excludes": [
+        "^.*.meta$",
+        "^.*.mdown$",
+        "^.*.pdf$",
+        "^.*.DS_Store"
+    ]
+}

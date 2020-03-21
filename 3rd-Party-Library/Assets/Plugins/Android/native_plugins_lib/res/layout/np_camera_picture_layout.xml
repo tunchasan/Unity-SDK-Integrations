@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/np_camera_picture_root_layout"
+    android:weightSum="1">
+
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/np_camera_capture_button"
+        android:layout_alignParentTop="true"/>
+
+    <Button
+        android:id="@+id/np_camera_retake_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="11dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:text="Retake" />
+
+    <Button
+        android:id="@+id/np_camera_capture_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/np_camera_retake_button"
+        android:layout_centerHorizontal="true"
+        android:text="Capture" />
+
+    <Button
+        android:id="@+id/np_camera_select_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/np_camera_retake_button"
+        android:layout_alignBottom="@+id/np_camera_retake_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="25dp"
+        android:layout_marginRight="25dp"
+        android:text="Select" />
+
+</RelativeLayout>

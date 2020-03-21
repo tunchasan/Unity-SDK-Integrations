@@ -1,0 +1,59 @@
+# General
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+
+
+# Address Book
+-keep public class com.voxelbusters.nativeplugins.features.addressbook.AddressBookHandler {*; }
+
+#Billing
+-keep public class com.voxelbusters.nativeplugins.features.billing.** {*; }
+-keep class com.android.vending.billing.** {*;}
+-keep public class com.android.vending.billing.IInAppBillingService {*; }
+
+# Amazon API
+-dontwarn com.amazon.**
+-keep class com.amazon.** {*;}
+-keepattributes *Annotation*
+
+#Cloud Services
+-keep public class com.voxelbusters.nativeplugins.features.cloudservices.CloudServicesHandler {*; }
+
+#Game Services
+-keep public class com.voxelbusters.nativeplugins.features.gameservices.GameServicesHandler {*; }
+
+#Media Library
+-keep public class com.voxelbusters.nativeplugins.features.medialibrary.MediaLibraryHandler {*; }
+-dontwarn com.voxelbusters.nativeplugins.features.medialibrary.YoutubePlayerActivity
+
+#Notification Services
+-keep public class com.voxelbusters.nativeplugins.features.notification.NotificationHandler {*; }
+-keep class com.voxelbusters.nativeplugins.externallibrary.notification.shortcutbadger.** {<init>(...); }
+
+#Network Connectivity
+-keep public class com.voxelbusters.nativeplugins.features.reachability.NetworkReachabilityHandler {*; }
+
+#Sharing
+-keep public class com.voxelbusters.nativeplugins.features.sharing.SharingHandler {*; }
+
+#Twitter SDK
+-keep public class com.voxelbusters.nativeplugins.features.socialnetwork.twitter.TwitterHandler {*; }
+
+#UI
+-keep public class com.voxelbusters.nativeplugins.features.ui.UiHandler {*; }
+
+#Utility
+-keep public class com.voxelbusters.nativeplugins.features.utility.UtilityHandler {*; }
+
+#Webview
+-keep public class com.voxelbusters.nativeplugins.features.webview.** {*; }
+
+#External Addons
+-keep public class com.voxelbusters.nativeplugins.features.external.sdk.soomla.soomlagrow.SoomlaGrow {*; }
+-dontwarn com.voxelbusters.nativeplugins.features.external.sdk.soomla.**
+
+
+#NativeBinding Interface
+-keep public class com.voxelbusters.NativeBinding {*; }

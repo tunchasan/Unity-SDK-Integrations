@@ -12,6 +12,9 @@ public class BannerAD : UnityADs
     // Implement a function for showing a Banner ad:
     public void ShowBannerAD()
     {
+        //Update "activeAD" Value
+        activeAD = BannerAdID;
+
         //Start "ShowBannerAdReady" Coroutine
         StartCoroutine(ShowBannerAdReady());
     }
@@ -40,44 +43,60 @@ public class BannerAD : UnityADs
     // Called when an ad request has successfully loaded.
     public override void OnUnityAdsReady(string placementId)
     {
-        if (placementId == BannerAdID)
+        // Control the activeAD value with BannerAdID
+        if (activeAD == BannerAdID)
         {
-            Debug.Log("HandleBannerAdLoaded event received");
-        }
+            if (placementId == BannerAdID)
+            {
+                Debug.Log("HandleBannerAdLoaded event received");
+            }
+        }     
     }
 
     // Called when an ad has Finished, Skipped or Failed.
     public override void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
-        // Define conditional logic for each ad completion status:
-        if (showResult == ShowResult.Finished)
+        // Control the activeAD value with BannerAdID
+        if (activeAD == BannerAdID)
         {
-            // Optionally Reward the user for watching the ad to completion.
-            Debug.Log(
-                "HandleBannerAd event received to finish.");
-        }
-        else if (showResult == ShowResult.Skipped)
-        {
-            // Do not reward the user for skipping the ad.
-            Debug.Log("HandleBannerAdSkipped event received");
-        }
-        else if (showResult == ShowResult.Failed)
-        {
-            Debug.LogError("HandleBannerAdError event received");
-        }
+            // Define conditional logic for each ad completion status:
+            if (showResult == ShowResult.Finished)
+            {
+                // Optionally Reward the user for watching the ad to completion.
+                Debug.Log(
+                    "HandleBannerAd event received to finish.");
+            }
+            else if (showResult == ShowResult.Skipped)
+            {
+                // Do not reward the user for skipping the ad.
+                Debug.Log("HandleBannerAdSkipped event received");
+            }
+            else if (showResult == ShowResult.Failed)
+            {
+                Debug.LogError("HandleBannerAdError event received");
+            }
+        }        
     }
 
     // Called when an ad request be concluded by an error.
     public override void OnUnityAdsDidError(string message)
     {
-        // Log the error.
-        Debug.LogError("HandleBannerAdError event received");
+        // Control the activeAD value with BannerAdID
+        if (activeAD == BannerAdID)
+        {
+            // Log the error.
+            Debug.LogError("HandleBannerAdError event received");
+        }      
     }
 
     // Called when the end-users triggers an ad.
     public override void OnUnityAdsDidStart(string placementId)
     {
-        // Optional actions to take when the end-users triggers an ad.
-        Debug.Log("HandleBannerOpening event received");
+        // Control the activeAD value with BannerAdID
+        if (activeAD == BannerAdID)
+        {
+            // Optional actions to take when the end-users triggers an ad.
+            Debug.Log("HandleBannerOpening event received");
+        }      
     }
 }

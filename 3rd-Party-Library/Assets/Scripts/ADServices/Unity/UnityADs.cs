@@ -7,6 +7,8 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
 {
     protected string appID;
 
+    protected static string activeAD;
+
     [Header("Unity ADs Service Configuration")]
     public string _AndroidAppID;
 
@@ -22,6 +24,7 @@ public class UnityADs : MonoBehaviour, IUnityAdsListener
         //Detect Platform
         PlatformHandler();
 
+        //AdListener to Script for tracking events.
         Advertisement.AddListener(this);
 
         // Initialize the Ads listener and service

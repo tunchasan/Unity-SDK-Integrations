@@ -10,6 +10,9 @@ public class RewardedVideoAD : UnityADs
     // Implement a function for showing a rewarded video ad:
     public void ShowRewardedVideo()
     {
+        //Update "activeAD" Value
+        activeAD = RewardedVideoAdID;
+
         //Start "ShowRewardedAdReady" Coroutine
         StartCoroutine(ShowRewardedAdReady());
     }
@@ -35,47 +38,60 @@ public class RewardedVideoAD : UnityADs
     // Called when an ad request has successfully loaded.
     public override void OnUnityAdsReady(string placementId)
     {
-        if (placementId == RewardedVideoAdID) {
-
-            //AD is Loaded, Can Be Shown.
-            //ShowRewardedVideo();
-
-            Debug.Log("HandleRewardedAdLoaded event received");
-        }
+        // Control the activeAD value with RewardedVideoAdID
+        if (activeAD == RewardedVideoAdID)
+        {
+            if (placementId == RewardedVideoAdID)
+            {
+                Debug.Log("HandleRewardedAdLoaded event received");
+            }
+        }    
     }
 
     // Called when an ad has Finished, Skipped or Failed.
     public override void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
-        // Define conditional logic for each ad completion status:
-        if (showResult == ShowResult.Finished)
+        // Control the activeAD value with RewardedVideoAdID
+        if (activeAD == RewardedVideoAdID)
         {
-            // Reward the user for watching the ad to completion.
-            Debug.Log(
-                "HandleRewardedAdRewarded event received for 10 Golds");
-        }
-        else if (showResult == ShowResult.Skipped)
-        {
-            // Do not reward the user for skipping the ad.
-            Debug.Log("HandleRewardedAdClosed event received");
-        }
-        else if (showResult == ShowResult.Failed)
-        {
-           Debug.LogError("HandleRewardedAdError event received");
-        }
+            // Define conditional logic for each ad completion status:
+            if (showResult == ShowResult.Finished)
+            {
+                // Reward the user for watching the ad to completion.
+                Debug.Log(
+                    "HandleRewardedAdRewarded event received for 10 Golds");
+            }
+            else if (showResult == ShowResult.Skipped)
+            {
+                // Do not reward the user for skipping the ad.
+                Debug.Log("HandleRewardedAdClosed event received");
+            }
+            else if (showResult == ShowResult.Failed)
+            {
+                Debug.LogError("HandleRewardedAdError event received");
+            }
+        }   
     }
 
     // Called when an ad request be concluded by an error.
     public override void OnUnityAdsDidError(string message)
     {
-        // Log the error.
-        Debug.LogError("HandleRewardedAdError event received");
+        // Control the activeAD value with RewardedVideoAdID
+        if (activeAD == RewardedVideoAdID)
+        {
+            // Log the error.
+            Debug.LogError("HandleRewardedAdError event received");
+        }       
     }
 
     // Called when the end-users triggers an ad.
     public override void OnUnityAdsDidStart(string placementId)
     {
-        // Optional actions to take when the end-users triggers an ad.
-        Debug.Log("HandleRewardedAdOpening event received");
+        // Control the activeAD value with RewardedVideoAdID
+        if (activeAD == RewardedVideoAdID)
+        {
+            // Optional actions to take when the end-users triggers an ad.
+            Debug.Log("HandleRewardedAdOpening event received");
+        }  
     }
 }

@@ -7,7 +7,6 @@ public class FBScript : MonoBehaviour
 {
     public Text FriendsText;
 
-    /******************************FB INITIALIZATION PART******************************/
     private void Awake()
     {
         //if Facebook is not initialized, Initialized the FB Services then active the FB App
@@ -34,6 +33,7 @@ public class FBScript : MonoBehaviour
             });
                 
         }
+
         //if Facebook is Initialized, Directly Active the FB App.
         else
         {
@@ -41,10 +41,10 @@ public class FBScript : MonoBehaviour
         }
     }
 
-    /**************************************************************************************/
-
+    // Login & Logout Field
     #region Login / Logout
     
+    //Function that manages Facebook Login
     public void FacebookLogin()
     {
         var permissions = new List<string>() { "public_profile", "email", "user_friends" };
@@ -52,6 +52,7 @@ public class FBScript : MonoBehaviour
         FB.LogInWithReadPermissions(permissions);
     }
 
+    //Function that's manage Facebook Logout
     public void FacebookLogout()
     {
         FB.LogOut();
@@ -59,9 +60,11 @@ public class FBScript : MonoBehaviour
 
     #endregion
 
+    //Facebook Share Field
     #region Share
 
-    public void FacebookShare(string URL)
+    //Function that manages Facebook Share Service
+    public void FacebookShareGame(string URL)
     {
         //
         URL = "https://play.google.com/store/apps/details?id=com.lilithgame.roc.gp";
@@ -69,7 +72,13 @@ public class FBScript : MonoBehaviour
 
         FB.ShareLink(
             
-            new System.Uri(URL)
+            new System.Uri(URL), // App URL
+
+            "",
+            
+            "",
+            
+            null
 
             );
 
@@ -77,14 +86,13 @@ public class FBScript : MonoBehaviour
 
     #endregion
 
+    // Facebook Invite Field
     #region Invite
 
+    //Facebook Invite Friends to Game
     public void FacebookInviteFriends(string Message, string Title)
-    {   //
-       Message = "Hey! Come and play this awesome game!";
-
-       Title = "Invite your friends to join you";
-        //
+    {   
+        //Facebook Invite Service Request
         FB.AppRequest(
             
             message: Message,
@@ -95,30 +103,30 @@ public class FBScript : MonoBehaviour
 
     }
 
+    //Facebook Invite Friends to Game //FOR TEST
     public void FacebookInviteFriends()
-    {   //
-        string Message = "Hey! Come and play this awesome game!";
-
-        string Title = "Invite your friends to join you";
-        //
+    {   
+        //Facebook Invite Service Request
         FB.AppRequest(
 
-            message: Message,
+            message: "Hey! Come and play this awesome game!",
 
-            title: Title
+            title: "Invite your friends to join you"
 
             );
 
     }
-
 
     #endregion
 
     #region Friends
 
-    public void GetFriendsOnline()
+    //API Request to find players in User Friend List.
+    public void FacebookGetFriends()
     {
         string query = "/me/friends";
+
+        //The Facebook Request gets friends whose play the current game.
         FB.API(query, HttpMethod.GET, result =>
          {
              var dictionary = (Dictionary<string,object>)Facebook.MiniJSON.Json.Deserialize(result.RawResult);

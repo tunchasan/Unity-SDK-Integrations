@@ -35,7 +35,7 @@ public class BannerAD : UnityADs
         Advertisement.Banner.Show(BannerAdID);
 
         Debug.Log("HandleBannerAdDisplayed event received");
-
+        
         //Stop "ShowBannerAdReady" Coroutine
         StopCoroutine(ShowBannerAdReady());
     }

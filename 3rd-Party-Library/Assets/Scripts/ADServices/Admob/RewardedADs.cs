@@ -43,10 +43,10 @@ public class RewardedADs : AdmobADs
                 _Rewarded_ID = _AndroidRewardedVideoAdID;   // This RewardedID is for Testing.
 
         #elif UNITY_IPHONE // IOS
-                _Interstitial_ID = _IOSInterstitialAdID;   // This RewardedID is for Testing.
+                _Rewarded_ID = _IOSInterstitialAdID;   // This RewardedID is for Testing.
 
         #else //Other
-                _Interstitial_ID = "unexpected_platform";
+                _Rewarded_ID = "unexpected_platform";
 
         #endif
     }

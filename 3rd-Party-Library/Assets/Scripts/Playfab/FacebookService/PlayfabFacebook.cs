@@ -105,7 +105,7 @@ public class PlayfabFacebook : MonoBehaviour
             //Share Request with FB.ShareLink
             FB.ShareLink(
 
-                new System.Uri(URL), // Content URL
+                contentURL: new System.Uri(URL), // Content URL
 
                 "", // Content Title
 
@@ -113,7 +113,7 @@ public class PlayfabFacebook : MonoBehaviour
 
                 null,   // Content Photo URL
 
-                OnFacebookShared); // CallBack
+                callback: OnFacebookShared); // CallBack
         }
 
         //If we did not "LoggedIn" FB, -> Auth()
@@ -133,6 +133,55 @@ public class PlayfabFacebook : MonoBehaviour
         {
             // If Facebook Sharing failed, we stop the cycle with the message
             DebugLogHandler("Facebook Sharing Failed: " + result.Error + "\n" + result.RawResult, true);
+        }
+    }
+
+    #endregion
+
+    #region INVITATION
+
+    //Facebook Invite Friends to Game
+    public void Invite()
+    {
+        //Control "LoggedIn" Facebook or not ?
+        if (FacebookLoggedIn())
+        {
+            //FOR TEST*********************
+            string Message = "Come on and Play!";
+
+            string Title = "Smash Game";
+            //*****************************
+
+            //Facebook Invite Service Request
+            FB.AppRequest(
+
+                message: Message, // Message
+
+                title: Title, // Invite FB Title
+
+                callback: OnFacebookInvited  // CallBack
+
+                );
+        }
+
+        //If we did not "LoggedIn" FB, -> Auth()
+        else { Auth(); }
+
+    }
+
+    //Facebook Invitation Callback method to catch the errors.
+    private void OnFacebookInvited(IAppRequestResult result)
+    {
+        // If result has no errors, it means we have shared the Content in Facebook successfully
+        if (result == null || string.IsNullOrEmpty(result.Error))
+        {
+            DebugLogHandler("Facebook Invitation Completed Successfully!");
+        }
+
+        else
+        {
+            // If Facebook Sharing failed, we stop the cycle with the message
+            DebugLogHandler("Facebook Invitation Failed: " + result.Error + "\n" + result.RawResult, true);
         }
     }
 

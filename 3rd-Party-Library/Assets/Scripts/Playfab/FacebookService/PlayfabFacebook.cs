@@ -2,6 +2,7 @@
 using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
@@ -208,4 +209,52 @@ public class PlayfabFacebook : MonoBehaviour
 
     #endregion
 
-}
+    #region FRIENDS
+
+    //API Request to find players in User's Facebook Friend List.
+    public void FetchFriends()
+    {
+        string query = "/me/friends";
+
+        //The Facebook Request gets friends whose play the current game.
+        FB.API(
+            
+            query, // Facebook query
+            
+            HttpMethod.GET, // API Get Request
+            
+            callback: OnFacebookFetchFriends // Callback
+
+        );
+
+    }
+
+    //Facebook FetchFriends Callback method to catch the errors.
+    private void OnFacebookFetchFriends(IGraphResult result)
+    {
+        //"FriendsText" stores request answer info.
+        string FriendsText = string.Empty;
+
+        var Dictionary = (Dictionary<string, object>)Facebook.MiniJSON.Json.Deserialize(result.RawResult);
+
+        //"FriendList" User's Facebook Friend List
+        var FriendList = (List<object>)Dictionary["data"];
+
+        //Get Player name whose play this game.
+        foreach (var dict in FriendList)
+        {
+            FriendsText += " ( " +((Dictionary<string, object>)dict)["name"] + " )" ;
+        }
+
+        if (string.IsNullOrEmpty(FriendsText))
+        {
+            DebugLogHandler("Facebook GetFriends Failed" + result.Error + "\n" + result.RawResult, true);
+        }
+
+        else
+            DebugLogHandler("Facebook FetchFriends Completed Successfully!" + "\n" + FriendsText);
+    }
+
+    #endregion
+
+    }

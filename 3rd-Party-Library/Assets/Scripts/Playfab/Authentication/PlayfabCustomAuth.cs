@@ -20,13 +20,20 @@ public class PlayfabCustomAuth : MonoBehaviour
     public GameObject _recoverButton;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
+        PlayerPrefs.DeleteAll();
         //Determinate, user logged in before or not.
         RememberPlayer();
+
+        _addLoginPanel.SetActive(false);
+
+        _recoverButton.SetActive(false);
     }
 
     #region REGISTER
+
+    /**************************************************************************************************************/
 
     //Register a New Player with Email, Password and Username
     public void RegisterNewPlayer()
@@ -59,9 +66,47 @@ public class PlayfabCustomAuth : MonoBehaviour
         _loginPanel.SetActive(false);
     }
 
+    /**************************************************************************************************************/
+
+    public void RegisterAnonymousPlayer()
+    {
+        //Register the Player
+        var addLoginRequest = new AddUsernamePasswordRequest { Email = _userEmail, Password = _userPasword, Username = _userName };
+
+        PlayFabClientAPI.AddUsernamePassword(addLoginRequest, OnAnonymousLoginSuccess, OnAnonymousLoginFailure);
+    }
+
+    //Recover Success CallBack Function
+    private void OnAnonymousLoginSuccess(AddUsernamePasswordResult result)
+    {
+        Debug.Log("Recover *Anonymous User* request completed Succesfuly.");
+
+        //Store Information to remember player next time.
+
+        PlayerPrefs.SetString("EMAIL", _userEmail);
+
+        PlayerPrefs.SetString("PASSWORD", _userPasword);
+
+        _loginPanel.SetActive(false);
+
+        _addLoginPanel.SetActive(false);
+    }
+
+    //Recover Failure CallBack Function
+    private void OnAnonymousLoginFailure(PlayFabError error)
+    {
+        Debug.LogWarning("Something went wrong with Recover *Anonymous User* Request...");
+
+        Debug.LogError("Error Report: " + error.GenerateErrorReport());
+    }
+
+    /**************************************************************************************************************/
+
     #endregion
 
     #region AUTHENTICATE
+
+    /**************************************************************************************************************/
 
     //Authenticate via EMAIL and PASSWORD
     #region EMAIL-PASSWORD
@@ -85,7 +130,7 @@ public class PlayfabCustomAuth : MonoBehaviour
     //Login Success CallBack Function
     private void OnLoginSuccess(LoginResult result)
     {
-        Debug.Log("Auth. with Email&Password request completed Succesfuly.");
+        Debug.Log("Authenticated " + "( " + _userEmail + " ) " + "Succeed");
 
         //Store Information to remember player next time.
 
@@ -95,15 +140,21 @@ public class PlayfabCustomAuth : MonoBehaviour
 
         _loginPanel.SetActive(false);
 
+        _addLoginPanel.SetActive(false);
+
         _recoverButton.SetActive(false);
     }
 
+    /**************************************************************************************************************/
+
     #endregion
 
-    //Authenticate via EMAIL and PASSWORD
+    //Logining with DeviceID as Anonymous
     #region DEVICE ( ANDROID - IOS )
 
-    public void LoginWithDevice()
+    /**************************************************************************************************************/
+
+    private void AnonymousLogin()
     {
         #if UNITY_ANDROID // On Android
 
@@ -146,6 +197,8 @@ public class PlayfabCustomAuth : MonoBehaviour
         return deviceID;
     }
 
+    /**************************************************************************************************************/
+
     #endregion
 
     #endregion
@@ -168,13 +221,13 @@ public class PlayfabCustomAuth : MonoBehaviour
 
             PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
         }
-
+        /*
         else
         {
-            LoginWithDevice();
+            AnonymousLogin();
 
             _addLoginPanel.SetActive(false);
-        }
+        }*/
     }
 
 #endregion
@@ -197,36 +250,8 @@ public class PlayfabCustomAuth : MonoBehaviour
     public void OpenAddLogin()
     {
         _addLoginPanel.SetActive(true);
-    }
 
-    public void OnClickAddLogin()
-    {
-        //Register the Player
-        var addLoginRequest = new AddUsernamePasswordRequest { Email = _userEmail, Password = _userPasword, Username = _userName };
-
-        PlayFabClientAPI.AddUsernamePassword(addLoginRequest, OnAddLoginSuccess, OnAddLoginFailure);
-    }
-
-    //Recover Success CallBack Function
-    private void OnAddLoginSuccess(AddUsernamePasswordResult result)
-    {
-        Debug.Log("Recover User request completed Succesfuly.");
-
-        //Store Information to remember player next time.
-
-        PlayerPrefs.SetString("EMAIL", _userEmail);
-
-        PlayerPrefs.SetString("PASSWORD", _userPasword);
-
-        _loginPanel.SetActive(false);
-    }
-
-    //Recover Failure CallBack Function
-    private void OnAddLoginFailure(PlayFabError error)
-    {
-        Debug.LogWarning("Something went wrong with Recover User Request...");
-
-        Debug.LogError("Error Report: " + error.GenerateErrorReport());
+        _recoverButton.SetActive(false);
     }
 
 }

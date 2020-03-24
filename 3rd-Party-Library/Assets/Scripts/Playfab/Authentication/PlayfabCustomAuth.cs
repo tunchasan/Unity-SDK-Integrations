@@ -13,6 +13,8 @@ public class PlayfabCustomAuth : MonoBehaviour
 
     private string _userName;
 
+    //FOR TEST
+
     public GameObject _loginPanel;
 
     public GameObject _addLoginPanel;
@@ -22,13 +24,8 @@ public class PlayfabCustomAuth : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        PlayerPrefs.DeleteAll();
         //Determinate, user logged in before or not.
         RememberPlayer();
-
-        _addLoginPanel.SetActive(false);
-
-        _recoverButton.SetActive(false);
     }
 
     #region REGISTER
@@ -221,13 +218,13 @@ public class PlayfabCustomAuth : MonoBehaviour
 
             PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
         }
-        /*
+        
         else
         {
             AnonymousLogin();
 
             _addLoginPanel.SetActive(false);
-        }*/
+        }
     }
 
 #endregion
@@ -247,11 +244,20 @@ public class PlayfabCustomAuth : MonoBehaviour
         _userName = usernameIn;
     }
 
+    //FOR TEST
     public void OpenAddLogin()
     {
         _addLoginPanel.SetActive(true);
 
         _recoverButton.SetActive(false);
+    }
+
+    //Remove Player Stored Auth. Data
+    public void RemovePlayerStoredAuthData()
+    {
+        PlayerPrefs.DeleteKey("EMAIL");
+
+        PlayerPrefs.DeleteKey("PASSWORD");
     }
 
 }

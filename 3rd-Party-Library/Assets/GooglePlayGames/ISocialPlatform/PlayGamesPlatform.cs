@@ -606,7 +606,7 @@ namespace GooglePlayGames
         /// To get another server auth code after the initial one returned, call
         /// GetAnotherServerAuthCode().
         /// </remarks>
-        public string GetServerAuthCode()
+        public string GetServerAuthCode(object p)
         {
             if (mClient != null && mClient.IsAuthenticated())
             {

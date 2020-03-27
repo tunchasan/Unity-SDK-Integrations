@@ -616,6 +616,16 @@ namespace GooglePlayGames
             return null;
         }
 
+        public string GetServerAuthCode()
+        {
+            if (mClient != null && mClient.IsAuthenticated())
+            {
+                return mClient.GetServerAuthCode();
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Gets another server auth code.
         /// </summary>

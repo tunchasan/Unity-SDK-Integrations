@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
-using System;
 using UnityEngine.UI;
+using PlayFab.DataModels;
 
-public class PlayFabGPGSAuth : MonoBehaviour
+public class PlayFabGPGS : MonoBehaviour
 {
     public Text text;
 
@@ -68,6 +66,7 @@ public class PlayFabGPGSAuth : MonoBehaviour
     {
         PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
+        //PlayFab Google Account Integration
         PlayFabClientAPI.LoginWithGoogleAccount(new LoginWithGoogleAccountRequest()
         {
             TitleId = PlayFabSettings.TitleId,
@@ -80,6 +79,23 @@ public class PlayFabGPGSAuth : MonoBehaviour
 
         {
             Debug.Log("Signed In as " + result.PlayFabId);
+
+            string entityID = result.EntityToken.Entity.Id;
+
+            string entityType = result.EntityToken.Entity.Type;
+
+            /********************************************************************************************/
+                                               /*CLOUD SAVE*/
+
+            //Determinete the cloud Service Type in { "FILE", "STATISTIC", "OBJECT" }
+            string cloudMethodType = (CSPlayFabMaster.cloudType.STATISTIC)
+                                      .ToString();
+
+            //CloudSave Instance
+            CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);
+
+            /********************************************************************************************/
+
         }, 
         
         OnPlayFabError); // Error Callback

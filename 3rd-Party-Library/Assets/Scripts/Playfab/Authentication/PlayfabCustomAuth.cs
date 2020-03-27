@@ -205,6 +205,11 @@ public class PlayfabCustomAuth : MonoBehaviour
     //Remember the Player and recover information to login automaticly.
     private void RememberPlayer()
     {
+        PlayerPrefs.DeleteAll();
+
+        _addLoginPanel.SetActive(false);
+        _recoverButton.SetActive(false);
+
         //Remember the Player
         if (PlayerPrefs.HasKey("EMAIL"))
         {
@@ -221,9 +226,9 @@ public class PlayfabCustomAuth : MonoBehaviour
         
         else
         {
-            AnonymousLogin();
+            //AnonymousLogin();
 
-            _addLoginPanel.SetActive(false);
+            //_addLoginPanel.SetActive(false);
         }
     }
 

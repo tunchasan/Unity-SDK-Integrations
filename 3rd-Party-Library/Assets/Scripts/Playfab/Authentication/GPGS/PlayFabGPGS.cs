@@ -92,7 +92,7 @@ public class PlayFabGPGS : MonoBehaviour
                                       .ToString();
 
             //CloudSave Instance
-            CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);
+           // CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);
 
             /********************************************************************************************/
 

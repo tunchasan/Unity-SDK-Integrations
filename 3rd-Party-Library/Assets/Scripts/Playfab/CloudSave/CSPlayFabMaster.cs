@@ -21,18 +21,26 @@ public class CSPlayFabMaster : MonoBehaviour
 
     protected string entityType; // entityType representing the logged in player
 
+    protected string cloudMethod; 
+
     //Cloud Service Types
     public enum cloudType { FILE, DATATABLE, OBJECT };
 
+    //Constructor
     public CSPlayFabMaster(string entityId, string entityType, string cloudMethod)
     {
         this.entityId = entityId;
 
         this.entityType = entityType;
 
+        this.cloudMethod = cloudMethod;
+
         //Select Cloud Save Method
         selectCloudMethod(cloudMethod);
     }
+
+    //Empty Constructor.
+    public CSPlayFabMaster() { }
 
     //The function detects which CS method will be use.
     private void selectCloudMethod(string type)

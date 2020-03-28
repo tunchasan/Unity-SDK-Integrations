@@ -88,7 +88,7 @@ public class PlayFabGPGS : MonoBehaviour
                                                /*CLOUD SAVE*/
 
             //Determinete the cloud Service Type in { "FILE", "STATISTIC", "OBJECT" }
-            string cloudMethodType = (CSPlayFabMaster.cloudType.STATISTIC)
+            string cloudMethodType = (CSPlayFabMaster.cloudType.DATATABLE)
                                       .ToString();
 
             //CloudSave Instance

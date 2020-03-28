@@ -11,7 +11,7 @@ using UnityEngine;
 /// It allows us to Save & Load Player's saved information that contains Maps info, Project.ini files and others...
 /// </summary>
 
-public class CSPlayFabFile : MonoBehaviour
+public class CSPlayFabAsFile : MonoBehaviour
 {
     public string entityId; // Id representing the logged in player
 
@@ -28,7 +28,7 @@ public class CSPlayFabFile : MonoBehaviour
     // GlobalFileLock provides is a simplistic way to avoid file collisions, specifically designed for this example.
     public int GlobalFileLock = 0;
 
-    public CSPlayFabFile(string Id, string type)
+    public CSPlayFabAsFile(string Id, string type)
     {
         entityId = Id;
 

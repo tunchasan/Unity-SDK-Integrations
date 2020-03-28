@@ -87,4 +87,59 @@ public class CSPlayFabAsDataTable : CSPlayFabMaster
 
     #endregion
 
+    #region REMOVE
+
+    //Remove the specified field data from dataTable.
+    public void RemoveUserData()    // CAN BE CONFIGURED BY MANUALLY
+    {
+        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
+        {
+            // Specified Field Name to remove from dataTable.
+            KeysToRemove = new List<string>(){
+
+                //SPECIFY THE FIELDS THAT's YOU WANNA REMOVE FROM DATATABLE... -> EXAMPLE: "PlayerLevel", "PlayerHealth"
+                /***************************************************************************************************/
+
+                "PlayerLevel"
+
+                /***************************************************************************************************/
+            }
+
+        },
+
+        result => Debug.Log("Successfully removed user data(s)"),
+
+        error =>
+        {
+
+            Debug.Log("Got error while removing user data(s)...");
+
+            Debug.Log(error.GenerateErrorReport());
+
+        });
+    }
+
+    //Remove the specified field data from dataTable.
+    public void RemoveUserData(List<string> dataList)   // CAN BE CONFIGURED BY AUTOMATICALLY
+    {
+        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
+        {
+            // Specified Field Name to remove from dataTable.
+            KeysToRemove = dataList
+
+        },
+
+        result => Debug.Log("Successfully removed user data(s)"),
+
+        error =>
+        {
+
+            Debug.Log("Got error while removing user data(s)...");
+
+            Debug.Log(error.GenerateErrorReport());
+
+        });
+    }
+
+    #endregion
 }

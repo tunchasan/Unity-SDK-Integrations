@@ -17,12 +17,12 @@ using UnityEngine;
 
 public class CSPlayFabMaster : MonoBehaviour
 {
-    private string entityId; // Id representing the logged in player
+    protected string entityId; // Id representing the logged in player
 
-    private string entityType; // entityType representing the logged in player
+    protected string entityType; // entityType representing the logged in player
 
     //Cloud Service Types
-    public enum cloudType { FILE, STATISTIC, OBJECT };
+    public enum cloudType { FILE, DATATABLE, OBJECT };
 
     public CSPlayFabMaster(string entityId, string entityType, string cloudMethod)
     {
@@ -41,21 +41,23 @@ public class CSPlayFabMaster : MonoBehaviour
         {
             case "FILE":
                 {
-                    CSPlayFabFile CSFile = new CSPlayFabFile(entityId, entityType);   //Cloud Save with CloudFile Services
+                    new CSPlayFabAsFile(entityId, entityType);   //Cloud Save with CloudFile Services
 
                     return;
                 }
 
-            case "STATISTIC":
+            case "DATATABLE":
                 {
-                    CSPlayFabStatistic CSFile = new CSPlayFabStatistic(entityId, entityType);   //Cloud Save with CloudStatistic Services
+                    new CSPlayFabAsDataTable();   //Cloud Save with CloudDataTable Services
+
+                    Debug.Log("{ Cloud Player Statistic } Service is Initializing...{ " + entityId + " <---> " + entityType + " }");
 
                     return;
                 }
 
             case "OBJECT":
                 {
-                    CSPlayFabObject CSFile = new CSPlayFabObject();   //Cloud Save with CloudObject Services
+                    new CSPlayFabAsObject();   //Cloud Save with CloudObject Services
 
                     return;
                 }

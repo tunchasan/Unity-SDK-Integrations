@@ -11,9 +11,6 @@ using UnityEngine;
 /// 
 public class CSPlayFabAsDataTable : CSPlayFabMaster
 {
-    //Constructor
-    public CSPlayFabAsDataTable(string entityId, string entityType, string cloudMethod) : base(entityId, entityType, cloudMethod) { }
-
     //CREATE and UPDATE CLOUD DATATABLE in PLAYFAB
     #region CREATE - UPDATE
 
@@ -87,6 +84,7 @@ public class CSPlayFabAsDataTable : CSPlayFabMaster
 
     #endregion
 
+    //REMOVE DATAs FROM PLAYFAB CLOUD DATATABLE.
     #region REMOVE
 
     //Remove the specified field data from dataTable.
@@ -140,6 +138,84 @@ public class CSPlayFabAsDataTable : CSPlayFabMaster
 
         });
     }
+
+    #endregion
+
+    //GET DATA FROM PLAYFAB CLOUD DATATABLE
+    #region GET
+
+    //Get single user data from PLAYFAB CLOUD DATATABLE
+    public string GetSingleUserData(string dataKey) // CAN BE CONFIGURED BY MANUALLY
+    {
+        //The data will store the "dataList" field's value.
+        string getData = "";
+
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest()
+        {
+            PlayFabId = entityId, // Id representing the logged in player
+
+            Keys = null
+
+        }, result => {
+
+            if (result.Data == null || !result.Data.ContainsKey(dataKey))
+            {
+                //if the DataTable does not have the Key(field)
+
+                Debug.Log(dataKey + " was not found ");
+
+                getData = "<-ERROR->"; // Assign invalid data.        
+            }
+
+            else  // FOUND
+            {
+                Debug.Log("Got user data:");
+
+                Debug.Log(dataKey + ": " + result.Data[dataKey].Value);
+
+                getData = result.Data[dataKey].Value.ToString(); // Assign valid data.
+            }
+
+
+        }, (error) => { // ERROR CALLBACK
+
+            Debug.Log("Got error retrieving user data:");
+
+            Debug.Log(error.GenerateErrorReport());
+
+            getData = "<-ERROR->"; // Assign invalid data.
+
+        });
+
+        return getData;
+    }
+
+    //Get many user data from PLAYFAB CLOUD DATATABLE.
+    public List<string> GetManyUserData(List<string> dataList)
+    {
+        //The list will store the "dataList" field's values.
+        List<string> getDataList = new List<string>();
+
+        foreach (string elem in dataList)
+        {
+            getDataList.Add(GetSingleUserData(elem)); //get single field
+        }
+
+        return getDataList;
+    }
+
+    public void gg() // FOR TEST
+    {
+        //The list will store the "dataList" field's values.
+        List<string> getDataList = new List<string>();
+
+        getDataList.Add("1");
+        getDataList.Add("2");
+        getDataList.Add("3");
+
+        GetManyUserData(getDataList);
+    }
+
 
     #endregion
 }

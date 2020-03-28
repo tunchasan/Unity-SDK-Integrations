@@ -150,6 +150,7 @@ public class CSPlayFabAsDataTable : CSPlayFabMaster
         //The data will store the "dataList" field's value.
         string getData = "";
 
+        //Request PlayFab Cloud to get datas.
         PlayFabClientAPI.GetUserData(new GetUserDataRequest()
         {
             PlayFabId = entityId, // Id representing the logged in player

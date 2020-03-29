@@ -11,7 +11,7 @@ using UnityEngine;
 /// It allows us to Save & Load Player's saved information that contains Maps info, Project.ini files and others...
 /// 2- Cloud Save with Objects
 /// It allows us to Save & Load Specific Player Info. as an object in PlayFab Cloud.
-/// 3- Cloud Save with Player's DataTable
+/// 3- Cloud Save with Player's Statistic
 /// It allows us to Save & Load Player's Ingame Stats in PlayFab Cloud.
 /// </summary>
 

@@ -1,6 +1,5 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -217,6 +216,7 @@ public class CSPlayFabAsDataTable : CSPlayFabMaster
 
         GetManyUserData(getDataList);
     }
+
 
     #endregion
 }

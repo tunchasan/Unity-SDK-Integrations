@@ -26,21 +26,18 @@ public class PlayFabLeaderboard : MonoBehaviour
 
         // Specific value of the user's statistic.
         public int StatValue;
-
-        // List of all authentication systems linked to this player account
-        public List<LinkedPlatformAccountModel> LinkedAccounts;
     }
 
     //FOR TEST, It will be PRIVATE
     public string _statisticName;
 
     // Configrate unique player statistic info. for Leaderboard
-    public void InitializeUser(string leaderboardFieldName) 
+    public void InitializeLeaderBoard(string leaderboardFieldName) 
     {
         Debug.Log("{ PlayFab LeaderBoard } Service is initializing..." + " { " + " } ");
 
         //Assign the Leaderboard name to class field.
-        this._statisticName = leaderboardFieldName;
+        //this._statisticName = leaderboardFieldName;
 
         hasLeaderboardData(); // Initialization...
     }
@@ -89,7 +86,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
     #region LEADERBOARD
 
-    //Get Player Request based on the Specified Leadeboard Range
+    //Get Player Request based on the Specified Leadeboard Range - ALL
     public List<ResultPlayer> RequestLeaderboardWorld(int startPosition, int maxResultCount)
     {
         //The ResultPlayer List.
@@ -112,13 +109,11 @@ public class PlayFabLeaderboard : MonoBehaviour
             foreach (PlayerLeaderboardEntry player in result.Leaderboard)
             {
                 //If the player is banned from game.
-                if (!player.Profile.BannedUntil.HasValue)
-                {
+                //if (!player.Profile.BannedUntil.HasValue) -> THERE IS AN ISSUE HERE.
+                //{
                     userData.DisplayName = player.DisplayName; //Display Name
 
                     userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.LinkedAccounts = player.Profile.LinkedAccounts; //List Of All Auth. System of Player
 
                     userData.Position = player.Position; //Player Overall Position
 
@@ -127,7 +122,7 @@ public class PlayFabLeaderboard : MonoBehaviour
                     //Add Player to List
                     resultPlayers.Add(userData);
 
-                }
+                //}
 
             }
 
@@ -145,6 +140,57 @@ public class PlayFabLeaderboard : MonoBehaviour
 
         Debug.LogError(error.GenerateErrorReport());
     }
+
+    /*******************************************************************************************************************************/
+
+    public void RequestLeaderboardWorld() // FOR TEST
+    {
+        //The ResultPlayer List.
+        List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
+
+        //The ResultPlayer Elem.
+        ResultPlayer userData;
+
+        PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+        {
+            StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+
+            StartPosition = 0, // Position in the leaderboard to start this listing(defaults to the first entry).
+
+            MaxResultsCount = 5  // Maximum number of entries to retrieve. Default 10, maximum 100.
+        },
+
+        result => { // Leaderboard access succeed.
+
+            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+            {
+                //If the player is banned from game.
+                //if (!player.Profile.BannedUntil.HasValue)
+                //{
+                    userData.DisplayName = player.DisplayName; //Display Name
+
+                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+
+                    userData.Position = player.Position; //Player Overall Position
+
+                    userData.StatValue = player.StatValue; //Player Score Value
+
+                    Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
+
+                    //Add Player to List
+                    resultPlayers.Add(userData);
+                //}
+
+            }
+
+        },
+
+            LeaderboardFailureCallbackk); // Leaderboard error callback
+    }
+
+    /*******************************************************************************************************************************/
+
+
 
     #endregion
 
@@ -182,6 +228,8 @@ public class PlayFabLeaderboard : MonoBehaviour
                 Debug.Log("Value: " + eachStat.Value);
 
                 isValidUser = true; // Validation succeed.
+
+                RequestLeaderboardWorld();
 
                 break;
             }

@@ -29,6 +29,7 @@ android {
  
     compileSdkVersion 28
     buildToolsVersion '28.0.1'
+    multiDexEnabled true
     defaultConfig {
         targetSdkVersion 28
         consumerProguardFiles 'proguard.txt'

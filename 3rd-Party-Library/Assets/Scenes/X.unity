@@ -505,6 +505,7 @@ GameObject:
   - component: {fileID: 1141385533}
   - component: {fileID: 1141385532}
   - component: {fileID: 1141385534}
+  - component: {fileID: 1141385535}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -551,6 +552,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 792c1c5093238424788ae7bae1e929c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1141385535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141385531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75beb28df27eba447aba1fcab74bd296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _statisticName: UserScore
 --- !u!1 &1312361645
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,8 +884,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1141385534}
-        m_MethodName: gg
+      - m_Target: {fileID: 1141385535}
+        m_MethodName: RequestLeaderboardWorld
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

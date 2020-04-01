@@ -266,6 +266,55 @@ public class PlayFabLeaderboard : MonoBehaviour
         //return resultPlayers;
     }
 
+    public void RequestLeaderboardFacebookandFriends()
+    {
+        //The ResultPlayer List.
+        List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
+
+        //The ResultPlayer Elem.
+        ResultPlayer userData;
+
+        PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
+        {
+            StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+
+            MaxResultsCount = 10,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+            IncludeFacebookFriends = true,
+
+            IncludeSteamFriends = false,
+        },
+
+        result => { // Leaderboard access succeed.
+
+            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+            {
+                //If the player is banned from game.
+                //if (!player.Profile.BannedUntil.HasValue)
+                //{
+                userData.DisplayName = player.DisplayName; //Display Name
+
+                userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+
+                userData.Position = player.Position; //Player Overall Position
+
+                userData.StatValue = player.StatValue; //Player Score Value
+
+                Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
+
+                //Add Player to List
+                resultPlayers.Add(userData);
+                //}
+
+            }
+
+        },
+
+            LeaderboardFailureCallbackk); // Leaderboard error callback
+
+        //return resultPlayers;
+    }
+
     #endregion
 
     #endregion

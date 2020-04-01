@@ -7,7 +7,8 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /// </summary>
-///
+/// Class that handles PlayFab Leaderboard Configurations and also provides many features like "GLOBAL LEADERBOARD"
+/// "LOCAL LEADERBOARD - Based on Friends" and "LOCAL LEADERBOARD - Based on Friends + Facebook Friends"
 /// </summary>
 
 public class PlayFabLeaderboard : MonoBehaviour
@@ -89,7 +90,8 @@ public class PlayFabLeaderboard : MonoBehaviour
 
     #region GLOBAL
 
-    //Get Player Request based on the Specified Leadeboard Range - ALL
+    // Returns a List that stores player Leaderboard information based on specified range ( startPosition - maxResultCount )
+    // GLOBAL //
     public List<ResultPlayer> RequestLeaderboardGlobal(int startPosition, int maxResultCount)
     {
         //The ResultPlayer List.
@@ -104,7 +106,9 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             StartPosition = startPosition, // Position in the leaderboard to start this listing(defaults to the first entry).
 
-            MaxResultsCount = maxResultCount  // Maximum number of entries to retrieve. Default 10, maximum 100.
+            MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+            ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
         },
         
         result => { // Leaderboard access succeed.
@@ -170,7 +174,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             MaxResultsCount = 5,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
-            ProfileConstraints = rofileConstraints
+            ProfileConstraints = rofileConstraints  // Determines which properties of the resulting player profiles to return
         },
 
         result => { // Leaderboard access succeed.
@@ -206,19 +210,13 @@ public class PlayFabLeaderboard : MonoBehaviour
     #endregion
 
     #region LOCAL
-    
-    public void RequestLeaderboardOnlyFriends()
+
+    // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
+    // LOCAL - ONLY FRIENDS //
+    public List<ResultPlayer> RequestLeaderboardOnlyFriends(int maxResultCount)
     {
         //The ResultPlayer List.
         List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
-
-        PlayerProfileViewConstraints rofileConstraints = new PlayerProfileViewConstraints();
-
-        rofileConstraints.ShowAvatarUrl = true;
-
-        rofileConstraints.ShowBannedUntil = true;
-
-        rofileConstraints.ShowDisplayName = true;
 
         //The ResultPlayer Elem.
         ResultPlayer userData;
@@ -227,13 +225,13 @@ public class PlayFabLeaderboard : MonoBehaviour
         {
             StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
 
-            MaxResultsCount = 10,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+            MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
-            IncludeFacebookFriends = false,
+            IncludeFacebookFriends = false, // Indicates whether Facebook friends should be included in the response.
 
-            IncludeSteamFriends = false,
+            IncludeSteamFriends = false,  // Indicates whether Steam friends should be included in the response.
 
-            ProfileConstraints = rofileConstraints
+            ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
         }, 
         
         result => { // Leaderboard access succeed.
@@ -243,13 +241,13 @@ public class PlayFabLeaderboard : MonoBehaviour
                 //If the player is banned from game.
                 //if (!player.Profile.BannedUntil.HasValue)
                 //{
-                userData.DisplayName = player.DisplayName; //Display Name
+                userData.DisplayName = player.DisplayName; // Display Name
 
-                userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+                userData.AvatarUrl = player.Profile.AvatarUrl; // Avatar Url
 
-                userData.Position = player.Position; //Player Overall Position
+                userData.Position = player.Position; // Player Overall Position
 
-                userData.StatValue = player.StatValue; //Player Score Value
+                userData.StatValue = player.StatValue; // Player Score Value
 
                 Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 
@@ -263,10 +261,12 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             LeaderboardFailureCallbackk); // Leaderboard error callback
 
-        //return resultPlayers;
+        return resultPlayers;
     }
 
-    public void RequestLeaderboardFacebookandFriends()
+    // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
+    // LOCAL - INGAME FRIENDS + FACEBOOK FRIENDS //
+    public List<ResultPlayer> RequestLeaderboardFacebookandFriends()
     {
         //The ResultPlayer List.
         List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -280,9 +280,11 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             MaxResultsCount = 10,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
-            IncludeFacebookFriends = true,
+            IncludeFacebookFriends = true, // Indicates whether Facebook friends should be included in the response.
 
-            IncludeSteamFriends = false,
+            IncludeSteamFriends = false, // Indicates whether Steam friends should be included in the response.
+
+            ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
         },
 
         result => { // Leaderboard access succeed.
@@ -312,7 +314,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             LeaderboardFailureCallbackk); // Leaderboard error callback
 
-        //return resultPlayers;
+        return resultPlayers;
     }
 
     #endregion
@@ -371,4 +373,18 @@ public class PlayFabLeaderboard : MonoBehaviour
     }
 
     #endregion
+
+    // PlayerProfileViewConstraints Initializer for Leaderboard User Datas.
+    private PlayerProfileViewConstraints GetProfileViewObject()
+    {
+        PlayerProfileViewConstraints profile = new PlayerProfileViewConstraints();
+
+        profile.ShowAvatarUrl = true; // Avatar Url
+
+        profile.ShowBannedUntil = true; // Ban Information
+
+        profile.ShowDisplayName = true; // Avatar Display Name
+
+        return profile; // Return Profile
+    }
 }

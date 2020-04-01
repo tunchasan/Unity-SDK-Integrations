@@ -28,7 +28,7 @@ public class PlayFabLeaderboard : MonoBehaviour
         public int StatValue;
     }
 
-    //FOR TEST, It will be PRIVATE
+    ///FOR TEST, It will be PRIVATE
     public string _statisticName;
 
     // Configrate unique player statistic info. for Leaderboard
@@ -56,7 +56,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             new StatisticUpdate {
 
-                StatisticName = _statisticName, //Statistic Field' Name
+                StatisticName = _statisticName, // Statistic Field' Name
 
                 Value = score //The Value
             }
@@ -79,6 +79,7 @@ public class PlayFabLeaderboard : MonoBehaviour
     private void FailureCallback(PlayFabError error)
     {
         Debug.LogWarning("Something went wrong with your API call. Here's some debug information:");
+
         Debug.LogError(error.GenerateErrorReport());
     }
 
@@ -86,8 +87,10 @@ public class PlayFabLeaderboard : MonoBehaviour
 
     #region LEADERBOARD
 
+    #region GLOBAL
+
     //Get Player Request based on the Specified Leadeboard Range - ALL
-    public List<ResultPlayer> RequestLeaderboardWorld(int startPosition, int maxResultCount)
+    public List<ResultPlayer> RequestLeaderboardGlobal(int startPosition, int maxResultCount)
     {
         //The ResultPlayer List.
         List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -148,6 +151,14 @@ public class PlayFabLeaderboard : MonoBehaviour
         //The ResultPlayer List.
         List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
 
+        PlayerProfileViewConstraints rofileConstraints = new PlayerProfileViewConstraints();
+
+        rofileConstraints.ShowAvatarUrl = true;
+
+        rofileConstraints.ShowBannedUntil = true;
+
+        rofileConstraints.ShowDisplayName = true;
+
         //The ResultPlayer Elem.
         ResultPlayer userData;
 
@@ -157,7 +168,9 @@ public class PlayFabLeaderboard : MonoBehaviour
 
             StartPosition = 0, // Position in the leaderboard to start this listing(defaults to the first entry).
 
-            MaxResultsCount = 5  // Maximum number of entries to retrieve. Default 10, maximum 100.
+            MaxResultsCount = 5,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+            ProfileConstraints = rofileConstraints
         },
 
         result => { // Leaderboard access succeed.
@@ -167,7 +180,7 @@ public class PlayFabLeaderboard : MonoBehaviour
                 //If the player is banned from game.
                 //if (!player.Profile.BannedUntil.HasValue)
                 //{
-                    userData.DisplayName = player.DisplayName; //Display Name
+                userData.DisplayName = player.DisplayName; //Display Name
 
                     userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
 
@@ -190,7 +203,70 @@ public class PlayFabLeaderboard : MonoBehaviour
 
     /*******************************************************************************************************************************/
 
+    #endregion
 
+    #region LOCAL
+    
+    public void RequestLeaderboardOnlyFriends()
+    {
+        //The ResultPlayer List.
+        List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
+
+        PlayerProfileViewConstraints rofileConstraints = new PlayerProfileViewConstraints();
+
+        rofileConstraints.ShowAvatarUrl = true;
+
+        rofileConstraints.ShowBannedUntil = true;
+
+        rofileConstraints.ShowDisplayName = true;
+
+        //The ResultPlayer Elem.
+        ResultPlayer userData;
+
+        PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
+        {
+            StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+
+            MaxResultsCount = 10,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+            IncludeFacebookFriends = false,
+
+            IncludeSteamFriends = false,
+
+            ProfileConstraints = rofileConstraints
+        }, 
+        
+        result => { // Leaderboard access succeed.
+
+            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+            {
+                //If the player is banned from game.
+                //if (!player.Profile.BannedUntil.HasValue)
+                //{
+                userData.DisplayName = player.DisplayName; //Display Name
+
+                userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+
+                userData.Position = player.Position; //Player Overall Position
+
+                userData.StatValue = player.StatValue; //Player Score Value
+
+                Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
+
+                //Add Player to List
+                resultPlayers.Add(userData);
+                //}
+
+            }
+
+        },
+
+            LeaderboardFailureCallbackk); // Leaderboard error callback
+
+        //return resultPlayers;
+    }
+
+    #endregion
 
     #endregion
 

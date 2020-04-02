@@ -21,5 +21,3 @@
 -keep class com.google.android.gms.common.data.DataBufferUtils { *; }
 -keep class com.google.android.gms.games.quest.** { *; }
 -keep class com.google.android.gms.nearby.** { *; }
--keep class com.facebook.internal.* {*;}
--keep class com.facebook.unity.FB* {*;}

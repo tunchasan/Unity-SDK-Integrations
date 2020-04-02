@@ -273,7 +273,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
         //The ResultPlayer Elem.
         ResultPlayer userData;
-
+        
         PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
         {
             StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.

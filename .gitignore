@@ -15,4 +15,3 @@ obj/
 */*.DS_Store
 *.userprefs
 */UnityPackageManager/
-*.apk

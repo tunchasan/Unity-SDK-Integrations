@@ -18,7 +18,7 @@ public class AndroidIAPExample : MonoBehaviour, IStoreListener
     public void Start()
     {
         // Make PlayFab log in
-        Login();
+        //Login();
     }
 
     public void OnGUI()
@@ -46,7 +46,7 @@ public class AndroidIAPExample : MonoBehaviour, IStoreListener
     }
 
     // This is invoked manually on Start to initiate login ops
-    private void Login()
+    public void Login()
     {
         // Login with Android ID
         PlayFabClientAPI.LoginWithAndroidDeviceID(new LoginWithAndroidDeviceIDRequest()

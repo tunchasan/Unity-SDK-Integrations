@@ -35,7 +35,7 @@ public class PlayfabFacebook : MonoBehaviour
     }
 
     //Facebook Auth. Handler
-    public void AuthLogin()
+    public void AuthLogin(bool linkAction)
     {
         //If the user did not auth. to FB.
         if (!FacebookLoggedIn())
@@ -43,7 +43,39 @@ public class PlayfabFacebook : MonoBehaviour
             DebugLogHandler("Logging into Facebook...");
 
             // We invoke basic login procedure and pass in the callback to process the result
-            FB.LogInWithReadPermissions(null, OnFacebookLoggedIn);
+            FB.LogInWithReadPermissions(
+
+                null,
+
+                (result) =>
+                {
+                    // If result has no errors, it means we have authenticated in Facebook successfully
+                    if (result == null || string.IsNullOrEmpty(result.Error))
+                    {
+                        DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
+
+                        if (linkAction) // is this Facebook Linking Action ?
+                        {
+                            LinkWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Link Accout with Facebook
+                        }
+
+                        else
+                        {
+                            LoginWithFacebook(); // Just Login with Facebook
+                        }
+
+                    }
+
+                    else
+                    {
+                        // If Facebook authentication failed, we stop the cycle with the message
+                        DebugLogHandler("Facebook Auth Failed: " + result.Error + "\n" + result.RawResult, true);
+                    }
+
+                }
+
+            );
+            
         }
 
         else
@@ -61,27 +93,16 @@ public class PlayfabFacebook : MonoBehaviour
         FB.LogOut();
     }
 
-    private void OnFacebookLoggedIn(ILoginResult result)
+    //Login with Facebook
+    private void LoginWithFacebook()
     {
-        // If result has no errors, it means we have authenticated in Facebook successfully
-        if (result == null || string.IsNullOrEmpty(result.Error))
-        {
-            DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
-
-            /*
-             * We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
-             * and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results
-             */
-            PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = AccessToken.CurrentAccessToken.TokenString },
-                OnPlayfabFacebookAuthComplete, OnPlayfabFacebookAuthFailed);
-        }
-        else
-        {
-            // If Facebook authentication failed, we stop the cycle with the message
-            DebugLogHandler("Facebook Auth Failed: " + result.Error + "\n" + result.RawResult, true);
-        }
+        /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
+        and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
+       
+        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = AccessToken.CurrentAccessToken.TokenString },
+            OnPlayfabFacebookAuthComplete, OnPlayfabFacebookAuthFailed);
     }
-    
+
     // When processing both results, we just set the message, explaining what's going on.
     private void OnPlayfabFacebookAuthComplete(LoginResult result)
     {
@@ -135,7 +156,7 @@ public class PlayfabFacebook : MonoBehaviour
         }
 
         else
-            AuthLogin(); //Facebook Auth. Handler
+            AuthLogin(false); //Facebook Auth. Handler
 
     }
 
@@ -185,7 +206,7 @@ public class PlayfabFacebook : MonoBehaviour
         }
 
         else
-            AuthLogin(); //Facebook Auth. Handler
+            AuthLogin(false); //Facebook Auth. Handler
 
     }
 
@@ -256,4 +277,25 @@ public class PlayfabFacebook : MonoBehaviour
 
     #endregion
 
+    #region LINK
+
+    // Link account with Facebook
+    public void LinkWithFacebook(string accessToken)
+    {
+        PlayFabClientAPI.LinkFacebookAccount(new LinkFacebookAccountRequest() // Facebook Linking Request
+        {
+            AccessToken = accessToken
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account Linked With Facebook Succeed.");
+        },
+
+       OnPlayfabFacebookAuthFailed); // Error Callback
+
     }
+
+    #endregion
+}
+

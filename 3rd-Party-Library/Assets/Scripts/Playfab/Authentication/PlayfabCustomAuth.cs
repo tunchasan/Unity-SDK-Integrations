@@ -151,25 +151,35 @@ public class PlayfabCustomAuth : MonoBehaviour
 
     /**************************************************************************************************************/
 
-    private void AnonymousLogin()
+    public void AnonymousLogin(bool linkAction)
     {
-        #if UNITY_ANDROID // On Android
 
-        //Login Request with Android Device
-        var requestAndroid = new LoginWithAndroidDeviceIDRequest { AndroidDeviceId = ReturnMobileID(), CreateAccount = true };
+        if (linkAction) // is this Link Mobile ID action ?
+        {
+            LinkWithMobileID(); // Link with MobileID
+        }
 
-        PlayFabClientAPI.LoginWithAndroidDeviceID(requestAndroid, OnLoginMobileSuccess, OnLoginMobileFailure);
+        else
+        {
+            #if UNITY_ANDROID // On Android
 
-        #endif
+            //Login Request with Android Device
+            var requestAndroid = new LoginWithAndroidDeviceIDRequest { AndroidDeviceId = ReturnMobileID(), CreateAccount = true };
+    
+            PlayFabClientAPI.LoginWithAndroidDeviceID(requestAndroid, OnLoginMobileSuccess, OnLoginMobileFailure);
 
-        #if UNITY_IOS // On IOS
+            #endif
 
-        //Login Request with IOS Device
-        var requestIOS = new LoginWithIOSDeviceIDRequest { DeviceId = ReturnMobileID(), CreateAccount = true };
+            #if UNITY_IOS // On IOS
 
-        PlayFabClientAPI.LoginWithIOSDeviceID(requestIOS, OnLoginMobileSuccess, OnLoginMobileFailure);
+            //Login Request with IOS Device
+            var requestIOS = new LoginWithIOSDeviceIDRequest { DeviceId = ReturnMobileID(), CreateAccount = true };
 
-        #endif
+            PlayFabClientAPI.LoginWithIOSDeviceID(requestIOS, OnLoginMobileSuccess, OnLoginMobileFailure);
+
+            #endif
+        }
+        
     }
 
     //Android - Login Failure CallBack Function
@@ -232,7 +242,49 @@ public class PlayfabCustomAuth : MonoBehaviour
         }
     }
 
-#endregion
+    #endregion
+
+    #region LINK
+
+    // Link Account with MobileIDs
+    private void LinkWithMobileID()
+    {
+        #if UNITY_ANDROID // On ANDROID
+
+        //Link user account with ANDROID ID
+        PlayFabClientAPI.LinkAndroidDeviceID(new LinkAndroidDeviceIDRequest()
+        {
+            AndroidDeviceId = ReturnMobileID()
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account Linked With Android DeviceID Succeed.");
+        },
+
+        OnLoginMobileFailure); // Error Callback
+
+        #endif
+
+        #if UNITY_IOS // On IOS
+
+        //Link user account with IOS ID
+        PlayFabClientAPI.LinkIOSDeviceID(new LinkIOSDeviceIDRequest()
+        {
+            DeviceId = ReturnMobileID()
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account Linked With IOS DeviceID Succeed.");
+        },
+
+        OnLoginMobileFailure); // Error Callback
+
+        #endif
+    }
+
+    #endregion
 
     public void GetUserEmail(string emailIn)
     {
@@ -266,3 +318,4 @@ public class PlayfabCustomAuth : MonoBehaviour
     }
 
 }
+

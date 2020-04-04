@@ -20,7 +20,7 @@ public class PlayFabGPGS : MonoBehaviour
         .RequestIdToken()
         .RequestServerAuthCode(false)
         .Build();
-
+        
         PlayGamesPlatform.InitializeInstance(config);
 
         // Recommended for debugging:
@@ -35,7 +35,7 @@ public class PlayFabGPGS : MonoBehaviour
 
     #region AUTHENTICATE
 
-    public void LoginPlayGameService()
+    public void LoginPlayGameService(bool linkAction)
     {
         //Authenticate the user request
         Social.localUser.Authenticate((bool success) => {
@@ -49,8 +49,17 @@ public class PlayFabGPGS : MonoBehaviour
 
                 text.text = GetUserName();
 
-                //Login in with PlayFab
-                LoginWithGoogleAccout(serverAuthCode);
+                if (linkAction) // is GPGS Linking Action ?
+                {
+                    LinkWithGooglePlayAccount(serverAuthCode);
+                }
+
+                else
+                {
+                    //Login in with PlayFab
+                    LoginWithGoogleAccout(serverAuthCode);
+                }
+                
             }
 
             else
@@ -62,7 +71,7 @@ public class PlayFabGPGS : MonoBehaviour
     }
 
     //GPGS login data with PlayFab Integration.
-    private void LoginWithGoogleAccout(string authCode)
+    public void LoginWithGoogleAccout(string authCode)
     {
         PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
@@ -99,6 +108,7 @@ public class PlayFabGPGS : MonoBehaviour
         }, 
         
         OnPlayFabError); // Error Callback
+        
     }
 
     //Error Callback
@@ -120,10 +130,32 @@ public class PlayFabGPGS : MonoBehaviour
         {
             if (PlayerPrefs.GetString("GPGSAUTH").Equals("success"))
             {
-                LoginPlayGameService(); // Login Google Acc. automaticly
+                LoginPlayGameService(false); // Login Google Acc. automaticly
             }
 
         }
+
+    }
+
+    #endregion
+
+    #region LINK
+
+    //Link user account with GPGS
+    private void LinkWithGooglePlayAccount(string authCode)
+    {
+        PlayFabClientAPI.LinkGoogleAccount(new LinkGoogleAccountRequest()
+        {
+            ServerAuthCode = authCode
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account Linked With Google Play Succeed.");
+
+        },
+
+        OnPlayFabError); // Error Callback
 
     }
 

@@ -266,7 +266,7 @@ public class PlayFabLeaderboard : MonoBehaviour
 
     // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
     // LOCAL - INGAME FRIENDS + FACEBOOK FRIENDS //
-    public List<ResultPlayer> RequestLeaderboardFacebookandFriends()
+    public List<ResultPlayer> RequestLeaderboardFacebookandFriends(int maxResultCount)
     {
         //The ResultPlayer List.
         List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -278,7 +278,7 @@ public class PlayFabLeaderboard : MonoBehaviour
         {
             StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
 
-            MaxResultsCount = 10,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+            MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
             IncludeFacebookFriends = true, // Indicates whether Facebook friends should be included in the response.
 

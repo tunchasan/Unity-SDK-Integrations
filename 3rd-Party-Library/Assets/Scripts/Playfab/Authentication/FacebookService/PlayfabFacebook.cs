@@ -54,14 +54,14 @@ public class PlayfabFacebook : MonoBehaviour
                     {
                         DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
 
-                        if (linkAction) // is this Facebook Linking Action ?
+                        if (true) // is this Facebook Linking Action ?
                         {
                             LinkWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Link Accout with Facebook
                         }
 
                         else
                         {
-                            LoginWithFacebook(); // Just Login with Facebook
+                            LoginWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Just Login with Facebook
                         }
 
                     }
@@ -94,12 +94,12 @@ public class PlayfabFacebook : MonoBehaviour
     }
 
     //Login with Facebook
-    private void LoginWithFacebook()
+    public void LoginWithFacebook(string token)
     {
         /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
         and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
        
-        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = AccessToken.CurrentAccessToken.TokenString },
+        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token },
             OnPlayfabFacebookAuthComplete, OnPlayfabFacebookAuthFailed);
     }
 
@@ -277,7 +277,7 @@ public class PlayfabFacebook : MonoBehaviour
 
     #endregion
 
-    #region LINK
+    #region LINK - UNLINK
 
     // Link account with Facebook
     public void LinkWithFacebook(string accessToken)
@@ -290,6 +290,22 @@ public class PlayfabFacebook : MonoBehaviour
 
         {
             Debug.Log("Account Linked With Facebook Succeed.");
+        },
+
+       OnPlayfabFacebookAuthFailed); // Error Callback
+
+    }
+
+    // Unlink account with Facebook
+    public void UnLinkWithFacebook()
+    {
+        PlayFabClientAPI.UnlinkFacebookAccount(new UnlinkFacebookAccountRequest()
+        {
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account UnLinked With Facebook Succeed.");
         },
 
        OnPlayfabFacebookAuthFailed); // Error Callback

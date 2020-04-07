@@ -4,12 +4,9 @@ using PlayFab.ClientModels;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine.UI;
-using PlayFab.DataModels;
 
 public class PlayFabGPGS : MonoBehaviour
 {
-    public Text text;
-
     private void Awake()
     {
         // The following grants profile access to the Google Play Games SDK.
@@ -47,8 +44,6 @@ public class PlayFabGPGS : MonoBehaviour
 
                 Debug.Log("Server Auth Code: " + serverAuthCode);
 
-                text.text = GetUserName();
-
                 if (linkAction) // is GPGS Linking Action ?
                 {
                     LinkWithGooglePlayAccount(serverAuthCode);
@@ -61,7 +56,7 @@ public class PlayFabGPGS : MonoBehaviour
                 }
                 
             }
-
+            
             else
             {    
                 Debug.Log("Google Failed to Authorize your login");
@@ -126,22 +121,33 @@ public class PlayFabGPGS : MonoBehaviour
     //Remember User whose signed in with Google Acc.
     private void RememberGoogleAccount()
     {
+        if (LoggedIn())
+        {
+            LoginPlayGameService(false); // Login Google Acc. automaticly
+        }
+    }
+
+    // Player loggenIn with GPGS before ?
+    public bool LoggedIn()
+    {
         if (PlayerPrefs.HasKey("GPGSAUTH"))
         {
             if (PlayerPrefs.GetString("GPGSAUTH").Equals("success"))
-            {
-                LoginPlayGameService(false); // Login Google Acc. automaticly
-            }
+                return true;
 
+            else
+                return false;
         }
 
+        else
+            return false;
     }
 
     #endregion
 
-    #region LINK
+    #region LINK - UNLINK
 
-    //Link user account with GPGS
+    // Link user account with GPGS
     private void LinkWithGooglePlayAccount(string authCode)
     {
         PlayFabClientAPI.LinkGoogleAccount(new LinkGoogleAccountRequest()
@@ -152,7 +158,22 @@ public class PlayFabGPGS : MonoBehaviour
 
         {
             Debug.Log("Account Linked With Google Play Succeed.");
+        },
 
+        OnPlayFabError); // Error Callback
+
+    }
+
+    // UnLink user account with GPGS
+    public void UnLinkWithGooglePlayAccount()
+    {
+        PlayFabClientAPI.UnlinkGoogleAccount(new UnlinkGoogleAccountRequest()
+        {
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account UnLinked With Google Play Succeed.");
         },
 
         OnPlayFabError); // Error Callback

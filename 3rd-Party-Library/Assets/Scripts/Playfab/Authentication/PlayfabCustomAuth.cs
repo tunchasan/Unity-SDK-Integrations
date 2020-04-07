@@ -13,21 +13,6 @@ public class PlayfabCustomAuth : MonoBehaviour
 
     private string _userName;
 
-    //FOR TEST
-
-    public GameObject _loginPanel;
-
-    public GameObject _addLoginPanel;
-
-    public GameObject _recoverButton;
-
-    // Start is called before the first frame update
-    private void Awake()
-    {
-        //Determinate, user logged in before or not.
-        RememberPlayer();
-    }
-
     #region REGISTER
 
     /**************************************************************************************************************/
@@ -59,8 +44,6 @@ public class PlayfabCustomAuth : MonoBehaviour
         PlayerPrefs.SetString("EMAIL", _userEmail);
 
         PlayerPrefs.SetString("PASSWORD", _userPasword);
-
-        _loginPanel.SetActive(false);
     }
 
     /**************************************************************************************************************/
@@ -83,10 +66,6 @@ public class PlayfabCustomAuth : MonoBehaviour
         PlayerPrefs.SetString("EMAIL", _userEmail);
 
         PlayerPrefs.SetString("PASSWORD", _userPasword);
-
-        _loginPanel.SetActive(false);
-
-        _addLoginPanel.SetActive(false);
     }
 
     //Recover Failure CallBack Function
@@ -134,12 +113,6 @@ public class PlayfabCustomAuth : MonoBehaviour
         PlayerPrefs.SetString("EMAIL", _userEmail);
 
         PlayerPrefs.SetString("PASSWORD", _userPasword);
-
-        _loginPanel.SetActive(false);
-
-        _addLoginPanel.SetActive(false);
-
-        _recoverButton.SetActive(false);
     }
 
     /**************************************************************************************************************/
@@ -154,7 +127,7 @@ public class PlayfabCustomAuth : MonoBehaviour
     public void AnonymousLogin(bool linkAction)
     {
 
-        if (linkAction) // is this Link Mobile ID action ?
+        if (true) // is this Link Mobile ID action ?
         {
             LinkWithMobileID(); // Link with MobileID
         }
@@ -192,8 +165,6 @@ public class PlayfabCustomAuth : MonoBehaviour
     private void OnLoginMobileSuccess(LoginResult result)
     {
         Debug.Log("Login with DeviceID request completed Succesfuly.");
-
-        _loginPanel.SetActive(false);
     }
 
     //Get Mobile Unique ID
@@ -213,13 +184,8 @@ public class PlayfabCustomAuth : MonoBehaviour
     #region RECOVER
 
     //Remember the Player and recover information to login automaticly.
-    private void RememberPlayer()
+    public void RememberPlayer()
     {
-        PlayerPrefs.DeleteAll();
-
-        _addLoginPanel.SetActive(false);
-        _recoverButton.SetActive(false);
-
         //Remember the Player
         if (PlayerPrefs.HasKey("EMAIL"))
         {
@@ -244,7 +210,7 @@ public class PlayfabCustomAuth : MonoBehaviour
 
     #endregion
 
-    #region LINK
+    #region LINK - UNLINK
 
     // Link Account with MobileIDs
     private void LinkWithMobileID()
@@ -284,6 +250,44 @@ public class PlayfabCustomAuth : MonoBehaviour
         #endif
     }
 
+    // UnLink Account with MobileIDs
+    public void UnLinkWithMobileID()
+    {
+        #if UNITY_ANDROID // On ANDROID
+
+        //Link user account with ANDROID ID
+        PlayFabClientAPI.UnlinkAndroidDeviceID(new UnlinkAndroidDeviceIDRequest()
+        {
+            AndroidDeviceId = ReturnMobileID()
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account UnLinked With Android DeviceID Succeed.");
+        },
+
+        OnLoginMobileFailure); // Error Callback
+
+        #endif
+
+        #if UNITY_IOS // On IOS
+
+        //Link user account with IOS ID
+        PlayFabClientAPI.UnlinkIOSDeviceID(new UnlinkIOSDeviceIDRequest()
+        {
+            DeviceId = ReturnMobileID()
+
+        }, (result) =>
+
+        {
+            Debug.Log("Account UnLinked With IOS DeviceID Succeed.");
+        },
+
+        OnLoginMobileFailure); // Error Callback
+
+#endif
+    }
+
     #endregion
 
     public void GetUserEmail(string emailIn)
@@ -299,14 +303,6 @@ public class PlayfabCustomAuth : MonoBehaviour
     public void GetUserName(string usernameIn)
     {
         _userName = usernameIn;
-    }
-
-    //FOR TEST
-    public void OpenAddLogin()
-    {
-        _addLoginPanel.SetActive(true);
-
-        _recoverButton.SetActive(false);
     }
 
     //Remove Player Stored Auth. Data

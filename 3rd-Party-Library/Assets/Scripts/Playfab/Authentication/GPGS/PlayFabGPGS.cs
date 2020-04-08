@@ -185,6 +185,11 @@ public class PlayFabGPGS
         {
             Debug.LogError("The Google Play Account is already used by another user.");
         }
+
+        else
+        {
+            Debug.LogError(error.GenerateErrorReport());
+        }
     }
 
     // UnLink user account with GPGS
@@ -214,6 +219,8 @@ public class PlayFabGPGS
 
     #region DISPLAY NAME
 
+    /*********************************************SET*******************************************/
+
     private void SetDisplayName(string displayName)
     {
         //Display Name Request
@@ -236,6 +243,28 @@ public class PlayFabGPGS
         PlayerPrefs.SetString("DISPLAYNAME_GPGS", result.DisplayName);
     }
 
+    /******************************************RESET**********************************************/
+
+    private void ResetDisplayName(string displayName)
+    {
+        //Display Name Request
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
+
+        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnResetDisplayNameSuccess, OnResetDisplayNameFailure);
+    }
+
+    // Reset DisplayName Error Callback
+    private void OnResetDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError(error.GenerateErrorReport());
+    }
+
+    // Reset DisplayName Callback
+    private void OnResetDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
+    }
+
     private void ResetDisplayName()
     {
         PlayerPrefs.DeleteKey("DISPLAYNAME_GPGS");
@@ -245,15 +274,17 @@ public class PlayFabGPGS
         // Reset as Facebook DisplayName
         if (PlayerPrefs.HasKey("DISPLAYNAME_FACEBOOK"))
         {
-            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_FACEBOOK"));
+            ResetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_FACEBOOK"));
         }
 
         // Reset as Guest DisplayName
         else
         {
-            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
+            ResetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
         }
     }
+
+    /************************************************************************************************/
 
     #endregion
 

@@ -3,11 +3,10 @@ using PlayFab;
 using PlayFab.ClientModels;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
-using UnityEngine.UI;
 
 public class PlayFabGPGS : MonoBehaviour
 {
-    private void Awake()
+    public PlayFabGPGS()
     {
         // The following grants profile access to the Google Play Games SDK.
         // Note: If you also want to capture the player's Google email, be sure to add
@@ -68,8 +67,6 @@ public class PlayFabGPGS : MonoBehaviour
     //GPGS login data with PlayFab Integration.
     public void LoginWithGoogleAccout(string authCode)
     {
-        PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
-
         //PlayFab Google Account Integration
         PlayFabClientAPI.LoginWithGoogleAccount(new LoginWithGoogleAccountRequest()
         {
@@ -88,15 +85,17 @@ public class PlayFabGPGS : MonoBehaviour
 
             string entityType = result.EntityToken.Entity.Type;
 
+            PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
+
             /********************************************************************************************/
-                                               /*CLOUD SAVE*/
+            /*CLOUD SAVE*/
 
             //Determinete the cloud Service Type in { "FILE", "STATISTIC", "OBJECT" }
-            string cloudMethodType = (CSPlayFabMaster.cloudType.DATATABLE)
+            /*string cloudMethodType = (CSPlayFabMaster.cloudType.DATATABLE)
                                       .ToString();
 
             //CloudSave Instance
-            CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);
+            CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);*/
 
             /********************************************************************************************/
 
@@ -158,10 +157,29 @@ public class PlayFabGPGS : MonoBehaviour
 
         {
             Debug.Log("Account Linked With Google Play Succeed.");
+
+            PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
+
+            //Display Name Request
+            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = Social.localUser.userName };
+
+            PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
         },
 
         OnPlayFabError); // Error Callback
 
+    }
+
+    //Display Name Error Callback
+    private void OnDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
+    }
+
+    //Display Name Succeed Callback
+    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
     // UnLink user account with GPGS

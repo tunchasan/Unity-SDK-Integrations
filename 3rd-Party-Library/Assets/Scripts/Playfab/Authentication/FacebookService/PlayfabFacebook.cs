@@ -2,9 +2,7 @@
 using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
-using System;
 using System.Collections.Generic;
-using Facebook.MiniJSON;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
 
@@ -15,7 +13,7 @@ public class PlayfabFacebook : MonoBehaviour
 
     #region AUTHENTICATON
 
-    public PlayfabFacebook()
+    private void Start()
     {
         DebugLogHandler("Initializing Facebook..."); // logs the given message and displays it on the screen using OnGUI method
 
@@ -56,7 +54,7 @@ public class PlayfabFacebook : MonoBehaviour
                     {
                         DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
 
-                        if (linkAction) // is this Facebook Linking Action ?
+                        if (true) // is this Facebook Linking Action ?
                         {
                             LinkWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Link Accout with Facebook
                         }
@@ -291,9 +289,6 @@ public class PlayfabFacebook : MonoBehaviour
         }, (result) =>
 
         {
-            //Request Facebook DisplayName
-            this.DisplayName();
-
             Debug.Log("Account Linked With Facebook Succeed.");
         },
 
@@ -315,48 +310,6 @@ public class PlayfabFacebook : MonoBehaviour
 
        OnPlayfabFacebookAuthFailed); // Error Callback
 
-    }
-
-    #endregion
-
-    #region DISPLAY NAME
-
-    private void DisplayName()
-    {
-        FB.API("me?fields=name", HttpMethod.GET, GetFacebookData);
-    }
-
-    private void GetFacebookData(IGraphResult result)
-    {
-        // If result has no errors
-        if (string.IsNullOrEmpty(result.Error))
-        {
-            string fbName = result.ResultDictionary["name"].ToString();
-
-            //Display Name Request
-            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = fbName };
-
-            PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
-        }
-
-        else
-        {
-            // If Facebook request failed, we stop the cycle with the message
-            DebugLogHandler("Facebook Failed: " + result.Error + "\n" + result.RawResult, true);
-        }
-        
-    }
-
-    //Display Name Error Callback
-    private void OnDisplayNameFailure(PlayFabError error)
-    {
-        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
-    }
-
-    //Display Name Succeed Callback
-    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
-    {
-        Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
     #endregion

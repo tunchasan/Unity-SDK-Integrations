@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class IT_Authentication : MonoBehaviour
 {
@@ -7,14 +8,19 @@ public class IT_Authentication : MonoBehaviour
     private PlayfabFacebook _facebookAuth;
 
     private PlayFabGPGS _gpgsAuth;
-     
+
+    [Header("Recover PopUpMenu Configuration")]
+    public GameObject _recoverPopUpFB;
+
+    public GameObject _recoverPopUpGPGS;
+
     private void Awake()
     {
         _customAuth = new PlayfabCustomAuth();
 
-        _facebookAuth = new PlayfabFacebook();
+        _facebookAuth = new PlayfabFacebook(_recoverPopUpFB);
 
-        _gpgsAuth = new PlayFabGPGS();
+        _gpgsAuth = new PlayFabGPGS(_recoverPopUpGPGS);
     }
 
     private void Start()
@@ -54,15 +60,42 @@ public class IT_Authentication : MonoBehaviour
 
     public void ConnectFacebook()
     {
-        if (_facebookAuth.GetLoggedIn())
+        if (_facebookAuth.GetLoggedIn()) // Loggedin with Facebook
         {
+            // UnLink Facebook Acc.
+            _facebookAuth.UnLinkWithFacebook();
+        }
 
+        else
+        {   
+            // Link Facebook Acc.
+            _facebookAuth.AuthLogin(true);
         }
     }
 
-    public void gg()
+    public void RecoverAccountWithFacebook()
     {
-        _facebookAuth.AuthLogin(true);
+        _facebookAuth.RecoverAccount();
+    }
+
+    public void DontRecoverAccountWithFacebook()
+    {
+        _facebookAuth.DontRecoverAccount();
+    }
+
+    public void RecoverAccountWithGPGS()
+    {
+        _gpgsAuth.RecoverAccount();
+    }
+
+    public void DontRecoverAccountWithGPGS()
+    {
+        _gpgsAuth.DontRecoverAccount();
+    }
+
+    public string GetRecoverWithFacebookText()
+    {
+        return _facebookAuth.GetRecoverPopUpText();
     }
 
 }

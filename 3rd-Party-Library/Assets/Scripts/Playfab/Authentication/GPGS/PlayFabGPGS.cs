@@ -7,9 +7,16 @@ using System;
 
 public class PlayFabGPGS
 {
+    // Store Recover PopUp Menu Ref.
+    private GameObject _recoverPopUpMenu;
+
+    // Popup Text
+    private string _popUpText;
+
+    // Store loggedIn status
     private bool LoggedIn;
 
-    public PlayFabGPGS()
+    public PlayFabGPGS(GameObject _PopUpMenu)
     {
         // The following grants profile access to the Google Play Games SDK.
         // Note: If you also want to capture the player's Google email, be sure to add
@@ -30,6 +37,9 @@ public class PlayFabGPGS
 
         //Initialize the Auth. status
         LoggedIn = false;
+
+        // Initialize Game Object
+        _recoverPopUpMenu = _PopUpMenu;
 
         //Remember User
         RememberGoogleAccount();
@@ -184,6 +194,8 @@ public class PlayFabGPGS
         if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // GPGS Acc. is already used by another user.
         {
             Debug.LogError("The Google Play Account is already used by another user.");
+
+            AccountRecoverWithGPGS(); // Account Recover with GPGS Account.
         }
 
         else
@@ -285,6 +297,99 @@ public class PlayFabGPGS
     }
 
     /************************************************************************************************/
+
+    #endregion
+
+    #region ACCOUNT RECOVER
+
+    // Recover Account with GPGS
+    private void RecoverPlayFabGPGSLogin()
+    {
+        //PlayFab Google Account Integration
+        PlayFabClientAPI.LoginWithGoogleAccount(new LoginWithGoogleAccountRequest()
+        {
+            TitleId = PlayFabSettings.TitleId,
+
+            ServerAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode(),
+
+        }, (result) =>
+
+        {
+            Debug.Log("Do you want to load " + result.InfoResultPayload.PlayerProfile.DisplayName + "'s game ?");
+
+            Debug.LogWarning("Warning: progress in the current game will be saved. You can load the current game by next login.");
+        },
+
+        OnPlayFabError); // Error Callback
+    }
+
+    // Get recover account's player data.
+    private void GetRecoverAccountData()
+    {
+        // Clear Current Token and Logout From PlayFab
+        PlayFabClientAPI.ForgetAllCredentials();
+
+        // Login Recoverable Acc. with Google
+        RecoverPlayFabGPGSLogin();
+    }
+
+    // Initialize Recover Acc. Action
+    private void AccountRecoverWithGPGS()
+    {
+        // Get Recover Account Unique Information to Show Player
+        GetRecoverAccountData();
+
+        // Create PopUp
+        RecoverPopUpMenu(true);
+    }
+
+    // Handle PopUpMenu Visibility
+    private void RecoverPopUpMenu(bool Visibilty)
+    {
+        // Enable PopUp Menu
+        _recoverPopUpMenu.SetActive(Visibilty);
+    }
+
+    // User wants to recover account, Recover it.  *** Yes Click Event ***
+    public void RecoverAccount()
+    {
+        // Hidden PopUp Menu
+        RecoverPopUpMenu(false);
+
+        LoggedIn = true; // Logged in user
+
+        PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
+
+        Debug.Log("Account Recovered...");
+    }
+
+    // User dont want to recover accout, Keep current.  *** No Click Event ***
+    public void DontRecoverAccount()
+    {
+        // Hidden PopUp Menu
+        RecoverPopUpMenu(false);
+
+        // Keep Current
+
+        // Clear Current Token and Logout From PlayFab
+        PlayFabClientAPI.ForgetAllCredentials();
+
+        // Logout from PlayGames
+        PlayGamesPlatform.Instance.SignOut();
+
+        LoggedIn = false; // Logged in user -> false
+
+        // Re-Connect PlayFab with DeviceID
+        PlayfabCustomAuth customAuth = new PlayfabCustomAuth();
+
+        customAuth.AnonymousLogin(false);
+    }
+
+    // PopUp Text
+    public string GetRecoverPopUpText()
+    {
+        return _popUpText;
+    }
 
     #endregion
 

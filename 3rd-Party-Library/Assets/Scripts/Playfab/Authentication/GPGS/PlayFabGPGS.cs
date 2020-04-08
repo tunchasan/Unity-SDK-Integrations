@@ -7,6 +7,8 @@ using System;
 
 public class PlayFabGPGS
 {
+    private bool LoggedIn;
+
     public PlayFabGPGS()
     {
         // The following grants profile access to the Google Play Games SDK.
@@ -25,6 +27,9 @@ public class PlayFabGPGS
 
         // Activate the Google Play Games platform
         PlayGamesPlatform.Activate();
+
+        //Initialize the Auth. status
+        LoggedIn = false;
 
         //Remember User
         RememberGoogleAccount();
@@ -85,6 +90,8 @@ public class PlayFabGPGS
             string entityID = result.EntityToken.Entity.Id;
 
             string entityType = result.EntityToken.Entity.Type;
+
+            LoggedIn = true; // Logged in user
 
             PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
@@ -161,6 +168,8 @@ public class PlayFabGPGS
 
             PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
+            LoggedIn = true; // Logged in user
+
             //Request PlayFab DisplayName
             this.SetDisplayName(Social.localUser.userName);
         },
@@ -179,6 +188,8 @@ public class PlayFabGPGS
 
         {
             PlayGamesPlatform.Instance.SignOut();
+
+            LoggedIn = false; // Logged in user -> false
 
             //Reset Display Name
             this.ResetDisplayName();
@@ -218,6 +229,10 @@ public class PlayFabGPGS
 
     private void ResetDisplayName()
     {
+        PlayerPrefs.DeleteKey("DISPLAYNAME_GPGS");
+
+        PlayerPrefs.DeleteKey("GPGSAUTH");
+
         // Reset as Facebook DisplayName
         if (PlayerPrefs.HasKey("DISPLAYNAME_FACEBOOK"))
         {
@@ -239,4 +254,9 @@ public class PlayFabGPGS
         return PlayGamesPlatform.Instance.GetUserDisplayName();
     }
 
+    //Return Auth. Status
+    public bool GetLoggedIn()
+    {
+        return LoggedIn;
+    }
 }

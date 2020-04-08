@@ -7,8 +7,6 @@ public class IT_Authentication : MonoBehaviour
     private PlayfabFacebook _facebookAuth;
 
     private PlayFabGPGS _gpgsAuth;
-
-    private string _nickName;
      
     private void Awake()
     {
@@ -17,8 +15,6 @@ public class IT_Authentication : MonoBehaviour
         _facebookAuth = new PlayfabFacebook();
 
         _gpgsAuth = new PlayFabGPGS();
-
-        _nickName = "";
     }
 
     private void Start()
@@ -41,24 +37,27 @@ public class IT_Authentication : MonoBehaviour
 
     }
 
-    public void LinkWithFacebook()
+    public void ConnectGPGS()
     {
-        _facebookAuth.AuthLogin(true);
+        if (_gpgsAuth.GetLoggedIn()) // Loggedin with GPGS
+        {
+            // UnLink GPGS Acc.
+            _gpgsAuth.UnLinkWithGooglePlayAccount();   
+        }
+
+        else // Not Loggedin with GPGS, Connect with it.
+        {
+            // Link GPGS Acc.
+            _gpgsAuth.LoginPlayGameService(true);
+        }
     }
 
-    public void UnLinkWithFacebook()
+    public void ConnectFacebook()
     {
-        _facebookAuth.UnLinkWithFacebook();
-    }
+        if (_facebookAuth.GetLoggedIn())
+        {
 
-    public void LinkWithGooglePlay()
-    {
-        _gpgsAuth.LoginPlayGameService(true);
-    }
-
-    public void UnLinkWithGooglePlay()
-    {
-        _gpgsAuth.UnLinkWithGooglePlayAccount();
+        }
     }
 
 }

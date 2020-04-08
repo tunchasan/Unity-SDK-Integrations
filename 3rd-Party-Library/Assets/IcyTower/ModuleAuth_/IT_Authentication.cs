@@ -60,4 +60,9 @@ public class IT_Authentication : MonoBehaviour
         }
     }
 
+    public void gg()
+    {
+        _facebookAuth.AuthLogin(true);
+    }
+
 }

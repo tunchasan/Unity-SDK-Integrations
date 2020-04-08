@@ -174,8 +174,17 @@ public class PlayFabGPGS
             this.SetDisplayName(Social.localUser.userName);
         },
 
-        OnPlayFabError); // Error Callback
+        OnPlayFabLinkError); // Error Callback
 
+    }
+
+    private void OnPlayFabLinkError(PlayFabError error)
+    {
+        // Specified Error Code
+        if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // GPGS Acc. is already used by another user.
+        {
+            Debug.LogError("The Google Play Account is already used by another user.");
+        }
     }
 
     // UnLink user account with GPGS

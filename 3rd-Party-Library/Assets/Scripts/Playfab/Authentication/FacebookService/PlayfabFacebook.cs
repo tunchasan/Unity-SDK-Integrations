@@ -3,6 +3,7 @@
 using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
@@ -296,8 +297,18 @@ public class PlayfabFacebook
             Debug.Log("Account Linked With Facebook Succeed.");
         },
 
-       OnPlayfabFacebookAuthFailed); // Error Callback
+       OnPlayfabFacebookLinkFailed); // Error Callback
 
+    }
+
+    // Link Error Callback
+    private void OnPlayfabFacebookLinkFailed(PlayFabError error)
+    {
+        // Specified Error Code
+        if(error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // Facebook Acc. is already used by another user.
+        {
+            Debug.LogError("The Facebook Account is already used by another user.");
+        }
     }
 
     // Unlink account with Facebook

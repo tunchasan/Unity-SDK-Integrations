@@ -23,7 +23,7 @@ public class PlayfabFacebook
     }
 
     //Control User's Auth. Status
-    private bool FacebookLoggedIn()
+    public bool GetLoggedIn()
     {
         return FB.IsLoggedIn;
     }
@@ -31,7 +31,7 @@ public class PlayfabFacebook
     private void OnFacebookInitialized()
     {     
         // Once Facebook SDK is initialized, if we are logged in, we log out to demonstrate the entire authentication cycle.
-        if (FacebookLoggedIn())
+        if (GetLoggedIn())
             FB.LogOut();
     }
 
@@ -39,7 +39,7 @@ public class PlayfabFacebook
     public void AuthLogin(bool linkAction)
     {
         //If the user did not auth. to FB.
-        if (!FacebookLoggedIn())
+        if (!GetLoggedIn())
         {
             DebugLogHandler("Logging into Facebook...");
 
@@ -138,7 +138,7 @@ public class PlayfabFacebook
     public void Share(string URL)
     {
         //If the user loggedIn Facebook, We control the Callback.
-        if (FacebookLoggedIn())
+        if (GetLoggedIn())
         {
             URL = "https://www.youtube.com/watch?v=BVomQtrtMTM"; // FOR TEST
 
@@ -186,7 +186,7 @@ public class PlayfabFacebook
     public void Invite()
     {
         //If the user loggedIn Facebook, We control the Callback.
-        if (FacebookLoggedIn())
+        if (GetLoggedIn())
         {
             //FOR TEST*********************
             string Message = "Come on and Play!";
@@ -376,6 +376,8 @@ public class PlayfabFacebook
     // Reset DisplayName
     private void ResetDisplayName()
     {
+        PlayerPrefs.DeleteKey("DISPLAYNAME_FACEBOOK");
+
         // Reset as GPGS DisplayName
         if (PlayerPrefs.HasKey("DISPLAYNAME_GPGS"))
         {

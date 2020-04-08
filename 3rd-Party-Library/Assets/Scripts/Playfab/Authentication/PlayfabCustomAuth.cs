@@ -127,7 +127,7 @@ public class PlayfabCustomAuth : MonoBehaviour
     public void AnonymousLogin(bool linkAction)
     {
 
-        if (true) // is this Link Mobile ID action ?
+        if (linkAction) // is this Link Mobile ID action ?
         {
             LinkWithMobileID(); // Link with MobileID
         }
@@ -165,6 +165,24 @@ public class PlayfabCustomAuth : MonoBehaviour
     private void OnLoginMobileSuccess(LoginResult result)
     {
         Debug.Log("Login with DeviceID request completed Succesfuly.");
+
+        //Display Name Request
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = "Guest " + result.PlayFabId };
+
+        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+            
+    }
+
+    //Display Name Error Callback
+    private void OnDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
+    }
+
+    //Display Name Succeed Callback
+    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
     //Get Mobile Unique ID

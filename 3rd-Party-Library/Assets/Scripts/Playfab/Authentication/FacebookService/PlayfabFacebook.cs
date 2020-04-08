@@ -3,7 +3,6 @@
 using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
@@ -13,15 +12,24 @@ public class PlayfabFacebook
     // Holds the latest message to be displayed on the screen.
     private string _debugMessage;
 
+    // Store Recover PopUp Menu Ref.
+    private GameObject _recoverPopUpMenu;
+
+    private string _popUpText;
+
     #region AUTHENTICATON
 
-    public PlayfabFacebook()
+    public PlayfabFacebook(GameObject PopUpMenu)
     {
         DebugLogHandler("Initializing Facebook..."); // logs the given message and displays it on the screen using OnGUI method
 
         // This call is required before any other calls to the Facebook API. We pass in the callback to be invoked once initialization is finished
         FB.Init(OnFacebookInitialized);
-    }
+
+        // PopMenu Initialize
+        _recoverPopUpMenu = PopUpMenu;
+
+}
 
     //Control User's Auth. Status
     public bool GetLoggedIn()
@@ -63,7 +71,7 @@ public class PlayfabFacebook
 
                         else
                         {
-                            LoginWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Just Login with Facebook
+                            PlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString); // Just Login with Facebook
                         }
 
                     }
@@ -96,12 +104,12 @@ public class PlayfabFacebook
     }
 
     //Login with Facebook
-    public void LoginWithFacebook(string token)
+    public void PlayFabFacebookLogin(string token)
     {
         /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
         and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
-       
-        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token },
+
+        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token, InfoRequestParameters = InfoRequest() },
             OnPlayfabFacebookAuthComplete, OnPlayfabFacebookAuthFailed);
     }
 
@@ -129,6 +137,16 @@ public class PlayfabFacebook
         //If "error" flag is false, Print the error message in Console.
         else
             Debug.Log(_debugMessage);
+    }
+
+    // Set-Up PayloadData
+    private GetPlayerCombinedInfoRequestParams InfoRequest()
+    {
+        GetPlayerCombinedInfoRequestParams request = new GetPlayerCombinedInfoRequestParams();
+
+        request.GetPlayerProfile = true;
+
+        return request;
     }
 
     #endregion
@@ -309,8 +327,7 @@ public class PlayfabFacebook
         {
             Debug.LogWarning("The Facebook Account is already used by another user.");
 
-            AccountRecoverWithFacebook(error); // Account Recover with Facebook Account.
-
+            AccountRecoverWithFacebook(); // Account Recover with Facebook Account.
         }
 
         else
@@ -434,25 +451,94 @@ public class PlayfabFacebook
         Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
-    /************************************************************************************************/
+    /**********************************************************************************************/
 
     #endregion
 
     #region ACCOUNT RECOVER
 
-    private string GetRecoverAccountData()
+    // Recover Account with Facebook
+    private void RecoverPlayFabFacebookLogin(string token)
     {
+        /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
+        and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
 
-
-        return "";
+        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token, InfoRequestParameters = InfoRequest() },
+            OnPlayfabFacebookRecoverComplete, OnPlayfabFacebookAuthFailed);
     }
 
-    private void AccountRecoverWithFacebook(PlayFabError error)
+    // Collect recover account's player data.
+    private void OnPlayfabFacebookRecoverComplete(LoginResult result)
+    {
+        DebugLogHandler("PlayFab Facebook Auth Complete. Session ticket: " + result.SessionTicket);
+
+        Debug.Log("Do you want to load " + result.InfoResultPayload.PlayerProfile.DisplayName + "'s game ?");
+
+        Debug.LogWarning("Warning: progress in the current game will be saved. You can load the current game by next login.");
+    }
+
+    // Get recover account's player data.
+    private void GetRecoverAccountData()
+    {
+        // Clear Current Token and Logout From PlayFab
+        PlayFabClientAPI.ForgetAllCredentials();
+
+        // Login Recoverable Acc. with Facebook
+        RecoverPlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString);
+    }
+
+    // Initialize Recover Acc. Action
+    private void AccountRecoverWithFacebook()
     {
         // Get Recover Account Unique Information to Show Player
         GetRecoverAccountData();
 
+        // Create PopUp
+        RecoverPopUpMenu(true);
+    }
 
+    // Handle PopUpMenu Visibility
+    private void RecoverPopUpMenu(bool Visibilty)
+    {
+        // Enable PopUp Menu
+        _recoverPopUpMenu.SetActive(Visibilty);
+    }
+
+    // User wants to recover account, Recover it.  *** Yes Click Event ***
+    public void RecoverAccount()
+    {
+        // Hidden PopUp Menu
+        RecoverPopUpMenu(false);
+
+        // Login Accout
+        Debug.Log("Account Recovering...");
+
+        //
+    }
+
+    // User dont want to recover accout, Keep current.  *** No Click Event ***
+    public void DontRecoverAccount()
+    {
+        // Hidden PopUp Menu
+        RecoverPopUpMenu(false);
+
+        // Keep Current
+
+        // Clear Current Token and Logout From PlayFab
+        PlayFabClientAPI.ForgetAllCredentials();
+
+        // Logout Facebook
+        FB.LogOut();
+
+        PlayfabCustomAuth customAuth = new PlayfabCustomAuth();
+
+        customAuth.AnonymousLogin(false);
+    }
+
+    // PopUp Text
+    public string GetRecoverPopUpText()
+    {
+        return _popUpText;
     }
 
     #endregion

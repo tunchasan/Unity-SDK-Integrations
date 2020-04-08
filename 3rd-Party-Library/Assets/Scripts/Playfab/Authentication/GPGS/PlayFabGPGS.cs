@@ -160,26 +160,12 @@ public class PlayFabGPGS : MonoBehaviour
 
             PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
-            //Display Name Request
-            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = Social.localUser.userName };
-
-            PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+            //Request PlayFab DisplayName
+            this.SetDisplayName();
         },
 
         OnPlayFabError); // Error Callback
 
-    }
-
-    //Display Name Error Callback
-    private void OnDisplayNameFailure(PlayFabError error)
-    {
-        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
-    }
-
-    //Display Name Succeed Callback
-    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
-    {
-        Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
     // UnLink user account with GPGS
@@ -196,6 +182,30 @@ public class PlayFabGPGS : MonoBehaviour
 
         OnPlayFabError); // Error Callback
 
+    }
+
+    #endregion
+
+    #region DISPLAY NAME
+
+    private void SetDisplayName()
+    {
+        //Display Name Request
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = Social.localUser.userName };
+
+        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+    }
+
+    //Display Name Error Callback
+    private void OnDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
+    }
+
+    //Display Name Succeed Callback
+    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
     }
 
     #endregion

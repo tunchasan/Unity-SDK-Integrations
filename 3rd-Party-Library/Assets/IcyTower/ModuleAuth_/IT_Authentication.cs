@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class IT_Authentication : MonoBehaviour
 {
@@ -26,9 +24,10 @@ public class IT_Authentication : MonoBehaviour
     private void Start()
     {
         // LoggedIn before with GPGS
-        if (_gpgsAuth.LoggedIn())
+        if (_gpgsAuth.LoggedInBefore())
         {
             /// PlayFabGPGS handles automatically Login with GPGS
+            Debug.Log("GPGS login in automatically...");
         }
 
         // Not LoggedIn before with GPGS
@@ -36,27 +35,30 @@ public class IT_Authentication : MonoBehaviour
         {   
             /// Login as Guest with Unique DeviceID
             _customAuth.AnonymousLogin(false);
+
+            Debug.Log("Mobile Device login in automatically...");
         }
 
     }
 
-    public void LinkFacebook()
+    public void LinkWithFacebook()
     {
-
+        _facebookAuth.AuthLogin(true);
     }
 
-    public void UnLinkFacebook()
+    public void UnLinkWithFacebook()
     {
-
+        _facebookAuth.UnLinkWithFacebook();
     }
 
-    public void LinkGooglePlay()
+    public void LinkWithGooglePlay()
     {
-
+        _gpgsAuth.LoginPlayGameService(true);
     }
 
-    public void UnLinkGooglePlay()
+    public void UnLinkWithGooglePlay()
     {
-
+        _gpgsAuth.UnLinkWithGooglePlayAccount();
     }
+
 }

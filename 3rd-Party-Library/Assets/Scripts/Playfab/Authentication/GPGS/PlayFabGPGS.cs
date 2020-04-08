@@ -3,8 +3,9 @@ using PlayFab;
 using PlayFab.ClientModels;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using System;
 
-public class PlayFabGPGS : MonoBehaviour
+public class PlayFabGPGS
 {
     public PlayFabGPGS()
     {
@@ -120,14 +121,14 @@ public class PlayFabGPGS : MonoBehaviour
     //Remember User whose signed in with Google Acc.
     private void RememberGoogleAccount()
     {
-        if (LoggedIn())
+        if (LoggedInBefore())
         {
             LoginPlayGameService(false); // Login Google Acc. automaticly
         }
     }
 
     // Player loggenIn with GPGS before ?
-    public bool LoggedIn()
+    public bool LoggedInBefore()
     {
         if (PlayerPrefs.HasKey("GPGSAUTH"))
         {
@@ -161,7 +162,7 @@ public class PlayFabGPGS : MonoBehaviour
             PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
             //Request PlayFab DisplayName
-            this.SetDisplayName();
+            this.SetDisplayName(Social.localUser.userName);
         },
 
         OnPlayFabError); // Error Callback
@@ -177,6 +178,11 @@ public class PlayFabGPGS : MonoBehaviour
         }, (result) =>
 
         {
+            PlayGamesPlatform.Instance.SignOut();
+
+            //Reset Display Name
+            this.ResetDisplayName();
+
             Debug.Log("Account UnLinked With Google Play Succeed.");
         },
 
@@ -188,10 +194,10 @@ public class PlayFabGPGS : MonoBehaviour
 
     #region DISPLAY NAME
 
-    private void SetDisplayName()
+    private void SetDisplayName(string displayName)
     {
         //Display Name Request
-        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = Social.localUser.userName };
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
 
         PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
     }
@@ -206,6 +212,23 @@ public class PlayFabGPGS : MonoBehaviour
     private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
     {
         Debug.Log("Display Name Changed: " + result.DisplayName);
+
+        PlayerPrefs.SetString("DISPLAYNAME_GPGS", result.DisplayName);
+    }
+
+    private void ResetDisplayName()
+    {
+        // Reset as Facebook DisplayName
+        if (PlayerPrefs.HasKey("DISPLAYNAME_FACEBOOK"))
+        {
+            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_FACEBOOK"));
+        }
+
+        // Reset as Guest DisplayName
+        else
+        {
+            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
+        }
     }
 
     #endregion

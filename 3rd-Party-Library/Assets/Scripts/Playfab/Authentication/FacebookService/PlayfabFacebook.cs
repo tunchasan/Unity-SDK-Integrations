@@ -1,14 +1,13 @@
 ﻿// Import statements introduce all the necessary classes for this example.
+
 using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
-using System;
 using System.Collections.Generic;
-using Facebook.MiniJSON;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
 
-public class PlayfabFacebook : MonoBehaviour
+public class PlayfabFacebook
 {
     // Holds the latest message to be displayed on the screen.
     private string _debugMessage;
@@ -292,7 +291,7 @@ public class PlayfabFacebook : MonoBehaviour
 
         {
             //Request Facebook DisplayName
-            this.DisplayName();
+            this.GetFacebookDisplayName();
 
             Debug.Log("Account Linked With Facebook Succeed.");
         },
@@ -310,6 +309,9 @@ public class PlayfabFacebook : MonoBehaviour
         }, (result) =>
 
         {
+            // Reset Display Name for Facebook
+            this.ResetDisplayName();
+
             Debug.Log("Account UnLinked With Facebook Succeed.");
         },
 
@@ -321,7 +323,8 @@ public class PlayfabFacebook : MonoBehaviour
 
     #region DISPLAY NAME
 
-    private void DisplayName()
+    // Get DisplayName Request to Facebook
+    private void GetFacebookDisplayName()
     {
         FB.API("me?fields=name", HttpMethod.GET, GetFacebookData);
     }
@@ -333,10 +336,8 @@ public class PlayfabFacebook : MonoBehaviour
         {
             string fbName = result.ResultDictionary["name"].ToString();
 
-            //Display Name Request
-            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = fbName };
-
-            PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+            //PlayFab Set DisplayName Request
+            this.SetDisplayName(fbName);
         }
 
         else
@@ -345,6 +346,15 @@ public class PlayfabFacebook : MonoBehaviour
             DebugLogHandler("Facebook Failed: " + result.Error + "\n" + result.RawResult, true);
         }
         
+    }
+
+    // Set DisplayName Request to PlayFab
+    private void SetDisplayName(string displayName)
+    {
+        //Display Name Request
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
+
+        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
     }
 
     //Display Name Error Callback
@@ -357,6 +367,24 @@ public class PlayfabFacebook : MonoBehaviour
     private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
     {
         Debug.Log("Display Name Changed: " + result.DisplayName);
+
+        PlayerPrefs.SetString("DISPLAYNAME_FACEBOOK", result.DisplayName);
+    }
+
+    // Reset DisplayName
+    private void ResetDisplayName()
+    {
+        // Reset as GPGS DisplayName
+        if (PlayerPrefs.HasKey("DISPLAYNAME_GPGS"))
+        {
+            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GPGS"));
+        }
+
+        // Reset as Guest DisplayName
+        else
+        {
+            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
+        }
     }
 
     #endregion

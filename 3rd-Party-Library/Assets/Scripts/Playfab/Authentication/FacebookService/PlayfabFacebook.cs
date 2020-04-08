@@ -309,6 +309,8 @@ public class PlayfabFacebook
         }, (result) =>
 
         {
+            FB.LogOut(); // Logout Facebook
+
             // Reset Display Name for Facebook
             this.ResetDisplayName();
 

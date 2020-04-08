@@ -307,7 +307,15 @@ public class PlayfabFacebook
         // Specified Error Code
         if(error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // Facebook Acc. is already used by another user.
         {
-            Debug.LogError("The Facebook Account is already used by another user.");
+            Debug.LogWarning("The Facebook Account is already used by another user.");
+
+            AccountRecoverWithFacebook(error); // Account Recover with Facebook Account.
+
+        }
+
+        else
+        {
+            Debug.LogError(error.GenerateErrorReport());
         }
     }
 
@@ -335,6 +343,8 @@ public class PlayfabFacebook
     #endregion
 
     #region DISPLAY NAME
+
+    /*********************************************SET*******************************************/
 
     // Get DisplayName Request to Facebook
     private void GetFacebookDisplayName()
@@ -384,6 +394,8 @@ public class PlayfabFacebook
         PlayerPrefs.SetString("DISPLAYNAME_FACEBOOK", result.DisplayName);
     }
 
+    /******************************************RESET**********************************************/
+
     // Reset DisplayName
     private void ResetDisplayName()
     {
@@ -392,14 +404,55 @@ public class PlayfabFacebook
         // Reset as GPGS DisplayName
         if (PlayerPrefs.HasKey("DISPLAYNAME_GPGS"))
         {
-            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GPGS"));
+            ResetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GPGS"));
         }
 
         // Reset as Guest DisplayName
         else
         {
-            SetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
+            ResetDisplayName(PlayerPrefs.GetString("DISPLAYNAME_GUEST"));
         }
+    }
+
+    private void ResetDisplayName(string displayName)
+    {
+        //Display Name Request
+        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = displayName };
+
+        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnResetDisplayNameSuccess, OnResetDisplayNameFailure);
+    }
+
+    // Reset DisplayName Error Callback
+    private void OnResetDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError(error.GenerateErrorReport());
+    }
+
+    // Reset DisplayName Callback
+    private void OnResetDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
+    }
+
+    /************************************************************************************************/
+
+    #endregion
+
+    #region ACCOUNT RECOVER
+
+    private string GetRecoverAccountData()
+    {
+
+
+        return "";
+    }
+
+    private void AccountRecoverWithFacebook(PlayFabError error)
+    {
+        // Get Recover Account Unique Information to Show Player
+        GetRecoverAccountData();
+
+
     }
 
     #endregion

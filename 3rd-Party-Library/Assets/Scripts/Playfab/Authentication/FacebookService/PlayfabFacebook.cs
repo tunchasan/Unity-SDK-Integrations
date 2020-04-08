@@ -463,7 +463,7 @@ public class PlayfabFacebook
         /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
         and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
 
-        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token, InfoRequestParameters = InfoRequest() },
+        PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { AccessToken = token, InfoRequestParameters = InfoRequest() },
             OnPlayfabFacebookRecoverComplete, OnPlayfabFacebookAuthFailed);
     }
 
@@ -511,7 +511,7 @@ public class PlayfabFacebook
         RecoverPopUpMenu(false);
 
         // Login Accout
-        Debug.Log("Account Recovering...");
+        Debug.Log("Account Recovered.");
 
         //
     }

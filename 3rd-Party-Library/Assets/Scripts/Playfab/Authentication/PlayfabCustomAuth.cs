@@ -5,7 +5,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System;
 
-public class PlayfabCustomAuth : MonoBehaviour
+public class PlayfabCustomAuth
 {
     private string _userEmail;
 
@@ -166,23 +166,7 @@ public class PlayfabCustomAuth : MonoBehaviour
     {
         Debug.Log("Login with DeviceID request completed Succesfuly.");
 
-        //Display Name Request
-        var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = "Guest " + result.PlayFabId };
-
-        PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
-            
-    }
-
-    //Display Name Error Callback
-    private void OnDisplayNameFailure(PlayFabError error)
-    {
-        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
-    }
-
-    //Display Name Succeed Callback
-    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
-    {
-        Debug.Log("Display Name Changed: " + result.DisplayName);
+        SetDisplayName(result.PlayFabId); // Set Display Name
     }
 
     //Get Mobile Unique ID
@@ -304,6 +288,38 @@ public class PlayfabCustomAuth : MonoBehaviour
         OnLoginMobileFailure); // Error Callback
 
 #endif
+    }
+
+    #endregion
+
+    #region DISPLAY - NAME
+
+    //Set PlayFab Display Name
+    private void SetDisplayName(string PlayFabID)
+    {
+        if (!PlayerPrefs.HasKey("DISPLAYNAME_GUEST"))
+        {
+            //Display Name Request
+            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = "Guest " + PlayFabID };
+
+            PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+
+        }
+        
+    }
+
+    //Display Name Error Callback
+    private void OnDisplayNameFailure(PlayFabError error)
+    {
+        Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
+    }
+
+    //Display Name Succeed Callback
+    private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
+    {
+        Debug.Log("Display Name Changed: " + result.DisplayName);
+
+        PlayerPrefs.SetString("DISPLAYNAME_GUEST", result.DisplayName);
     }
 
     #endregion

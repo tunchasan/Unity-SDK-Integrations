@@ -83,12 +83,14 @@ android {
     }
 
 buildTypes {
+
         debug {
  minifyEnabled true
  useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
             jniDebuggable true
         }
+
         release {
  minifyEnabled true
  useProguard true

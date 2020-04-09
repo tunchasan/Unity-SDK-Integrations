@@ -22,8 +22,7 @@ public class PlayFabGPGS
         // Note: If you also want to capture the player's Google email, be sure to add
         // .RequestEmail() to the PlayGamesClientConfiguration
         PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-        .RequestEmail()
-        .RequestIdToken()
+        .AddOauthScope("profile")
         .RequestServerAuthCode(false)
         .Build();
         
@@ -53,7 +52,7 @@ public class PlayFabGPGS
         Social.localUser.Authenticate((bool success) => {
 
             if (success) // If "Auth" is success
-            {   
+            {
                 //Get "ServerAuthCode" and assing it.
                 string serverAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode();
 
@@ -66,7 +65,7 @@ public class PlayFabGPGS
 
                 else
                 {
-                    //Login in with PlayFab
+                    // Login in with PlayFab
                     LoginWithGoogleAccout(serverAuthCode);
                 }
                 
@@ -80,7 +79,7 @@ public class PlayFabGPGS
         });
     }
 
-    //GPGS login data with PlayFab Integration.
+    // GPGS login data with PlayFab Integration.
     public void LoginWithGoogleAccout(string authCode)
     {
         //PlayFab Google Account Integration
@@ -127,6 +126,8 @@ public class PlayFabGPGS
     private void OnPlayFabError(PlayFabError error)
     {
         PlayerPrefs.SetString("GPGSAUTH", "failed"); // PlayFab GPGS Auth failed.
+
+        Debug.LogError(error.Error);
 
         Debug.LogError("GPGS PlayFab - Error Report: " + error.GenerateErrorReport());
     }
@@ -302,42 +303,12 @@ public class PlayFabGPGS
 
     #region ACCOUNT RECOVER
 
-    // Recover Account with GPGS
-    private void RecoverPlayFabGPGSLogin()
-    {
-        //PlayFab Google Account Integration
-        PlayFabClientAPI.LoginWithGoogleAccount(new LoginWithGoogleAccountRequest()
-        {
-            TitleId = PlayFabSettings.TitleId,
-
-            ServerAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode(),
-
-        }, (result) =>
-
-        {
-            Debug.Log("Do you want to load " + result.InfoResultPayload.PlayerProfile.DisplayName + "'s game ?");
-
-            Debug.LogWarning("Warning: progress in the current game will be saved. You can load the current game by next login.");
-        },
-
-        OnPlayFabError); // Error Callback
-    }
-
-    // Get recover account's player data.
-    private void GetRecoverAccountData()
-    {
-        // Clear Current Token and Logout From PlayFab
-        PlayFabClientAPI.ForgetAllCredentials();
-
-        // Login Recoverable Acc. with Google
-        RecoverPlayFabGPGSLogin();
-    }
-
     // Initialize Recover Acc. Action
     private void AccountRecoverWithGPGS()
     {
-        // Get Recover Account Unique Information to Show Player
-        GetRecoverAccountData();
+        Debug.Log("Do you want to load " + Social.localUser.userName + "'s game ?");
+
+        Debug.LogWarning("Warning: progress in the current game will be saved. You can load the current game by next login.");
 
         // Create PopUp
         RecoverPopUpMenu(true);
@@ -356,11 +327,13 @@ public class PlayFabGPGS
         // Hidden PopUp Menu
         RecoverPopUpMenu(false);
 
-        LoggedIn = true; // Logged in user
+        PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string serverAuthCode) =>
+        {
+            Debug.Log("New Server Auth Code: " + serverAuthCode);
 
-        PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
-
-        Debug.Log("Account Recovered...");
+            //Login in with PlayFab
+            LoginWithGoogleAccout(serverAuthCode);
+        });
     }
 
     // User dont want to recover accout, Keep current.  *** No Click Event ***
@@ -369,20 +342,11 @@ public class PlayFabGPGS
         // Hidden PopUp Menu
         RecoverPopUpMenu(false);
 
-        // Keep Current
-
-        // Clear Current Token and Logout From PlayFab
-        PlayFabClientAPI.ForgetAllCredentials();
-
         // Logout from PlayGames
         PlayGamesPlatform.Instance.SignOut();
 
         LoggedIn = false; // Logged in user -> false
 
-        // Re-Connect PlayFab with DeviceID
-        PlayfabCustomAuth customAuth = new PlayfabCustomAuth();
-
-        customAuth.AnonymousLogin(false);
     }
 
     // PopUp Text

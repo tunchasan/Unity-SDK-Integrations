@@ -486,6 +486,7 @@ public class PlayfabFacebook
         // Login Recoverable Acc. with Facebook
         RecoverPlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString);
     }
+    
 
     // Initialize Recover Acc. Action
     private void AccountRecoverWithFacebook()

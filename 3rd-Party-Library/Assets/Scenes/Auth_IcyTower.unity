@@ -601,7 +601,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Connect GPGS
+  m_Text: Connect Facebook
 --- !u!222 &253169285
 CanvasRenderer:
   m_ObjectHideFlags: 0

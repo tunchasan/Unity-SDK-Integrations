@@ -15,7 +15,7 @@ public class PlayFabGPGS
 
     // Store loggedIn status
     private bool LoggedIn;
-
+  
     public PlayFabGPGS(GameObject _PopUpMenu)
     {
         // The following grants profile access to the Google Play Games SDK.

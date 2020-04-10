@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Library.FaceBook;
+using Library.Authentication.GooglePlay;
+using Library.Authentication;
 
 public class IT_Authentication : MonoBehaviour
 {
@@ -13,6 +16,10 @@ public class IT_Authentication : MonoBehaviour
     public GameObject _recoverPopUpFB;
 
     public GameObject _recoverPopUpGPGS;
+
+    public Text _recoverPopUpFBText;
+
+    public Text _recoverPopUpGPGSText;
 
     private void Awake()
     {
@@ -93,9 +100,10 @@ public class IT_Authentication : MonoBehaviour
         _gpgsAuth.DontRecoverAccount();
     }
 
-    public string GetRecoverWithFacebookText()
+
+    public void GetRecoverWithGPGSText()
     {
-        return _facebookAuth.GetRecoverPopUpText();
+        _recoverPopUpGPGSText.text = _gpgsAuth.GetRecoverPopUpText();
     }
 
 }

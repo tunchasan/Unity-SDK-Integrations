@@ -1,41 +1,61 @@
-﻿using GoogleMobileAds.Api;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Library.Advertisement.Admob
-{
-public class AdmobADs : MonoBehaviour
-{
-    private string appID;
-
-    [Header("Google Admob Service Configuration")]
-    public string _AndroidAppID;
-
-    public string _IOSAppID;
-
-    //Initialize some stuff.
-    private void Start()
+{    
+     /// <summary>
+     /// AdmobADs which provide the full range of Google Admob features available to the library - banner, interstitial and rewarded
+     /// video ads for Android and IOS.
+     /// </summary>
+    
+    public class AdmobADs : MonoBehaviour
     {
-        PlatformHandler();
+        private string appID;
 
-        // Initialize the Google Mobile Ads SDK. When publish our app, we should use it.
-        //MobileAds.Initialize(appID);
+        /// <summary>
+        /// Both fields represent specific platform unique App ID. We initialize mobile ads services with this ID.
+        /// </summary>
+        /// <summary>
+
+        /// <summary>
+        /// Stores unique app id for Android. When we select platform as android, we initialize our ads with this id.
+        /// </summary>
+        [Header("Google Admob Service Configuration")]
+        public string _AndroidAppID;
+
+        /// <summary>
+        /// Stores unique app id for IOS. When we select platform as ios, we initialize our ads with this id.
+        /// </summary>
+        public string _IOSAppID;
+
+        /// <summary>
+        ///  Initialize Services depending on platform with unique appID.
+        /// </summary>
+        
+        private void Start()
+        {
+            /// 
+            PlatformHandler();
+
+            /// When we publish the app, we should initialize MobileAds with appID.
+            // MobileAds.Initialize(appID);
+        }
+
+        /// <summary>
+        /// PlatformHandler sets appID by depending on the platform.
+        /// </summary>
+        public void PlatformHandler()
+        {
+            #if UNITY_ANDROID  // For Android
+                      appID = _AndroidAppID;
+            #elif UNITY_IPHONE // For IOS
+                      appID = _IOSAppID;
+            #else              // For Other Platform
+                      appID = "unexpected_platform";
+            #endif
+        }
+
     }
 
-    //Handle APPID depends on Platform.
-    public void PlatformHandler()
-    {
-        #if UNITY_ANDROID
-                  appID = _AndroidAppID;
-        #elif UNITY_IPHONE
-                  appID = _IOSAppID;
-        #else
-                  appID = "unexpected_platform";
-        #endif
-    }
-
-}
 }
 
 

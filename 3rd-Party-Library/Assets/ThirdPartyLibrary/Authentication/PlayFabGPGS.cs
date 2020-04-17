@@ -44,9 +44,7 @@ namespace Library.Authentication.GooglePlay
 
             // Initialize Game Object
             _recoverPopUpMenu = _PopUpMenu;
-
-            //Remember User
-            RememberGoogleAccount();
+            
         }
 
         #region AUTHENTICATE
@@ -98,28 +96,16 @@ namespace Library.Authentication.GooglePlay
 
             }, (result) =>
 
-            {
-                Debug.Log("Signed In as " + result.PlayFabId);
-
+            {   
                 string entityID = result.EntityToken.Entity.Id;
 
                 string entityType = result.EntityToken.Entity.Type;
 
+                Debug.Log("[6] Logged in as " + Social.localUser.userName);
+
                 LoggedIn = true; // Logged in user
 
                 PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
-
-                /********************************************************************************************/
-                /*CLOUD SAVE*/
-
-                //Determinete the cloud Service Type in { "FILE", "STATISTIC", "OBJECT" }
-                /*string cloudMethodType = (CSPlayFabMaster.cloudType.DATATABLE)
-                                          .ToString();
-
-                //CloudSave Instance
-                CSPlayFabMaster cloud = new CSPlayFabMaster(entityID, entityType, cloudMethodType);*/
-
-                /********************************************************************************************/
 
             },
 
@@ -142,7 +128,7 @@ namespace Library.Authentication.GooglePlay
         #region RECOVER
 
         //Remember User whose signed in with Google Acc.
-        private void RememberGoogleAccount()
+        public void RememberGoogleAccount()
         {
             if (LoggedInBefore())
             {

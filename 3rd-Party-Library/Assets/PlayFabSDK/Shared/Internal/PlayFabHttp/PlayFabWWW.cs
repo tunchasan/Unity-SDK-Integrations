@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 #else
 using UnityEngine.Experimental.Networking;
-using UnityEngine.Networking;
 #endif
 #if !UNITY_WSA && !UNITY_WP8
 using Ionic.Zlib;

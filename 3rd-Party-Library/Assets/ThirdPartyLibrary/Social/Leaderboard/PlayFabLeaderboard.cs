@@ -1,9 +1,6 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Library.Social.Leaderboard
@@ -32,17 +29,17 @@ namespace Library.Social.Leaderboard
         }
 
         ///FOR TEST, It will be PRIVATE
-        public string _statisticName;
+        private static List <StatisticUpdate> _statisticField;
 
         // Configrate unique player statistic info. for Leaderboard
-        public void InitializeLeaderBoard(string leaderboardFieldName)
+        public static void InitializeLeaderBoards(List <StatisticUpdate> leaderboardFieldNames)
         {
             Debug.Log("{ PlayFab LeaderBoard } Service is initializing..." + " { " + " } ");
 
             //Assign the Leaderboard name to class field.
-            //this._statisticName = leaderboardFieldName;
+            _statisticField = leaderboardFieldNames;
 
-            hasLeaderboardData(); // Initialization...
+            AddStatisticFieldsToPlayer(); // Initialization...
         }
 
         #region DATA SUBMISSION 
@@ -51,35 +48,47 @@ namespace Library.Social.Leaderboard
         /// The function that handles Player Statistic Request for Leaderboard Position
         /// </summary>
 
-        public void SubmitScore(int score)
+        public static void SubmitScore(int score, string leaderboardName)
         {
             PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
             {
                 Statistics = new List<StatisticUpdate> {
 
-            new StatisticUpdate {
+                    new StatisticUpdate {
 
-                StatisticName = _statisticName, // Statistic Field' Name
+                        StatisticName = leaderboardName, // Statistic Field' Name
 
-                Value = score //The Value
-            }
+                        Value = score //The Value
+                    }
+
+                }
+    
+            }, result => OnStatisticsUpdated(result), FailureCallback);
 
         }
+
+        /// </summary>
+        /// The function that handles Player Statistics Request
+        /// </summary>
+
+        public static void SubmitScores(List<StatisticUpdate> leaderboards)
+        {
+            PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
+            {
+                Statistics = leaderboards
 
             }, result => OnStatisticsUpdated(result), FailureCallback);
 
         }
 
         // Statistic Update Success Request Handler
-        private void OnStatisticsUpdated(UpdatePlayerStatisticsResult updateResult)
+        private static void OnStatisticsUpdated(UpdatePlayerStatisticsResult updateResult)
         {
-            Debug.Log("Successfully submitted high score");
-
-            RequestLeaderboardWorld();
+            Debug.Log("Successfully submitted high scores");
         }
 
         // Statistic Update Request Failed Handler
-        private void FailureCallback(PlayFabError error)
+        private static void FailureCallback(PlayFabError error)
         {
             Debug.LogWarning("Something went wrong with your API call. Here's some debug information:");
 
@@ -94,7 +103,7 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified range ( startPosition - maxResultCount )
         // GLOBAL //
-        public List<ResultPlayer> RequestLeaderboardGlobal(int startPosition, int maxResultCount)
+        public static List<ResultPlayer> RequestLeaderboardGlobal(int startPosition, int maxResultCount, string leaderboardName)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -104,7 +113,7 @@ namespace Library.Social.Leaderboard
 
             PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
             {
-                StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
 
                 StartPosition = startPosition, // Position in the leaderboard to start this listing(defaults to the first entry).
 
@@ -143,7 +152,7 @@ namespace Library.Social.Leaderboard
         }
 
         //Request Failed - Debug and Display the issue in the Console.
-        private void LeaderboardFailureCallbackk(PlayFabError error)
+        private static void LeaderboardFailureCallbackk(PlayFabError error)
         {
             Debug.LogWarning("LeaderBoard Data < GET REQUEST > is Failed: ");
 
@@ -152,7 +161,7 @@ namespace Library.Social.Leaderboard
 
         /*******************************************************************************************************************************/
 
-        public void RequestLeaderboardWorld() // FOR TEST
+        public static void RequestLeaderboardWorld(string leaderboardName) // FOR TEST
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -170,7 +179,7 @@ namespace Library.Social.Leaderboard
 
             PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
             {
-                StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
 
                 StartPosition = 0, // Position in the leaderboard to start this listing(defaults to the first entry).
 
@@ -215,7 +224,7 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
         // LOCAL - ONLY FRIENDS //
-        public List<ResultPlayer> RequestLeaderboardOnlyFriends(int maxResultCount)
+        public static List<ResultPlayer> RequestLeaderboardOnlyFriends(int maxResultCount, string leaderboardName)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -225,7 +234,7 @@ namespace Library.Social.Leaderboard
 
             PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
             {
-                StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
 
                 MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
@@ -268,7 +277,7 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
         // LOCAL - INGAME FRIENDS + FACEBOOK FRIENDS //
-        public List<ResultPlayer> RequestLeaderboardFacebookandFriends(int maxResultCount)
+        public static List<ResultPlayer> RequestLeaderboardFacebookandFriends(int maxResultCount, string leaderboardName)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -278,7 +287,7 @@ namespace Library.Social.Leaderboard
 
             PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
             {
-                StatisticName = _statisticName, // Statistic used to rank players for this leaderboard.
+                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
 
                 MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
@@ -326,7 +335,7 @@ namespace Library.Social.Leaderboard
         #region LEADERBOARD VALIDATION
 
         //Get Player Statistic Data for Validation Player
-        public void hasLeaderboardData()
+        private static void AddStatisticFieldsToPlayer()
         {
             PlayFabClientAPI.GetPlayerStatistics(new GetPlayerStatisticsRequest(),
 
@@ -339,45 +348,27 @@ namespace Library.Social.Leaderboard
         }
 
         //Request Failed - Debug and Display the issue in the Console.
-        private void OnGetStatisticError(PlayFabError error)
+        private static void OnGetStatisticError(PlayFabError error)
         {
             Debug.LogError("LeaderBoard Error: " + error.GenerateErrorReport());
         }
 
         //Request Succeed - Get the Statistic Data
-        private void OnGetStatisticSuccess(GetPlayerStatisticsResult result)
+        private static void OnGetStatisticSuccess(GetPlayerStatisticsResult statisticsResult)
         {
-            bool isValidUser = false; // Validation Value
-
-            //Check each statistic in the list to see if it's the one you want
-            foreach (var eachStat in result.Statistics)
+            PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
             {
-                if (eachStat.StatisticName.Equals(_statisticName))
-                {
-                    Debug.Log("Value: " + eachStat.Value);
+                Statistics = _statisticField // Statictic Fields
 
-                    isValidUser = true; // Validation succeed.
+            }, result => OnStatisticsUpdated(result), FailureCallback);
 
-                    RequestLeaderboardWorld();
-
-                    break;
-                }
-
-            }
-
-            if (!isValidUser) // Invalid User -> So we need to initialize "User Statistic Data" for Leadearboard Usage...
-            {
-                SubmitScore(0); // Assign 0 and Finalize the Validation
-
-                Debug.Log("Validation Succeed.");
-            }
-
+            Debug.Log("Validation Succeed.");
         }
 
         #endregion
 
         // PlayerProfileViewConstraints Initializer for Leaderboard User Datas.
-        private PlayerProfileViewConstraints GetProfileViewObject()
+        private static PlayerProfileViewConstraints GetProfileViewObject()
         {
             PlayerProfileViewConstraints profile = new PlayerProfileViewConstraints();
 

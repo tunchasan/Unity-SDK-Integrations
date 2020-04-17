@@ -1,6 +1,5 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
-using PlayFab.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -170,6 +169,33 @@ namespace Library.Purchasing
             // Pass in the product id to initiate purchase
             m_StoreController.InitiatePurchase(productId);
         }
+
+        // Non - receipt purchase.
+        public static void NonReceiptPurchase(string catalogVersion, string itemId, int price, string currencyCode)
+        {
+            PlayFabClientAPI.PurchaseItem(new PurchaseItemRequest
+            {
+                CatalogVersion = catalogVersion, // Catalog DisplayName
+
+                ItemId = itemId, // Item Instanciate Unique ID
+
+                Price = price, // Item Price
+
+                VirtualCurrency = currencyCode // Currency Code like "GM"
+
+            }, (result) =>
+
+            {
+                Debug.Log("Purchase succeed: " + result.Items);
+
+            }, (error) =>
+
+            {
+                Debug.LogError("Purchase failed: " + error.GenerateErrorReport());
+            });
+
+        }
+
     }
 
     // The following classes are used to deserialize JSON results provided by IAP Service

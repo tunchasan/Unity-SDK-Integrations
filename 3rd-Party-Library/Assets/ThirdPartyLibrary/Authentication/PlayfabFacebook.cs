@@ -25,10 +25,13 @@ namespace Library.FaceBook
 
         public PlayfabFacebook(GameObject PopUpMenu)
         {
-            DebugLogHandler("Initializing Facebook..."); // logs the given message and displays it on the screen using OnGUI method
+            //DebugLogHandler("Initializing Facebook..."); // logs the given message and displays it on the screen using OnGUI method
 
             // This call is required before any other calls to the Facebook API. We pass in the callback to be invoked once initialization is finished
-            FB.Init(OnFacebookInitialized);
+            FB.Init();
+
+            // In the "OnFacebookInitialized" function didn't invoke by FB.Init, we invoke it here.
+            OnFacebookInitialized();
 
             // PopMenu Initialize
             _recoverPopUpMenu = PopUpMenu;

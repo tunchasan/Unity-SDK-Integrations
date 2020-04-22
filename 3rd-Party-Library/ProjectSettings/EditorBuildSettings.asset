@@ -14,7 +14,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/IAPP.unity
     guid: 8b6ecdf7829a59d42af90b491408df38
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Auth_IcyTower.unity
     guid: fae925bcf3a5185498a37b7e50bd1073
+  - enabled: 1
+    path: Assets/Scenes/Test.unity
+    guid: 78b012febe00deb4a8e9554a6d485849
   m_configObjects: {}

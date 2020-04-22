@@ -5,31 +5,37 @@ namespace Library.Advertisement.UnityAd
 {
     using UnityEngine.Advertisements;
 
+    /// <summary>
+    /// The class provides the full range of Unity Banner advertisements. Also gives chance to manage banner advertisement 
+    /// deep properties such as position.
+    /// </summary>
     public class BannerAD : UnityADs
     {
-        [Header("Banner AD Properties")]
-        public string BannerAdID;
+        /**********************************************************************/
 
-        public BannerPosition _BannerPosition;
+        /// <summary>
+        /// Defines unique video advertisement id.
+        /// Banner advertisement's requests are managed on this id.
+        /// </summary>
+        public const string BannerAdID = "BannerAd";   /* <-------------------*/
 
-        // Implement a function for showing a Banner ad:
-        public void ShowBannerAD()
+        /**********************************************************************/
+
+        /// <summary>
+        /// Defines banner advertisements ingame position such as TOP_LEFT, TOP_CENTER, TOP_RIGHT, BOTTOM_LEFT,
+        /// BOTTOM_CENTER, BOTTOM_RIGHT and CENTER.
+        /// </summary>
+        private BannerPosition _BannerPosition = BannerPosition.BOTTOM_CENTER;
+
+        /// <summary>
+        /// Creates a request that handles displaying and loading banner ads. Then sends the request to Unity advertisement server.
+        /// We catch upcoming information by the request's callbacks.
+        /// Also the method helps us to manage banner advertisement's properties. ( Banner Position )
+        /// </summary>
+        public void LoadAndShowBannerAd()
         {
             //Update "activeAD" Value
-            activeAD = BannerAdID;
-
-            //Start "ShowBannerAdReady" Coroutine
-            StartCoroutine(ShowBannerAdReady());
-        }
-
-        // Implement an coroutine that controls the Advertisement is ready or not 
-        IEnumerator ShowBannerAdReady()
-        {
-            //Start the while loop for 
-            while (!Advertisement.IsReady(BannerAdID))
-            {
-                yield return new WaitForSeconds(_AdControlRate);
-            }
+            _activeAD = BannerAdID;
 
             //Set Position the Banner
             Advertisement.Banner.SetPosition(_BannerPosition);
@@ -38,16 +44,33 @@ namespace Library.Advertisement.UnityAd
             Advertisement.Banner.Show(BannerAdID);
 
             Debug.Log("HandleBannerAdDisplayed event received");
-
-            //Stop "ShowBannerAdReady" Coroutine
-            StopCoroutine(ShowBannerAdReady());
         }
 
-        // Called when an ad request has successfully loaded.
+        /// <summary>
+        /// Makes banner ads. visibility to false. The banner ads. can be shown again by using ShowBannerAD method.
+        /// </summary>
+        public void HideBannerAD()
+        {
+            Advertisement.Banner.Hide();
+        }
+
+        /// <summary>
+        /// Modifies current banner advertisement position.
+        /// </summary>
+        public void SetBannerPosition(BannerPosition position)
+        {
+            Advertisement.Banner.SetPosition(position);
+
+            _BannerPosition = position;
+        }
+
+        /// <summary>
+        /// Called when an ad request has successfully loaded.
+        /// </summary>
         public override void OnUnityAdsReady(string placementId)
         {
             // Control the activeAD value with BannerAdID
-            if (activeAD == BannerAdID)
+            if (_activeAD == BannerAdID)
             {
                 if (placementId == BannerAdID)
                 {
@@ -56,11 +79,13 @@ namespace Library.Advertisement.UnityAd
             }
         }
 
-        // Called when an ad has Finished, Skipped or Failed.
+        /// <summary>
+        /// Called when an ad has Finished, Skipped or Failed.
+        /// </summary>
         public override void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
         {
             // Control the activeAD value with BannerAdID
-            if (activeAD == BannerAdID)
+            if (_activeAD == BannerAdID)
             {
                 // Define conditional logic for each ad completion status:
                 if (showResult == ShowResult.Finished)
@@ -81,22 +106,26 @@ namespace Library.Advertisement.UnityAd
             }
         }
 
-        // Called when an ad request be concluded by an error.
+        /// <summary>
+        /// Called when an ad request be concluded by an error.
+        /// </summary>
         public override void OnUnityAdsDidError(string message)
         {
             // Control the activeAD value with BannerAdID
-            if (activeAD == BannerAdID)
+            if (_activeAD == BannerAdID)
             {
                 // Log the error.
                 Debug.LogError("HandleBannerAdError event received");
             }
         }
 
-        // Called when the end-users triggers an ad.
+        /// <summary>
+        /// Called when the end-users triggers an ad.
+        /// </summary>  
         public override void OnUnityAdsDidStart(string placementId)
         {
             // Control the activeAD value with BannerAdID
-            if (activeAD == BannerAdID)
+            if (_activeAD == BannerAdID)
             {
                 // Optional actions to take when the end-users triggers an ad.
                 Debug.Log("HandleBannerOpening event received");

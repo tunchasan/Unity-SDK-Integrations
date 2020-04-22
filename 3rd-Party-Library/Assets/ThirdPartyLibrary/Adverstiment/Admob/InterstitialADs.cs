@@ -1,31 +1,59 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using GoogleMobileAds.Api;
 using System;
 
 namespace Library.Advertisement.Admob
 {
+    /// <summary>
+    /// The class provides the full range of Admob interstitial advertisements available to the library.
+    /// </summary>
     public class InterstitialADs : AdmobADs
     {
-        private InterstitialAd _InterstitialAD;
+        /// <summary>
+        /// Core object of the class, all requests is doing with this object.
+        /// </summary>
+        private InterstitialAd _InterstitialAD = null;
 
+        /// <summary>
+        /// Defines unique interstitial advertisement id.
+        /// Interstitial advertisement's requests are managed on this id.
+        /// </summary>
         private string _Interstitial_ID;
 
-        [Header("Interstitial AD Properties")]
-        public string _AndroidInterstitialAdID;
+        /*************************************************************************************************************************/
 
-        public string _IOSInterstitialAdID;
+        /// <summary>
+        /// Admob advertisements request only can be concluded as success with right identifier. The identifiers differ on ios and 
+        /// android. Interstitial advertisement request are managed on this identifiers.
+        /// </summary>
+        private const string _AndroidInterstitialAdID = "ca-app-pub-3940256099942544/1033173712";     /* <---------------------- */
 
-        //Request Banner depends on platforms and Load the AD.
-        public void RequestInterstitial()
+        /// <summary>
+        /// Interstitial advertisement request are managed on this id.
+        /// </summary>
+        private const string _IOSInterstitialAdID = "ca-app-pub-3940256099942544/4411468910";    /* <--------------------------- */
+
+        /*************************************************************************************************************************/
+
+        /// <summary>
+        /// Prepares service for first success advertisement request.
+        /// </summary>
+        public InterstitialADs()
         {
             //Detect Platform
             PlatformADHandler();
+        }
 
+        /// <summary>
+        /// Creates a request that handles loading interstitial ads. Then sends the request to Admob advertisement server.
+        /// Also manages the action events subscription status for current advertisement.
+        /// </summary>
+        public void LoadInterstitialAd()
+        {
             //Create & Assign New Instance of InterstitialAD
             _InterstitialAD = new InterstitialAd(_Interstitial_ID);
 
+            // Subcription
             HandleInterstitialADEvents(true);
 
             //FOR REAL APP
@@ -38,11 +66,45 @@ namespace Library.Advertisement.Admob
             _InterstitialAD.LoadAd(adRequest);
         }
 
-        //Handle Interstitial_ID depends on Platform.
-        public void PlatformADHandler()
+        /// <summary>
+        /// Display current interstitial advertisement
+        /// </summary>
+        public void ShowInterstitialAd()
+        {
+            if (_InterstitialAD.IsLoaded()) {
+                
+                _InterstitialAD.Show(); 
+            }
+
+            else {
+
+                Debug.Log("Failed: There is no loaded interstitial ad.");
+            }
+        }
+
+        /// <summary>
+        /// Destroy current interstitial advertisement
+        /// </summary>
+        public void DestroyInsterstitialAd()
+        {
+            _InterstitialAD.Destroy(); // Destroy Banner object
+        }
+
+        /// <summary>
+        /// Returns whether rewarded video advertisement is ready to display.
+        /// </summary>
+        public bool IsLoaded()
+        {
+            return _InterstitialAD.IsLoaded();
+        }
+
+        /// <summary>
+        /// Assings unique rewarded advertisement id to _Interstitial_ID. The id is used for initializing interstitial ads.
+        /// </summary>
+        private void PlatformADHandler()
         {
             #if UNITY_ANDROID //ANDROID
-            _Interstitial_ID = _AndroidInterstitialAdID;   // This InterstitialID is for Testing.
+                 _Interstitial_ID = _AndroidInterstitialAdID;   // This InterstitialID is for Testing.
 
             #elif UNITY_IPHONE // IOS
                 _Interstitial_ID = _IOSInterstitialAdID;   // This InterstitialID is for Testing.
@@ -53,52 +115,55 @@ namespace Library.Advertisement.Admob
             #endif
         }
 
-        //Show the InterstitialAD
-        private void DisplayInterstitial()
+        /// <summary>
+        /// Called when an ad request has successfully loaded.
+        /// </summary>
+        private void HandleOnAdLoaded(object sender, EventArgs args)
         {
-            _InterstitialAD.Show();
-        }
-
-        // Called when an ad request has successfully loaded.
-        public void HandleOnAdLoaded(object sender, EventArgs args)
-        {
-            //AD is Loaded, Can Be Shown.
-            DisplayInterstitial();
-
             Debug.Log("HandleAdLoaded event received");
         }
 
-        // Called when an ad request failed to load.
-        public void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        /// <summary>
+        /// Called when an ad request failed to load.
+        /// </summary>
+        private void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             Debug.LogError("HandleFailedToReceiveAd event received with message: "
                             + args.Message);
         }
 
-        // Called when an ad is clicked.
-        public void HandleOnAdOpened(object sender, EventArgs args)
+        /// <summary>
+        /// Called when an ad is clicked.
+        /// </summary>
+        private void HandleOnAdOpened(object sender, EventArgs args)
         {
             Debug.Log("HandleAdOpened event received");
         }
 
-        // Called when the user returned from the app after an ad click.
-        public void HandleOnAdClosed(object sender, EventArgs args)
+        /// <summary>
+        /// Called when the user returned from the app after an ad click.
+        /// </summary>
+        private void HandleOnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("HandleAdClosed event received");
+
         }
 
-        // Called when the ad click caused the user to leave the application.
-        public void HandleOnAdLeavingApplication(object sender, EventArgs args)
+        /// <summary>
+        /// Called when the ad click caused the user to leave the application.
+        /// </summary>
+        private void HandleOnAdLeavingApplication(object sender, EventArgs args)
         {
             Debug.Log("HandleAdLeavingApplication event received");
         }
 
-        //Handle all ADEvents for InterstitialAD
+        /// <summary>
+        /// Handles all advertisement events subscription work
+        /// </summary>
         private void HandleInterstitialADEvents(bool Active)
         {
             if (Active)
             {
-
                 // Called when an ad request has successfully loaded.
                 this._InterstitialAD.OnAdLoaded += HandleOnAdLoaded;
 
@@ -135,18 +200,6 @@ namespace Library.Advertisement.Admob
 
             }
 
-        }
-
-        //If the script is disabled, we deactivete the ADEvents.
-        private void OnDisable()
-        {
-            HandleInterstitialADEvents(false);
-        }
-
-        //Destory the Banner Ad
-        public void DestroyInterstitalAd()
-        {
-            _InterstitialAD.Destroy();
         }
 
     }

@@ -1,40 +1,70 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using GoogleMobileAds.Api;
 using System;
 
 namespace Library.Advertisement.Admob
 {
+    /// <summary>
+    /// The class provides the full range of Admob banner advertisements available to the library.
+    /// Also can be managed banner's deep properties such as type and position.
+    /// </summary>
     public class BannerADs : AdmobADs
     {
+        /// <summary>
+        /// Core object of the class, all requests is doing with this object.
+        /// </summary>
         private BannerView _bannerAD;
 
-        private string _BANNER_ID;
+        /// <summary>
+        /// Defines unique banner advertisement id.
+        /// Banner advertisement's requests are managed on this id.
+        /// </summary>
+        private string _Banner_ID;
 
-        //Enum Types
+        /// <summary>
+        /// Defines banner advertisements ingame types such as 'Banner_320x50', 'MediumRectangle_300x250','SmartBanner'...
+        /// </summary>
         public enum AdType { Banner_320x50, MediumRectangle_300x250, IABBanner_468x60, Leaderboard_728x90, SmartBanner };
 
-        [Header("Banner AD Configuration")]
-        public string _AndroidBannerID;
+        private AdType _BannerType;
 
-        public string _IOSBannerID;
+        /*******************************************************************************************************************/
 
-        [Header("Banner AD Properties")]
-        public AdPosition _BannerPosition;
+        /// <summary>
+        /// Admob advertisements request only can be concluded as success with right identifier. The identifiers differ on 
+        /// ios and android. For Android , '_AndroidBannerID'. Banner advertisement request are managed on this id.
+        /// </summary>
+        private const string _AndroidBannerID = "ca-app-pub-3940256099942544/6300978111";    /* <--------------------------*/
 
-        public AdType _BannerType;
+        /// <summary>
+        /// For Ios , '_IOSBannerID'. Banner advertisement request are managed on this id.
+        /// </summary>
+        private const string _IOSBannerID = "ca-app-pub-3940256099942544/2934735716";    /* <------------------------------*/
 
-        //Request Banner depends on platforms and Load the AD.
-        public void RequestBanner()
+        /*******************************************************************************************************************/
+
+        /// <summary>
+        /// Prepares service for first success advertisement request.
+        /// </summary>
+        public BannerADs()
         {
             //Detect Platform
             PlatformADHandler();
+        }
 
+        /// <summary>
+        /// Creates a request that handles displaying and loading banner ads. Then sends the request to Admob advertisement server.
+        /// We catch upcoming information by the request's callbacks.
+        /// Also the method helps us to manage banner advertisement's properties. ( Banner Position )
+        /// </summary>
+        public void LoadAndShowBannerAd()
+        {
             //Create & Assign New Instance of BannerAD
-            _bannerAD = new BannerView(_BANNER_ID, AdTypeHandler(), _BannerPosition);
+            _bannerAD = new BannerView(_Banner_ID, AdSize.SmartBanner, AdPosition.Bottom);
 
+            // Subscribe events
             HandleBannerADEvents(true);
+
             //FOR TEST APP
             AdRequest adRequest = new AdRequest.Builder().AddTestDevice("2077ef9a63d2b398840261c8221a0c9b").Build();
 
@@ -45,7 +75,17 @@ namespace Library.Advertisement.Admob
             _bannerAD.LoadAd(adRequest);
         }
 
-        //AdType Selection Based On _AdType
+        /// <summary>
+        /// Modifies current banner advertisement position.
+        /// </summary>
+        public void SetBannerPosition(AdPosition position)
+        {
+            _bannerAD.SetPosition(position);
+        }
+
+        /// <summary>
+        /// Detects current banner's choosen type and returns a banner object.
+        /// </summary>
         private AdSize AdTypeHandler()
         {
             switch (_BannerType)
@@ -86,11 +126,13 @@ namespace Library.Advertisement.Admob
 
         }
 
-        //Handle Banner_ID depends on Platform.
-        public void PlatformADHandler()
+        /// <summary>
+        /// Assings unique banner advertisement id to _BANNER_ID. The id is used for initializing banner ads.
+        /// </summary>
+        private void PlatformADHandler()
         {
             #if UNITY_ANDROID //ANDROID
-            _BANNER_ID = _AndroidBannerID;   // This BannerID is for Testing.
+                _Banner_ID = _AndroidBannerID;   // This BannerID is for Testing.
 
             #elif UNITY_IPHONE // IOS
                 _BANNER_ID = _IOSBannerID;   // This BannerID is for Testing.
@@ -101,53 +143,68 @@ namespace Library.Advertisement.Admob
             #endif
         }
 
-        //Show the BannerAD
-        public void DisplayBanner()
+        /// <summary>
+        /// Display current banner advertisement
+        /// </summary>
+        public void ShowBanner()
         {
             _bannerAD.Show();
         }
 
-        //Hide the BannerAD
-        public void HideBanner()
+        /// <summary>
+        /// Destroy current banner advertisement
+        /// </summary>
+        public void DestroyBannerAd()
         {
-            _bannerAD.Hide();
+            _bannerAD.Destroy(); // Destroy Banner object
         }
 
-        // Called when an ad request has successfully loaded.
-        public void HandleOnAdLoaded(object sender, EventArgs args)
+        /// <summary>
+        /// Called when an ad request has successfully loaded.
+        /// </summary>
+        private void HandleOnAdLoaded(object sender, EventArgs args)
         {
-            //AD is Loaded, Can Be Shown.
-            DisplayBanner();
-
             Debug.Log("HandleAdLoaded event received");
+
+            ShowBanner();
         }
 
-        // Called when an ad request failed to load.
-        public void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        /// <summary>
+        /// Called when an ad request failed to load.
+        /// </summary>
+        private void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             Debug.LogError("HandleFailedToReceiveAd event received with message: "
                                 + args.Message);
         }
 
-        // Called when an ad is clicked.
-        public void HandleOnAdOpened(object sender, EventArgs args)
+        /// <summary>
+        /// Called when an ad is clicked.
+        /// </summary>
+        private void HandleOnAdOpened(object sender, EventArgs args)
         {
             Debug.Log("HandleAdOpened event received");
         }
 
-        // Called when the user returned from the app after an ad click.
-        public void HandleOnAdClosed(object sender, EventArgs args)
+        /// <summary>
+        /// Called when the user returned from the app after an ad click.
+        /// </summary>
+        private void HandleOnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("HandleAdClosed event received");
         }
 
-        // Called when the ad click caused the user to leave the application.
-        public void HandleOnAdLeavingApplication(object sender, EventArgs args)
+        /// <summary>
+        /// Called when the ad click caused the user to leave the application.
+        /// </summary>
+        private void HandleOnAdLeavingApplication(object sender, EventArgs args)
         {
             Debug.Log("HandleAdLeavingApplication event received");
         }
 
-        //Handle all ADEvents for BannerAD
+        /// <summary>
+        /// Handles all advertisement events subscription work
+        /// </summary>
         private void HandleBannerADEvents(bool Active)
         {
             if (Active)
@@ -190,18 +247,7 @@ namespace Library.Advertisement.Admob
 
         }
 
-        //If the script is disabled, we deactivete the ADEvents.
-        private void OnDisable()
-        {
-            HandleBannerADEvents(false);
-        }
-
-        //Destory the Banner Ad
-        public void DestoryBanner()
-        {
-            _bannerAD.Destroy();
-        }
-
     }
+
 }
 

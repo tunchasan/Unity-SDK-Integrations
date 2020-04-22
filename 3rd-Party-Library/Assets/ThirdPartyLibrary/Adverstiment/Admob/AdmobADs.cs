@@ -7,8 +7,11 @@ namespace Library.Advertisement.Admob
      /// video ads for Android and IOS.
      /// </summary>
     
-    public class AdmobADs : MonoBehaviour
+    public abstract class AdmobADs
     {
+        /// <summary>
+        /// Stores application id based on platform.
+        /// </summary>
         private string appID;
 
         /// <summary>
@@ -16,24 +19,26 @@ namespace Library.Advertisement.Admob
         /// </summary>
         /// <summary>
 
+        /*********************************************************************************************************/
+
         /// <summary>
         /// Stores unique app id for Android. When we select platform as android, we initialize our ads with this id.
         /// </summary>
-        [Header("Google Admob Service Configuration")]
-        public string _AndroidAppID;
+        private const string _AndroidAppID = "ca-app-pub-1508527570491486~9884488791";    /* <------------------ */
 
         /// <summary>
         /// Stores unique app id for IOS. When we select platform as ios, we initialize our ads with this id.
         /// </summary>
-        public string _IOSAppID;
+        private const string _IOSAppID = "";     /* <----------------------------------------------------------- */
+
+        /*********************************************************************************************************/
 
         /// <summary>
-        ///  Initialize Services depending on platform with unique appID.
+        ///  Initialize required admob core services.
         /// </summary>
-        
-        private void Start()
+        public AdmobADs()
         {
-            /// 
+            /// PlatformHandler sets appID by depending on the platform.
             PlatformHandler();
 
             /// When we publish the app, we should initialize MobileAds with appID.
@@ -41,9 +46,9 @@ namespace Library.Advertisement.Admob
         }
 
         /// <summary>
-        /// PlatformHandler sets appID by depending on the platform.
+        /// Assings unique application id to appID. The id is used for initializing mobile ads services.
         /// </summary>
-        public void PlatformHandler()
+        private void PlatformHandler()
         {
             #if UNITY_ANDROID  // For Android
                       appID = _AndroidAppID;

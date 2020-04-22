@@ -4,23 +4,51 @@ namespace Library.Advertisement.UnityAd
 {
     using UnityEngine.Advertisements;
 
-    public class UnityADs : MonoBehaviour, IUnityAdsListener
+    /// <summary>
+    /// UnityADs which provide the full range of Unity ads features available to the library - banner, video and rewarded
+    /// video ads for Android and IOS.
+    /// </summary>
+    public abstract class UnityADs : IUnityAdsListener
     {
-        protected string appID;
+        /// <summary>
+        /// Stores application id based on platform.
+        /// </summary>
+        protected string _appID;
 
-        protected static string activeAD;
+        /// <summary>
+        /// Stores current active unity adverstiment type.
+        /// </summary>
+        protected static string _activeAD;
 
-        [Header("Unity ADs Service Configuration")]
-        public string _AndroidAppID;
+        /****************************************************************************************************************/
 
-        public string _IOSAppID;
+        /// <summary>
+        /// Both fields represent specific platform unique App ID. We initialize mobile ads services with this ID.
+        /// </summary>
 
-        public bool _testMode;
+        /// <summary>
+        /// Defines unique app id for Android. When we select platform as android, we initialize our ads with this id.
+        /// </summary>
+        private const string _AndroidAppID = "3513340";    /* <---------------------------------------------------------*/
 
-        [Header("Unity ADs Deep Configuration")]
-        public float _AdControlRate;
+        /// <summary>
+        /// Defines unique app id for IOS. When we select platform as ios, we initialize our ads with this id.
+        /// </summary>
+        private const string _IOSAppID = "3513341";    /* <------------------------------------------------------------ */
 
-        private void Start()
+        /// <summary>
+        /// Defines whether the application's advertisement work on test mode or real mode.
+        /// </summary>
+        private const bool _testMode = true;    /* <--------------------------------------------------------------------*/
+
+        /****************************************************************************************************************/
+
+        /// <summary>
+        ///  Initialize Services depending on platform with unique appID. 
+        ///  After initialization, Unity Ads will begin to cache the first ad. 
+        ///  Unity Ads will cache the next available ad after each consecutive ad shown. 
+        /// </summary>
+        public UnityADs()
         {
             //Detect Platform
             PlatformHandler();
@@ -29,14 +57,16 @@ namespace Library.Advertisement.UnityAd
             Advertisement.AddListener(this);
 
             // Initialize the Ads listener and service
-            Advertisement.Initialize(appID, _testMode);
+            Advertisement.Initialize(_appID, _testMode);
         }
 
-        //Handle APPID depends on Platform.
-        public void PlatformHandler()
+        /// <summary>
+        /// Assings unique application id to appID. The id is used for initializing mobile ads services.
+        /// </summary>>
+        private void PlatformHandler()
         {
             #if UNITY_ANDROID
-            appID = _AndroidAppID;
+                  _appID = _AndroidAppID;
             #elif UNITY_IPHONE
                   appID = _IOSAppID;
             #else
@@ -44,31 +74,41 @@ namespace Library.Advertisement.UnityAd
             #endif
         }
 
-        //Control the Ad is ready to display or not
-        public virtual bool isAdReady()
+        /// <summary>
+        /// Controls and returns whether current advertisement is ready
+        /// </summary>
+        public virtual bool IsReady()
         {
             return Advertisement.IsReady();
         }
 
-        // Called when an ad request has successfully loaded.
+        /// <summary>
+        /// Called when an ad request has successfully loaded.
+        /// </summary>
         public virtual void OnUnityAdsReady(string placementId)
         {
             Debug.Log("HandleTheAd event received to load");
         }
 
-        // Called when an ad request be concluded by an error.
+        /// <summary>
+        /// Called when an ad request be concluded by an error.
+        /// </summary>
         public virtual void OnUnityAdsDidError(string message)
         {
             Debug.LogError("HandleTheAd event received to an error.");
         }
 
-        // Called when an ad request has successfully displayed.
+        /// <summary>
+        /// Called when an ad request has successfully displayed.
+        /// </summary>
         public virtual void OnUnityAdsDidStart(string placementId)
         {
             Debug.LogError("HandleTheAd event received to start.");
         }
 
-        // Called when an ad has Finished, Skipped or Failed.
+        /// <summary>
+        /// Called when an ad has Finished, Skipped or Failed.
+        /// </summary>
         public virtual void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
         {
             // Defined conditional logic for each ad completion status based on showResult.
@@ -87,5 +127,6 @@ namespace Library.Advertisement.UnityAd
             }
         }
     }
+
 }
 

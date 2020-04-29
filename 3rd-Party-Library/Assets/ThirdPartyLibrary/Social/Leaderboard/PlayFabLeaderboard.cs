@@ -102,7 +102,7 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified range ( startPosition - maxResultCount )
         // GLOBAL //
-        public static void GetLeaderboardGlobal(int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
+        public static void GetLeaderboardGlobalAroundPlayer(int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
@@ -112,6 +112,54 @@ namespace Library.Social.Leaderboard
                 StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
 
                 MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+                ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
+            },
+
+            (result) => { // Leaderboard access succeed.
+
+                foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+                {
+                    //The ResultPlayer Elem.
+                    ResultPlayer userData = new ResultPlayer();
+
+                    userData.DisplayName = player.DisplayName; //Display Name
+
+                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+
+                    userData.Position = player.Position; //Player Overall Position
+
+                    userData.StatValue = player.StatValue; //Player Score Value
+
+                    //Add Player to List
+                    resultPlayers.Add(userData);
+                }
+
+                resultCallback(resultPlayers);
+            },
+
+            (error) =>
+            {
+                errorCallback("LeaderBoard Data < GET REQUEST > is Failed: " + error.GenerateErrorReport().ToString());
+
+            }); // Leaderboard error callback
+
+        }
+
+        // Returns a List that stores player Leaderboard information based on specified range ( startPosition - maxResultCount )
+        // GLOBAL //
+        public static void GetLeaderboardGlobal(int startPosition, int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
+        {
+            //The ResultPlayer List.
+            List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
+
+            PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+            {
+                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
+
+                MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
+
+                StartPosition = startPosition,
 
                 ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
             },

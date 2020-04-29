@@ -8,8 +8,13 @@ namespace Library.Advertisement.Admob
     /// The class provides the full range of Admob banner advertisements available to the library.
     /// Also can be managed banner's deep properties such as type and position.
     /// </summary>
-    public class BannerADs : AdmobADs
+    public class AdmobBannerAd : AdmobADs
     {
+        /// <summary>
+        /// This is the ad callback events that can be hooked into.
+        /// </summary>
+        public Action OnAdLeavingApplication;
+
         /// <summary>
         /// Core object of the class, all requests is doing with this object.
         /// </summary>
@@ -46,7 +51,7 @@ namespace Library.Advertisement.Admob
         /// <summary>
         /// Prepares service for first success advertisement request.
         /// </summary>
-        public BannerADs()
+        public AdmobBannerAd()
         {
             //Detect Platform
             PlatformADHandler();
@@ -57,7 +62,7 @@ namespace Library.Advertisement.Admob
         /// We catch upcoming information by the request's callbacks.
         /// Also the method helps us to manage banner advertisement's properties. ( Banner Position )
         /// </summary>
-        public void LoadAndShowBannerAd()
+        public void LoadBannerAd()
         {
             //Create & Assign New Instance of BannerAD
             _bannerAD = new BannerView(_Banner_ID, AdSize.SmartBanner, AdPosition.Bottom);
@@ -166,7 +171,7 @@ namespace Library.Advertisement.Admob
         {
             Debug.Log("HandleAdLoaded event received");
 
-            ShowBanner();
+            OnAdLoaded?.Invoke();
         }
 
         /// <summary>
@@ -176,6 +181,8 @@ namespace Library.Advertisement.Admob
         {
             Debug.LogError("HandleFailedToReceiveAd event received with message: "
                                 + args.Message);
+
+            OnAdFailedToLoad?.Invoke();
         }
 
         /// <summary>
@@ -184,6 +191,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdOpened(object sender, EventArgs args)
         {
             Debug.Log("HandleAdOpened event received");
+
+            OnAdOpened?.Invoke();
         }
 
         /// <summary>
@@ -192,6 +201,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("HandleAdClosed event received");
+
+            OnAdClosed?.Invoke();
         }
 
         /// <summary>
@@ -200,6 +211,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdLeavingApplication(object sender, EventArgs args)
         {
             Debug.Log("HandleAdLeavingApplication event received");
+
+            OnAdLeavingApplication?.Invoke();
         }
 
         /// <summary>

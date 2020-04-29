@@ -7,8 +7,13 @@ namespace Library.Advertisement.Admob
     /// <summary>
     /// The class provides the full range of Admob interstitial advertisements available to the library.
     /// </summary>
-    public class InterstitialADs : AdmobADs
+    public class AdmobInterstitialAd : AdmobADs
     {
+        /// <summary>
+        /// This is the ad callback events that can be hooked into.
+        /// </summary>
+        public Action OnAdLeavingApplication;
+
         /// <summary>
         /// Core object of the class, all requests is doing with this object.
         /// </summary>
@@ -38,7 +43,7 @@ namespace Library.Advertisement.Admob
         /// <summary>
         /// Prepares service for first success advertisement request.
         /// </summary>
-        public InterstitialADs()
+        public AdmobInterstitialAd()
         {
             //Detect Platform
             PlatformADHandler();
@@ -121,6 +126,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdLoaded(object sender, EventArgs args)
         {
             Debug.Log("HandleAdLoaded event received");
+
+            OnAdLoaded?.Invoke();
         }
 
         /// <summary>
@@ -130,6 +137,8 @@ namespace Library.Advertisement.Admob
         {
             Debug.LogError("HandleFailedToReceiveAd event received with message: "
                             + args.Message);
+
+            OnAdFailedToLoad?.Invoke();
         }
 
         /// <summary>
@@ -138,6 +147,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdOpened(object sender, EventArgs args)
         {
             Debug.Log("HandleAdOpened event received");
+
+            OnAdOpened?.Invoke();
         }
 
         /// <summary>
@@ -147,6 +158,7 @@ namespace Library.Advertisement.Admob
         {
             Debug.Log("HandleAdClosed event received");
 
+            OnAdClosed?.Invoke();
         }
 
         /// <summary>
@@ -155,6 +167,8 @@ namespace Library.Advertisement.Admob
         private void HandleOnAdLeavingApplication(object sender, EventArgs args)
         {
             Debug.Log("HandleAdLeavingApplication event received");
+
+            OnAdLeavingApplication?.Invoke();
         }
 
         /// <summary>

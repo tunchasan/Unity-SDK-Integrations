@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Library.Advertisement.Admob
 {    
@@ -9,6 +10,17 @@ namespace Library.Advertisement.Admob
     
     public abstract class AdmobADs
     {
+        /// <summary>
+        /// These are the ad callback events that can be hooked into.
+        /// </summary>
+        public Action OnAdLoaded;
+        
+        public Action OnAdOpened;
+        
+        public Action OnAdClosed;
+
+        public Action OnAdFailedToLoad;
+
         /// <summary>
         /// Stores application id based on platform.
         /// </summary>

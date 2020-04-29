@@ -3,6 +3,7 @@ using PlayFab.ClientModels;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Purchasing;
 
 namespace Library.Social.Leaderboard
 {
@@ -11,6 +12,8 @@ namespace Library.Social.Leaderboard
     /// "LOCAL LEADERBOARD - Based on Friends" and "LOCAL LEADERBOARD - Based on Friends + Facebook Friends"
     /// </summary>
     // ResultPlayer represents the Leaderboard unique Player Subfields.
+
+    [Serializable]
     public class ResultPlayer
     {
         // Title-specific display name of the user for this leaderboard entry.
@@ -24,6 +27,19 @@ namespace Library.Social.Leaderboard
 
         // Specific value of the user's statistic.
         public int StatValue;
+
+        // Specific value of the user's ID.
+        public string UserID;
+
+        public ResultPlayer(string userID, string displayName, string avatarUrl, int position, int statValue)
+        {
+            DisplayName = displayName;
+            AvatarUrl = avatarUrl;
+            Position = position;
+            StatValue = statValue;
+            UserID = userID;
+        }
+
     }
 
     public class PlayFabLeaderboard
@@ -121,15 +137,7 @@ namespace Library.Social.Leaderboard
                 foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
                     //The ResultPlayer Elem.
-                    ResultPlayer userData = new ResultPlayer();
-
-                    userData.DisplayName = player.DisplayName; //Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.Position = player.Position; //Player Overall Position
-
-                    userData.StatValue = player.StatValue; //Player Score Value
+                    ResultPlayer userData = new ResultPlayer(player.PlayFabId, player.DisplayName, player.Profile.AvatarUrl, player.Position, player.StatValue);
 
                     //Add Player to List
                     resultPlayers.Add(userData);
@@ -169,15 +177,7 @@ namespace Library.Social.Leaderboard
                 foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
                     //The ResultPlayer Elem.
-                    ResultPlayer userData = new ResultPlayer();
-
-                    userData.DisplayName = player.DisplayName; //Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.Position = player.Position; //Player Overall Position
-
-                    userData.StatValue = player.StatValue; //Player Score Value
+                    ResultPlayer userData = new ResultPlayer(player.PlayFabId, player.DisplayName, player.Profile.AvatarUrl, player.Position, player.StatValue);
 
                     //Add Player to List
                     resultPlayers.Add(userData);
@@ -223,21 +223,12 @@ namespace Library.Social.Leaderboard
                 foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
                     //The ResultPlayer Elem.
-                    ResultPlayer userData = new ResultPlayer();
-
-                    userData.DisplayName = player.DisplayName; // Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; // Avatar Url
-
-                    userData.Position = player.Position; // Player Overall Position
-
-                    userData.StatValue = player.StatValue; // Player Score Value
+                    ResultPlayer userData = new ResultPlayer(player.PlayFabId, player.DisplayName, player.Profile.AvatarUrl, player.Position, player.StatValue);
 
                     //Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 
                     //Add Player to List
                     resultPlayers.Add(userData);
-
                 }
 
                 resultCallback(resultPlayers);
@@ -276,15 +267,7 @@ namespace Library.Social.Leaderboard
                 foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
                     //The ResultPlayer Elem.
-                    ResultPlayer userData = new ResultPlayer();
-
-                    userData.DisplayName = player.DisplayName; //Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.Position = player.Position; //Player Overall Position
-
-                    userData.StatValue = player.StatValue; //Player Score Value
+                    ResultPlayer userData = new ResultPlayer(player.PlayFabId, player.DisplayName, player.Profile.AvatarUrl, player.Position, player.StatValue);
 
                     //Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 
@@ -331,15 +314,7 @@ namespace Library.Social.Leaderboard
                 foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
                     //The ResultPlayer Elem.
-                    ResultPlayer userData = new ResultPlayer();
-
-                    userData.DisplayName = player.DisplayName; //Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.Position = player.Position; //Player Overall Position
-
-                    userData.StatValue = player.StatValue; //Player Score Value
+                    ResultPlayer userData = new ResultPlayer(player.PlayFabId, player.DisplayName, player.Profile.AvatarUrl, player.Position, player.StatValue);
 
                     //Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 

@@ -9,7 +9,7 @@ namespace Library.Advertisement.UnityAd
     /// The class provides the full range of Unity Banner advertisements. Also gives chance to manage banner advertisement 
     /// deep properties such as position.
     /// </summary>
-    public class BannerAD : UnityADs
+    public class UnityBannerAd : UnityAD
     {
         /**********************************************************************/
 
@@ -75,6 +75,8 @@ namespace Library.Advertisement.UnityAd
                 if (placementId == BannerAdID)
                 {
                     Debug.Log("HandleBannerAdLoaded event received");
+
+                    OnAdLoaded?.Invoke();
                 }
             }
         }
@@ -98,10 +100,14 @@ namespace Library.Advertisement.UnityAd
                 {
                     // Do not reward the user for skipping the ad.
                     Debug.Log("HandleBannerAdSkipped event received");
+
+                    OnAdClosed?.Invoke();
                 }
                 else if (showResult == ShowResult.Failed)
                 {
                     Debug.LogError("HandleBannerAdError event received");
+
+                    OnAdFailedToShow?.Invoke();
                 }
             }
         }
@@ -116,6 +122,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Log the error.
                 Debug.LogError("HandleBannerAdError event received");
+
+                OnAdFailedToLoad?.Invoke();
             }
         }
 
@@ -129,6 +137,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Optional actions to take when the end-users triggers an ad.
                 Debug.Log("HandleBannerOpening event received");
+
+                OnAdOpened?.Invoke();
             }
         }
     }

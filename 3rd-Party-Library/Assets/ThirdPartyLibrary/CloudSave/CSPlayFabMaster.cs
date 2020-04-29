@@ -58,7 +58,7 @@ namespace Library.CloudSave
 
                 case "DATATABLE":
                     {
-                        new CSPlayFabAsDataTable();   //Cloud Save with CloudDataTable Services
+                        new CloudSaveOnDataTable();   //Cloud Save with CloudDataTable Services
 
                         Debug.Log("{ Cloud Player Statistic } Service is Initializing...{ " + entityId + " <---> " + entityType + " }");
 

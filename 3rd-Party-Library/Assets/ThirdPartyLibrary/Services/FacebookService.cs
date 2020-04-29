@@ -4,26 +4,21 @@ using Facebook.Unity;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
-using Library.Authentication;
 using UnityEngine;
 using LoginResult = PlayFab.ClientModels.LoginResult;
+using System;
+using Library.Authentication;
 
 namespace Library.FaceBook
 {
-    
-    public class PlayfabFacebook
+    public class FacebookService
     {
         // Holds the latest message to be displayed on the screen.
         private string _debugMessage;
 
-        // Store Recover PopUp Menu Ref.
-        private GameObject _recoverPopUpMenu;
-
-        private string _popUpText;
-
         #region AUTHENTICATON
 
-        public PlayfabFacebook(GameObject PopUpMenu)
+        public FacebookService()
         {
             //DebugLogHandler("Initializing Facebook..."); // logs the given message and displays it on the screen using OnGUI method
 
@@ -32,10 +27,6 @@ namespace Library.FaceBook
 
             // In the "OnFacebookInitialized" function didn't invoke by FB.Init, we invoke it here.
             OnFacebookInitialized();
-
-            // PopMenu Initialize
-            _recoverPopUpMenu = PopUpMenu;
-
         }
 
         //Control User's Auth. Status
@@ -52,54 +43,52 @@ namespace Library.FaceBook
         }
 
         //Facebook Auth. Handler
-        public void AuthLogin(bool linkAction)
+        public void AuthLogin(bool linkAction, Action<bool, string, bool> actionStatus)
         {
-            //If the user did not auth. to FB.
-            if (!GetLoggedIn())
-            {
-                DebugLogHandler("Logging into Facebook...");
+            DebugLogHandler("Logging into Facebook...");
 
-                // We invoke basic login procedure and pass in the callback to process the result
-                FB.LogInWithReadPermissions(
+            // We invoke basic login procedure and pass in the callback to process the result
+            FB.LogInWithReadPermissions(
 
-                    null,
+                null,
 
-                    (result) =>
-                    {
+                (result) =>
 
+                {
                     // If result has no errors, it means we have authenticated in Facebook successfully
-                    if (result == null || string.IsNullOrEmpty(result.Error))
+                    if ((result == null || string.IsNullOrEmpty(result.Error)) && !result.Cancelled)
+                    {
+                        DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
+
+                        if (linkAction) // is this Facebook Linking Action ?
                         {
-                            DebugLogHandler("Facebook Auth Complete! Access Token: " + AccessToken.CurrentAccessToken.TokenString + "\nLogging into PlayFab...");
-
-                            if (linkAction) // is this Facebook Linking Action ?
-                            {
-                                LinkWithFacebook(AccessToken.CurrentAccessToken.TokenString); // Link Accout with Facebook
-                            }
-
-                            else
-                            {
-                                PlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString); // Just Login with Facebook
-                            }
-
+                            LinkWithFacebook(AccessToken.CurrentAccessToken.TokenString, actionStatus); // Link Accout with Facebook
                         }
 
                         else
                         {
-                        // If Facebook authentication failed, we stop the cycle with the message
-                        DebugLogHandler("Facebook Auth Failed: " + result.Error + "\n" + result.RawResult, true);
+                            PlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString); // Just Login with Facebook
                         }
-
                     }
 
-                );
+                    else
+                    {
+                        if(actionStatus != null)
+                        { 
+                            actionStatus(false, "Facebook Auth Failed: " + result.Error + "\n" + result.RawResult, false);
+                        }
 
-            }
+                        else
+                        {
+                            //If Facebook authentication failed, we stop the cycle with the message
+                            DebugLogHandler("Facebook Auth Failed: " + result.Error + "\n" + result.RawResult, true);
+                        }
+                        
+                    }
 
-            else
-            {
-                Debug.LogWarning("Authenticated to Facebook Before!");
-            }
+                }
+
+            );
 
         }
 
@@ -184,7 +173,7 @@ namespace Library.FaceBook
             }
 
             else
-                AuthLogin(false); //Facebook Auth. Handler
+                AuthLogin(false, null); //Facebook Auth. Handler
 
         }
 
@@ -235,7 +224,7 @@ namespace Library.FaceBook
             }
 
             else
-                AuthLogin(false); //Facebook Auth. Handler
+                AuthLogin(false, null); //Facebook Auth. Handler
 
         }
 
@@ -309,7 +298,7 @@ namespace Library.FaceBook
         #region LINK - UNLINK
 
         // Link account with Facebook
-        public void LinkWithFacebook(string accessToken)
+        public void LinkWithFacebook(string accessToken, Action<bool, string, bool> actionStatus)
         {
             PlayFabClientAPI.LinkFacebookAccount(new LinkFacebookAccountRequest() // Facebook Linking Request
             {
@@ -321,32 +310,74 @@ namespace Library.FaceBook
                 //Request Facebook DisplayName
                 this.GetFacebookDisplayName();
 
-                Debug.Log("Account Linked With Facebook Succeed.");
+                actionStatus(true, "Account Linked With Facebook Succeed.", false);
+
+                //Debug.Log("Account Linked With Facebook Succeed.");
             },
 
-           OnPlayfabFacebookLinkFailed); // Error Callback
+            (error) => 
+            { 
+                OnPlayfabFacebookLinkFailed(error, actionStatus);
+
+            }); // Error Callback
 
         }
 
         // Link Error Callback
-        private void OnPlayfabFacebookLinkFailed(PlayFabError error)
+        private void OnPlayfabFacebookLinkFailed(PlayFabError error, Action<bool, string, bool> actionStatus)
         {
-            // Specified Error Code
+            // Specified Error Code for RECOVER
             if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // Facebook Acc. is already used by another user.
             {
                 Debug.LogWarning("The Facebook Account is already used by another user.");
 
-                AccountRecoverWithFacebook(); // Account Recover with Facebook Account.
+                // Get User Name
+                FB.API("me?fields=name", HttpMethod.GET, 
+                    
+                    (result) =>
+                    {
+                        // If result has no errors
+                        if (string.IsNullOrEmpty(result.Error))
+                        {
+                            if (PlayfabCustomAuth.ISGuestAccount()) // If the account is not guest
+                            {
+                                string fbName = result.ResultDictionary["name"].ToString();
+
+                                actionStatus(false, "Do you want to load " + fbName + "'s game ?", true);
+                            }
+
+                            else
+                            {
+                                actionStatus(false, error.GenerateErrorReport(), false);
+
+                                FB.LogOut(); // LOGOUT FACEBOOK
+                            }
+                            
+                        }
+
+                        else
+                        {
+                            // If Facebook request failed, we stop the cycle with the message
+                            actionStatus(false, "Facebook Failed: " + result.Error + "\n" + result.RawResult, false);
+
+                            FB.LogOut(); // LOGOUT FACEBOOK
+                        }
+                    });
+
             }
 
             else
             {
-                Debug.LogError(error.GenerateErrorReport());
+                // Debug.LogError(error.GenerateErrorReport());
+
+                actionStatus(false, error.GenerateErrorReport(), false);
+
+                FB.LogOut(); // LOGOUT FACEBOOK
             }
         }
 
         // Unlink account with Facebook
-        public void UnLinkWithFacebook()
+        public void UnLinkWithFacebook(Action<bool, string> actionStatus)
         {
             PlayFabClientAPI.UnlinkFacebookAccount(new UnlinkFacebookAccountRequest()
             {
@@ -359,10 +390,17 @@ namespace Library.FaceBook
                 // Reset Display Name for Facebook
                 this.ResetDisplayName();
 
-                Debug.Log("Account UnLinked With Facebook Succeed.");
+                actionStatus(true, "Account UnLinked With Facebook Succeed.");
+
+                // Debug.Log("Account UnLinked With Facebook Succeed.");
             },
 
-           OnPlayfabFacebookAuthFailed); // Error Callback
+            (error) =>
+            {
+                actionStatus(false, "PlayFab Facebook Auth Failed: " + error.GenerateErrorReport());
+
+                // Debug.LogError("PlayFab Facebook Auth Failed: " + error.GenerateErrorReport());
+            });
 
         }
 
@@ -458,6 +496,8 @@ namespace Library.FaceBook
         private void OnResetDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
         {
             Debug.Log("Display Name Changed: " + result.DisplayName);
+
+            PlayfabCustomAuth.UserDisplayName = result.DisplayName;
         }
 
         /**********************************************************************************************/
@@ -466,92 +506,37 @@ namespace Library.FaceBook
 
         #region ACCOUNT RECOVER
 
-        // Recover Account with Facebook
-        private void RecoverPlayFabFacebookLogin(string token)
-        {
-            /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
-            and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
-
-            PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { AccessToken = token, InfoRequestParameters = InfoRequest() },
-                OnPlayfabFacebookRecoverComplete, OnPlayfabFacebookAuthFailed);
-        }
-
-        // Collect recover account's player data.
-        private void OnPlayfabFacebookRecoverComplete(LoginResult result)
-        {
-            DebugLogHandler("PlayFab Facebook Auth Complete. Session ticket: " + result.SessionTicket);
-
-            Debug.Log("Do you want to load " + result.InfoResultPayload.PlayerProfile.DisplayName + "'s game ?");
-
-            Debug.LogWarning("Warning: progress in the current game will be saved. You can load the current game by next login.");
-        }
-
-        // Get recover account's player data.
-        private void GetRecoverAccountData()
-        {
-            // Clear Current Token and Logout From PlayFab
-            PlayFabClientAPI.ForgetAllCredentials();
-
-            // Login Recoverable Acc. with Facebook
-            RecoverPlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString);
-        }
-
-
-        // Initialize Recover Acc. Action
-        private void AccountRecoverWithFacebook()
-        {
-            // Get Recover Account Unique Information to Show Player
-            GetRecoverAccountData();
-
-            // Create PopUp
-            RecoverPopUpMenu(true);
-        }
-
-        // Handle PopUpMenu Visibility
-        private void RecoverPopUpMenu(bool Visibilty)
-        {
-            // Enable PopUp Menu
-            _recoverPopUpMenu.SetActive(Visibilty);
-        }
-
         // User wants to recover account, Recover it.  *** Yes Click Event ***
-        public void RecoverAccount()
+        public void RecoverAccount(Action<bool, string> actionStatus)
         {
-            // Hidden PopUp Menu
-            RecoverPopUpMenu(false);
-
             // Login Accout
             Debug.Log("Account Recovered.");
 
-            //
+            Debug.Log("New Server Auth Code: " + AccessToken.CurrentAccessToken.TokenString);
+
+            PlayFabFacebookLogin(AccessToken.CurrentAccessToken.TokenString);
+
+            actionStatus(true, "Recover succesfully completed.");
         }
 
         // User dont want to recover accout, Keep current.  *** No Click Event ***
         public void DontRecoverAccount()
         {
-            // Hidden PopUp Menu
-            RecoverPopUpMenu(false);
-
-            // Keep Current
-
-            // Clear Current Token and Logout From PlayFab
-            PlayFabClientAPI.ForgetAllCredentials();
-
             // Logout Facebook
             FB.LogOut();
-
-            PlayfabCustomAuth customAuth = new PlayfabCustomAuth();
-
-            customAuth.AnonymousLogin(false);
-        }
-
-        // PopUp Text
-        public string GetRecoverPopUpText()
-        {
-            return _popUpText;
         }
 
         #endregion
+        /*
+        PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+        {
+            FunctionName = "DeleteUserByID",
+
+                FunctionParameter = new { PlayFabId = PlayfabCustomAuth.playfabID },
+
+                GeneratePlayStreamEvent = true,
+
+            }, xx, yy);*/
     }
 }
 

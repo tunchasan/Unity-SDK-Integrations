@@ -163,7 +163,7 @@ public class AuthenticationExample : MonoBehaviour
     {
         ConnectFacebookButton.interactable = false;
 
-        if (facebookAuth.GetLoggedIn()) // Loggedin with Facebook
+        if (FacebookService.IsLinkedWithFacebook()) // Loggedin with Facebook
         {
             // UnLink Facebook Acc.
             facebookAuth.UnLinkWithFacebook(

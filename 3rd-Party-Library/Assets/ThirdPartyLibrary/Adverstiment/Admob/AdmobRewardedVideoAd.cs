@@ -7,8 +7,15 @@ namespace Library.Advertisement.Admob
     /// <summary>
     /// The class provides the full range of Admob rewarded video advertisements available to the library.
     /// </summary>
-    public class RewardedADs : AdmobADs
+    public class AdmobRewardedVideoAd : AdmobADs
     {
+        /// <summary>
+        /// These are the ad callback events that can be hooked into.
+        /// </summary>
+        public Action<string, int> OnUserEarnedReward;
+
+        public Action OnAdFailedToShow;
+
         /// <summary>
         /// Core object of the class, all requests is doing with this object.
         /// </summary>
@@ -19,6 +26,16 @@ namespace Library.Advertisement.Admob
         /// Rewarded video advertisement's requests are managed on this id.
         /// </summary>
         private string _Rewarded_ID;
+
+        /// <summary>
+        /// Defines, reward type.
+        /// </summary>
+        public string RewardType { get; private set; }
+
+        /// <summary>
+        /// Defines rewarded item amount.
+        /// </summary>
+        public int RewardAmount { get; private set; }
 
         /*********************************************************************************************************************/
 
@@ -38,10 +55,14 @@ namespace Library.Advertisement.Admob
         /// <summary>
         /// Prepares service for first success advertisement request.
         /// </summary>
-        public RewardedADs()
+        public AdmobRewardedVideoAd(string rewardType, int rewardAmount)
         {
             //Detect Platform
             PlatformADHandler();
+
+            RewardType = rewardType;
+
+            RewardAmount = rewardAmount;
         }
 
         /// <summary>
@@ -120,6 +141,8 @@ namespace Library.Advertisement.Admob
         private void HandleRewardedAdLoaded(object sender, EventArgs args)
         {
             Debug.Log("HandleRewardedAdLoaded event received");
+
+            OnAdLoaded?.Invoke();
         }
 
         /// <summary>
@@ -130,6 +153,8 @@ namespace Library.Advertisement.Admob
             Debug.LogError(
                 "HandleRewardedAdFailedToLoad event received with message: "
                                  + args.Message);
+
+            OnAdFailedToLoad?.Invoke();
         }
 
         /// <summary>
@@ -138,6 +163,8 @@ namespace Library.Advertisement.Admob
         private void HandleRewardedAdOpening(object sender, EventArgs args)
         {
             Debug.Log("HandleRewardedAdOpening event received");
+
+            OnAdOpened?.Invoke();
         }
 
         /// <summary>
@@ -148,6 +175,8 @@ namespace Library.Advertisement.Admob
             Debug.LogError(
                 "HandleRewardedAdFailedToShow event received with message: "
                                  + args.Message);
+
+            OnAdFailedToShow?.Invoke();
         }
 
         /// <summary>
@@ -156,6 +185,8 @@ namespace Library.Advertisement.Admob
         private void HandleRewardedAdClosed(object sender, EventArgs args)
         {
             Debug.Log("HandleRewardedAdClosed event received");
+
+            OnAdClosed?.Invoke();
         }
 
         /// <summary>
@@ -163,11 +194,13 @@ namespace Library.Advertisement.Admob
         /// </summary>
         private void HandleUserEarnedReward(object sender, Reward args)
         {
-            string type = args.Type;
+            /*string type = args.Type;
             double amount = args.Amount;
             Debug.Log(
                 "HandleRewardedAdRewarded event received for "
-                            + amount.ToString() + " " + type);
+                            + amount.ToString() + " " + type);*/
+
+            OnUserEarnedReward?.Invoke(RewardType, RewardAmount);
         }
 
         /// <summary>

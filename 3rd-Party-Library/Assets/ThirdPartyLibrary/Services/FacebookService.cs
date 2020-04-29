@@ -30,7 +30,7 @@ namespace Library.FaceBook
         }
 
         //Control User's Auth. Status
-        public bool GetLoggedIn()
+        public static bool GetLoggedIn()
         {
             return FB.IsLoggedIn;
         }
@@ -460,6 +460,7 @@ namespace Library.FaceBook
 
         /******************************************RESET**********************************************/
 
+           
         // Reset DisplayName
         private void ResetDisplayName()
         {
@@ -498,6 +499,11 @@ namespace Library.FaceBook
             Debug.Log("Display Name Changed: " + result.DisplayName);
 
             PlayfabCustomAuth.UserDisplayName = result.DisplayName;
+        }
+
+        public static bool IsLinkedWithFacebook()
+        {
+            return PlayerPrefs.HasKey("DISPLAYNAME_FACEBOOK");
         }
 
         /**********************************************************************************************/

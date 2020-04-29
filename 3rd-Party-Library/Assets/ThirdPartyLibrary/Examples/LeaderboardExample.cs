@@ -69,7 +69,7 @@ public class LeaderboardExample : MonoBehaviour
 
     public void GetGlobalLeaderboard() // Get Global Leaderboard
     {
-        PlayFabLeaderboard.GetLeaderboardGlobalAroundPlayer(50, "LEADERBOARD_01", GlobalLeaderboardResultCallback, GlobalLeaderboardErrorCallback);
+        PlayFabLeaderboard.GetLeaderboardGlobal(50, "LEADERBOARD_01", GlobalLeaderboardResultCallback, GlobalLeaderboardErrorCallback);
     }
 
     private void GlobalLeaderboardResultCallback(List<ResultPlayer> resultPlayers) // Success Callback

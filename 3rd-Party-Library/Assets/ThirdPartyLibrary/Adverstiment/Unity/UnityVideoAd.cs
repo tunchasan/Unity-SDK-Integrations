@@ -8,7 +8,7 @@ namespace Library.Advertisement.UnityAd
     /// <summary>
     /// The class provides the full range of Unity video ads. features.
     /// </summary>
-    public class VideoADs : UnityADs
+    public class UnityVideoAd : UnityAD
     {
         /********************************************************************************/
 
@@ -47,6 +47,8 @@ namespace Library.Advertisement.UnityAd
                 if (placementId == VideoAdID)
                 {
                     Debug.Log("HandleVideoAdLoaded event received");
+
+                    OnAdLoaded?.Invoke();
                 }
             }
         }
@@ -70,10 +72,14 @@ namespace Library.Advertisement.UnityAd
                 {
                     // Do not reward the user for skipping the ad.
                     Debug.Log("HandleVideoAdSkipped event received");
+
+                    OnAdClosed?.Invoke();
                 }
                 else if (showResult == ShowResult.Failed)
                 {
                     Debug.LogError("HandleVideoAdError event received");
+
+                    OnAdFailedToShow?.Invoke();
                 }
 
                 _activeAD = null; // Fix multiple reward issue
@@ -90,6 +96,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Log the error.
                 Debug.LogError("HandleVideoAdError event received");
+
+                OnAdFailedToLoad?.Invoke();
             }
         }
 
@@ -103,6 +111,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Optional actions to take when the end-users triggers an ad.
                 Debug.Log("HandleVideoAdOpening event received");
+
+                OnAdOpened?.Invoke();
             }
         }
     }

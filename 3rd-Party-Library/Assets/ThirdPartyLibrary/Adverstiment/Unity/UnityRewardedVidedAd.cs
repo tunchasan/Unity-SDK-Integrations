@@ -3,13 +3,29 @@ using UnityEngine;
 
 namespace Library.Advertisement.UnityAd
 {
+    using System;
     using UnityEngine.Advertisements;
 
     /// <summary>
     /// The class provides the full range of Unity rewarded video ads. features.
     /// </summary>
-    public class RewardedVideoAD : UnityADs
+    public class UnityRewardedVidedAd : UnityAD
     {
+        /// <summary>
+        /// These are the ad callback events that can be hooked into.
+        /// </summary>
+        public Action<string, int> OnUserEarnedReward;
+
+        /// <summary>
+        /// Defines, reward type.
+        /// </summary>
+        public string RewardType { get; private set; }
+
+        /// <summary>
+        /// Defines rewarded item amount.
+        /// </summary>
+        public int RewardAmount { get; private set; }
+
         /**********************************************************************************/
 
         /// <summary>
@@ -19,6 +35,13 @@ namespace Library.Advertisement.UnityAd
         public const string _rewardedVideoAdID = "rewardedVideo";    /* <-----------------*/
 
         /**********************************************************************************/
+
+        public UnityRewardedVidedAd(string rewardType, int rewardAmount)
+        {
+            RewardType = rewardType;
+
+            RewardAmount = rewardAmount;
+        }
 
         /// <summary>
         /// Creates a request that handles displaying and loading rewarded video ads.
@@ -47,6 +70,8 @@ namespace Library.Advertisement.UnityAd
                 if (placementId == _rewardedVideoAdID)
                 {
                     Debug.Log("HandleRewardedAdLoaded event received");
+
+                    OnAdLoaded?.Invoke();
                 }
             }
         }
@@ -66,15 +91,20 @@ namespace Library.Advertisement.UnityAd
                     Debug.Log(
                         "HandleRewardedAdRewarded event received for 10 Golds");
 
+                    OnUserEarnedReward?.Invoke(RewardType, RewardAmount);
                 }
                 else if (showResult == ShowResult.Skipped)
                 {
                     // Do not reward the user for skipping the ad.
                     Debug.Log("HandleRewardedAdClosed event received");
+
+                    OnAdClosed?.Invoke();
                 }
                 else if (showResult == ShowResult.Failed)
                 {
                     Debug.LogError("HandleRewardedAdError event received");
+
+                    OnAdFailedToShow?.Invoke();
                 }
 
                 _activeAD = null; // Fix multiple reward issue
@@ -91,6 +121,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Log the error.
                 Debug.LogError("HandleRewardedAdError event received");
+
+                OnAdFailedToLoad?.Invoke();
             }
         }
 
@@ -104,6 +136,8 @@ namespace Library.Advertisement.UnityAd
             {
                 // Optional actions to take when the end-users triggers an ad.
                 Debug.Log("HandleRewardedAdOpening event received");
+
+                OnAdOpened?.Invoke();
             }
         }
     }

@@ -2,14 +2,28 @@
 
 namespace Library.Advertisement.UnityAd
 {
+    using System;
     using UnityEngine.Advertisements;
 
     /// <summary>
     /// UnityADs which provide the full range of Unity ads features available to the library - banner, video and rewarded
     /// video ads for Android and IOS.
     /// </summary>
-    public abstract class UnityADs : IUnityAdsListener
+    public abstract class UnityAD : IUnityAdsListener
     {
+        /// <summary>
+        /// These are the ad callback events that can be hooked into.
+        /// </summary>
+        public Action OnAdLoaded;
+
+        public Action OnAdOpened;
+
+        public Action OnAdClosed;
+
+        public Action OnAdFailedToLoad;
+
+        public Action OnAdFailedToShow;
+
         /// <summary>
         /// Stores application id based on platform.
         /// </summary>
@@ -48,7 +62,7 @@ namespace Library.Advertisement.UnityAd
         ///  After initialization, Unity Ads will begin to cache the first ad. 
         ///  Unity Ads will cache the next available ad after each consecutive ad shown. 
         /// </summary>
-        public UnityADs()
+        public UnityAD()
         {
             //Detect Platform
             PlatformHandler();

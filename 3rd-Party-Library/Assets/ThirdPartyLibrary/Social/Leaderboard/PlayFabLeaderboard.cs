@@ -1,5 +1,6 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,46 +10,32 @@ namespace Library.Social.Leaderboard
     /// Class that handles PlayFab Leaderboard Configurations and also provides many features like "GLOBAL LEADERBOARD"
     /// "LOCAL LEADERBOARD - Based on Friends" and "LOCAL LEADERBOARD - Based on Friends + Facebook Friends"
     /// </summary>
+    // ResultPlayer represents the Leaderboard unique Player Subfields.
+    public class ResultPlayer
+    {
+        // Title-specific display name of the user for this leaderboard entry.
+        public string DisplayName;
+
+        // URL of the player's avatar image
+        public string AvatarUrl;
+
+        // User's overall position in the leaderboard.
+        public int Position;
+
+        // Specific value of the user's statistic.
+        public int StatValue;
+    }
 
     public class PlayFabLeaderboard
     {
-        // ResultPlayer represents the Leaderboard unique Player Subfields.
-        public struct ResultPlayer
-        {
-            // Title-specific display name of the user for this leaderboard entry.
-            public string DisplayName;
-
-            // URL of the player's avatar image
-            public string AvatarUrl;
-
-            // User's overall position in the leaderboard.
-            public int Position;
-
-            // Specific value of the user's statistic.
-            public int StatValue;
-        }
-
-        ///FOR TEST, It will be PRIVATE
-        private static List <StatisticUpdate> _statisticField;
-
-        // Configrate unique player statistic info. for Leaderboard
-        public static void InitializeLeaderBoards(List <StatisticUpdate> leaderboardFieldNames)
-        {
-            Debug.Log("{ PlayFab LeaderBoard } Service is initializing..." + " { " + " } ");
-
-            //Assign the Leaderboard name to class field.
-            _statisticField = leaderboardFieldNames;
-
-            AddStatisticFieldsToPlayer(); // Initialization...
-        }
-
-        #region DATA SUBMISSION 
+       
+        #region SET STATISTICS
 
         /// </summary>
         /// The function that handles Player Statistic Request for Leaderboard Position
         /// </summary>
 
-        public static void SubmitScore(int score, string leaderboardName)
+        public static void SubmitScore(string leaderboardName, int score)
         {
             PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
             {
@@ -70,12 +57,24 @@ namespace Library.Social.Leaderboard
         /// </summary>
         /// The function that handles Player Statistics Request
         /// </summary>
-
-        public static void SubmitScores(List<StatisticUpdate> leaderboards)
+        public static void SubmitScores(Dictionary<string,int> leaderboardList)
         {
+            List<StatisticUpdate> statisticList = new List<StatisticUpdate>();
+
+            foreach (var data in leaderboardList)
+            {
+                StatisticUpdate elem = new StatisticUpdate();
+
+                elem.StatisticName = data.Key;
+
+                elem.Value = data.Value;
+
+                statisticList.Add(elem);
+            }
+
             PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
             {
-                Statistics = leaderboards
+                Statistics = statisticList
 
             }, result => OnStatisticsUpdated(result), FailureCallback);
 
@@ -103,32 +102,27 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified range ( startPosition - maxResultCount )
         // GLOBAL //
-        public static List<ResultPlayer> RequestLeaderboardGlobal(int startPosition, int maxResultCount, string leaderboardName)
+        public static void GetLeaderboardGlobal(int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
 
-            //The ResultPlayer Elem.
-            ResultPlayer userData;
-
-            PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+            PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
             {
                 StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
-
-                StartPosition = startPosition, // Position in the leaderboard to start this listing(defaults to the first entry).
 
                 MaxResultsCount = maxResultCount,  // Maximum number of entries to retrieve. Default 10, maximum 100.
 
                 ProfileConstraints = GetProfileViewObject() // Determines which properties of the resulting player profiles to return
             },
 
-            result => { // Leaderboard access succeed.
+            (result) => { // Leaderboard access succeed.
 
-            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+                foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
-                //If the player is banned from game.
-                //if (!player.Profile.BannedUntil.HasValue) -> THERE IS AN ISSUE HERE.
-                //{
+                    //The ResultPlayer Elem.
+                    ResultPlayer userData = new ResultPlayer();
+
                     userData.DisplayName = player.DisplayName; //Display Name
 
                     userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
@@ -137,86 +131,20 @@ namespace Library.Social.Leaderboard
 
                     userData.StatValue = player.StatValue; //Player Score Value
 
-                //Add Player to List
-                resultPlayers.Add(userData);
+                    //Add Player to List
+                    resultPlayers.Add(userData);
+                }
 
-                //}
-
-            }
-
+                resultCallback(resultPlayers);
             },
 
-                LeaderboardFailureCallbackk); // Leaderboard error callback
-
-            return resultPlayers;
-        }
-
-        //Request Failed - Debug and Display the issue in the Console.
-        private static void LeaderboardFailureCallbackk(PlayFabError error)
-        {
-            Debug.LogWarning("LeaderBoard Data < GET REQUEST > is Failed: ");
-
-            Debug.LogError(error.GenerateErrorReport());
-        }
-
-        /*******************************************************************************************************************************/
-
-        public static void RequestLeaderboardWorld(string leaderboardName) // FOR TEST
-        {
-            //The ResultPlayer List.
-            List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
-
-            PlayerProfileViewConstraints rofileConstraints = new PlayerProfileViewConstraints();
-
-            rofileConstraints.ShowAvatarUrl = true;
-
-            rofileConstraints.ShowBannedUntil = true;
-
-            rofileConstraints.ShowDisplayName = true;
-
-            //The ResultPlayer Elem.
-            ResultPlayer userData;
-
-            PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+            (error) =>
             {
-                StatisticName = leaderboardName, // Statistic used to rank players for this leaderboard.
+                errorCallback("LeaderBoard Data < GET REQUEST > is Failed: " + error.GenerateErrorReport().ToString());
 
-                StartPosition = 0, // Position in the leaderboard to start this listing(defaults to the first entry).
+            }); // Leaderboard error callback
 
-                MaxResultsCount = 5,  // Maximum number of entries to retrieve. Default 10, maximum 100.
-
-                ProfileConstraints = rofileConstraints  // Determines which properties of the resulting player profiles to return
-            },
-
-            result => { // Leaderboard access succeed.
-
-            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
-                {
-                //If the player is banned from game.
-                //if (!player.Profile.BannedUntil.HasValue)
-                //{
-                userData.DisplayName = player.DisplayName; //Display Name
-
-                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
-
-                    userData.Position = player.Position; //Player Overall Position
-
-                    userData.StatValue = player.StatValue; //Player Score Value
-
-                    Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
-
-                //Add Player to List
-                resultPlayers.Add(userData);
-                //}
-
-            }
-
-            },
-
-                LeaderboardFailureCallbackk); // Leaderboard error callback
         }
-
-        /*******************************************************************************************************************************/
 
         #endregion
 
@@ -224,13 +152,10 @@ namespace Library.Social.Leaderboard
 
         // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
         // LOCAL - ONLY FRIENDS //
-        public static List<ResultPlayer> RequestLeaderboardOnlyFriends(int maxResultCount, string leaderboardName)
+        public static void GetLeaderboardOnlyFriends(int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
-
-            //The ResultPlayer Elem.
-            ResultPlayer userData;
 
             PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
             {
@@ -247,43 +172,43 @@ namespace Library.Social.Leaderboard
 
             result => { // Leaderboard access succeed.
 
-            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+                foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
-                //If the player is banned from game.
-                //if (!player.Profile.BannedUntil.HasValue)
-                //{
-                userData.DisplayName = player.DisplayName; // Display Name
+                    //The ResultPlayer Elem.
+                    ResultPlayer userData = new ResultPlayer();
 
-                userData.AvatarUrl = player.Profile.AvatarUrl; // Avatar Url
+                    userData.DisplayName = player.DisplayName; // Display Name
 
-                userData.Position = player.Position; // Player Overall Position
+                    userData.AvatarUrl = player.Profile.AvatarUrl; // Avatar Url
 
-                userData.StatValue = player.StatValue; // Player Score Value
+                    userData.Position = player.Position; // Player Overall Position
 
-                Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
+                    userData.StatValue = player.StatValue; // Player Score Value
 
-                //Add Player to List
-                resultPlayers.Add(userData);
-                //}
+                    //Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 
-            }
+                    //Add Player to List
+                    resultPlayers.Add(userData);
 
-            },
+                }
 
-                LeaderboardFailureCallbackk); // Leaderboard error callback
+                resultCallback(resultPlayers);
+            }, 
+            
+            (error) =>
+            {
+                errorCallback("LeaderBoard Data < GET REQUEST > is Failed: " + error.GenerateErrorReport().ToString());
 
-            return resultPlayers;
+            }); // Leaderboard error callback
+
         }
 
         // Returns a List that stores player Leaderboard information based on specified " maxResultCount "
         // LOCAL - INGAME FRIENDS + FACEBOOK FRIENDS //
-        public static List<ResultPlayer> RequestLeaderboardFacebookandFriends(int maxResultCount, string leaderboardName)
+        public static void GetLeaderboardFacebookandFriends(int maxResultCount, string leaderboardName, Action<List<ResultPlayer>> resultCallback, Action<string> errorCallback)
         {
             //The ResultPlayer List.
             List<ResultPlayer> resultPlayers = new List<ResultPlayer>();
-
-            //The ResultPlayer Elem.
-            ResultPlayer userData;
 
             PlayFabClientAPI.GetFriendLeaderboardAroundPlayer(new GetFriendLeaderboardAroundPlayerRequest
             {
@@ -300,69 +225,64 @@ namespace Library.Social.Leaderboard
 
             result => { // Leaderboard access succeed.
 
-            foreach (PlayerLeaderboardEntry player in result.Leaderboard)
+                foreach (PlayerLeaderboardEntry player in result.Leaderboard)
                 {
-                //If the player is banned from game.
-                //if (!player.Profile.BannedUntil.HasValue)
-                //{
-                userData.DisplayName = player.DisplayName; //Display Name
+                    //The ResultPlayer Elem.
+                    ResultPlayer userData = new ResultPlayer();
 
-                userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
+                    userData.DisplayName = player.DisplayName; //Display Name
 
-                userData.Position = player.Position; //Player Overall Position
+                    userData.AvatarUrl = player.Profile.AvatarUrl; //Player URL
 
-                userData.StatValue = player.StatValue; //Player Score Value
+                    userData.Position = player.Position; //Player Overall Position
 
-                Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
+                    userData.StatValue = player.StatValue; //Player Score Value
 
-                //Add Player to List
-                resultPlayers.Add(userData);
-                //}
+                    //Debug.Log("Display Name: { " + userData.DisplayName + " }" + " Avatar URL: { " + userData.AvatarUrl + " }" + " Position: { " + userData.Position + " }" + " StatValue: { " + userData.StatValue + " }");
 
-            }
+                    //Add Player to List
+                    resultPlayers.Add(userData);
+                }
+
+                resultCallback(resultPlayers);
 
             },
 
-                LeaderboardFailureCallbackk); // Leaderboard error callback
+            (error) =>
+            {
+                errorCallback("LeaderBoard Data < GET REQUEST > is Failed: " + error.GenerateErrorReport().ToString());
 
-            return resultPlayers;
+            }); // Leaderboard error callback
+
         }
 
         #endregion
 
         #endregion
 
-        #region LEADERBOARD VALIDATION
+        #region GET STATISTICS
 
-        //Get Player Statistic Data for Validation Player
-        private static void AddStatisticFieldsToPlayer()
+        public static void GetScores(Action<Dictionary<string,int>> resultCallback, Action<string> errorCallback)
         {
+            Dictionary<string, int> resultData = new Dictionary<string, int>();
+
             PlayFabClientAPI.GetPlayerStatistics(new GetPlayerStatisticsRequest(),
 
-            OnGetStatisticSuccess, //Success Callback
-
-            OnGetStatisticError //Error Callback
-
-            );
-
-        }
-
-        //Request Failed - Debug and Display the issue in the Console.
-        private static void OnGetStatisticError(PlayFabError error)
-        {
-            Debug.LogError("LeaderBoard Error: " + error.GenerateErrorReport());
-        }
-
-        //Request Succeed - Get the Statistic Data
-        private static void OnGetStatisticSuccess(GetPlayerStatisticsResult statisticsResult)
-        {
-            PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest // Update Request
+            (result) =>
             {
-                Statistics = _statisticField // Statictic Fields
+                foreach (var data in result.Statistics)
+                {
+                    resultData.Add(data.StatisticName,data.Value);
+                }
 
-            }, result => OnStatisticsUpdated(result), FailureCallback);
+                resultCallback(resultData);
+            },
 
-            Debug.Log("Validation Succeed.");
+            (error) =>
+            {
+                errorCallback(error.GenerateErrorReport());
+            });
+
         }
 
         #endregion

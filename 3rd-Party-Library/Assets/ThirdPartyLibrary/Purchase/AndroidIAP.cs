@@ -9,8 +9,33 @@ namespace Library.Purchasing
 {
     public class AndroidIAP : IStoreListener
     {
+        // This is automatically invoked automatically when IAP service is initialized
+        public Action OnIAPServicesInitialized;
+
+        // This is automatically invoked automatically when purchase validation succeed
+        public Action OnPurchasesValidationSucceed;
+
+        // This is automatically invoked automatically when purchase succeed
+        public Action OnPurchasesSucceed;
+
+        // This is automatically invoked automatically when IAP service failed to initialized
+        public Action<string> OnIAPServicesInitializeFailed;
+
+        // This is automatically invoked automatically when purchase failed
+        public Action<string> OnPurchasesFailed;
+
+        // This is automatically invoked automatically when purchase validation failed
+        public Action<string> OnPurchasesValidationFailed;
+
+        public enum ItemType
+        {
+            OnlyConsumable = 0,
+            OnlyNonConsumable = 1,
+            Mixed = 2
+        }
+
         // Items list, configurable via inspector
-        private List<CatalogItem> Catalog;
+        public List<CatalogItem> Catalog { get; private set; }
 
         // The Unity Purchasing system
         private static IStoreController m_StoreController;
@@ -22,12 +47,6 @@ namespace Library.Purchasing
             {
                 return m_StoreController != null && Catalog != null;
             }
-        }
-
-        // Get Store Items List
-        public List<CatalogItem> GetCatalogItems()
-        {
-            return Catalog;
         }
 
         public void OnGUI() // FOR TEST
@@ -49,7 +68,7 @@ namespace Library.Purchasing
                 if (GUILayout.Button("Buy " + item.DisplayName))
                 {
                     // On button click buy a product
-                    BuyProductID(item.ItemId);
+                    BuyProduct(item.ItemId);
 
                 }
             }
@@ -59,20 +78,28 @@ namespace Library.Purchasing
         /// ///Initialize CatalogItems before show up Store Page.
         /// </summary>
 
-        public void InitializeIAPItems()
+        public void InitializeIAPItems(Action<List<CatalogItem>> actionSuccess, Action<string> actionError)
         {
             PlayFabClientAPI.GetCatalogItems(new GetCatalogItemsRequest(), result => {
 
                 Catalog = result.Catalog;
 
                 // Make UnityIAP initialize
-                InitializePurchasing();
+                // InitializePurchasing();
 
-            }, error => Debug.LogError(error.GenerateErrorReport()));
+                actionSuccess(result.Catalog);
+
+            }, error => {
+
+                Debug.LogError(error.GenerateErrorReport());
+
+                actionError(error.GenerateErrorReport());
+
+            });
         }
 
         // This is invoked manually on Start to initialize UnityIAP
-        private void InitializePurchasing()
+        public void InitializePurchasingServices(ItemType type)
         {
             // If IAP is already initialized, return gently
             if (IsInitialized) return;
@@ -80,10 +107,22 @@ namespace Library.Purchasing
             // Create a builder for IAP service
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance(AppStore.GooglePlay));
 
-            // Register each Consumable item from the catalog
-            foreach (var item in Catalog)
+            if(type == ItemType.OnlyConsumable || type == ItemType.Mixed)
             {
-                builder.AddProduct(item.ItemId, ProductType.Consumable);
+                // Register each Consumable item from the catalog
+                foreach (var item in Catalog)
+                {
+                    builder.AddProduct(item.ItemId, ProductType.Consumable);
+                }
+            }
+
+            if (type == ItemType.OnlyNonConsumable || type == ItemType.Mixed)
+            {
+                // Register each Consumable item from the catalog
+                foreach (var item in Catalog)
+                {
+                    builder.AddProduct(item.ItemId, ProductType.NonConsumable);
+                }
             }
 
             // Trigger IAP service initialization
@@ -94,18 +133,25 @@ namespace Library.Purchasing
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
             m_StoreController = controller;
+
+            OnIAPServicesInitialized?.Invoke();
         }
 
         // This is automatically invoked automatically when IAP service failed to initialized
         public void OnInitializeFailed(InitializationFailureReason error)
         {
-            Debug.Log("OnInitializeFailed InitializationFailureReason:" + error);
+            //Debug.Log("OnInitializeFailed InitializationFailureReason:" + error);
+
+            OnIAPServicesInitializeFailed?.Invoke("OnInitializeFailed InitializationFailureReason:" + error);
         }
 
         // This is automatically invoked automatically when purchase failed
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
-            Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
+            //Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
+
+            OnPurchasesFailed?.Invoke(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", 
+                product.definition.storeSpecificId, failureReason));
         }
 
         // This is invoked automatically when successful purchase is ready to be processed
@@ -115,6 +161,8 @@ namespace Library.Purchasing
             // delivered on application start.
             // Production code should account for such case:
             // More: https://docs.unity3d.com/ScriptReference/Purchasing.PurchaseProcessingResult.Pending.html
+
+            OnPurchasesSucceed?.Invoke();
 
             if (!IsInitialized)
             {
@@ -153,25 +201,42 @@ namespace Library.Purchasing
                 ReceiptJson = googleReceipt.PayloadData.json,
                 // Pass in the signature
                 Signature = googleReceipt.PayloadData.signature
-            }, result => Debug.Log("Validation successful!"),
-               error => Debug.Log("Validation failed: " + error.GenerateErrorReport())
+
+            }, result => {
+
+                Debug.Log("Validation successful!");
+
+                OnPurchasesValidationSucceed?.Invoke();
+            },
+
+               error => {
+
+                   //Debug.Log("Validation failed: " + error.GenerateErrorReport());
+
+                   OnPurchasesValidationFailed?.Invoke("Validation failed: " + error.GenerateErrorReport());
+               } 
             );
 
             return PurchaseProcessingResult.Complete;
         }
 
         // This is invoked manually to initiate purchase
-        private void BuyProductID(string productId)
+        public void BuyProduct(string productId)
         {
             // If IAP service has not been initialized, fail hard
-            if (!IsInitialized) throw new Exception("IAP Service is not initialized!");
+            if (!IsInitialized)
+            {
+                OnPurchasesFailed?.Invoke("IAP Service is not initialized!");
+
+                throw new Exception("IAP Service is not initialized!");
+            }
 
             // Pass in the product id to initiate purchase
             m_StoreController.InitiatePurchase(productId);
         }
 
         // Non - receipt purchase.
-        public static void NonReceiptPurchase(string catalogVersion, string itemId, int price, string currencyCode)
+        public void NonReceiptPurchase(string catalogVersion, string itemId, int price, string currencyCode)
         {
             PlayFabClientAPI.PurchaseItem(new PurchaseItemRequest
             {
@@ -188,14 +253,18 @@ namespace Library.Purchasing
             {
                 Debug.Log("Purchase succeed: " + result.Items);
 
+                OnPurchasesSucceed?.Invoke();
+
             }, (error) =>
 
             {
-                Debug.LogError("Purchase failed: " + error.GenerateErrorReport());
+                //Debug.LogError("Purchase failed: " + error.GenerateErrorReport());
+
+                OnPurchasesFailed?.Invoke("Purchase failed: " + error.GenerateErrorReport());
+
             });
 
         }
-
     }
 
     // The following classes are used to deserialize JSON results provided by IAP Service

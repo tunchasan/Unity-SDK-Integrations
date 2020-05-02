@@ -162,7 +162,7 @@ namespace Library.Purchasing
             // Production code should account for such case:
             // More: https://docs.unity3d.com/ScriptReference/Purchasing.PurchaseProcessingResult.Pending.html
 
-            OnPurchasesSucceed?.Invoke(e.purchasedProduct.definition.id);
+            OnPurchasesSucceed?.Invoke(e.purchasedProduct.definition.storeSpecificId);
 
             if (!IsInitialized)
             {
@@ -206,7 +206,7 @@ namespace Library.Purchasing
 
                 Debug.Log("Validation successful!");
 
-                OnPurchasesValidationSucceed?.Invoke(e.purchasedProduct.definition.id);
+                OnPurchasesValidationSucceed?.Invoke(e.purchasedProduct.definition.storeSpecificId);
             },
 
                error => {
@@ -253,7 +253,7 @@ namespace Library.Purchasing
             {
                 Debug.Log("Purchase succeed: " + result.Items);
 
-                OnPurchasesSucceed?.Invoke();
+                OnPurchasesSucceed?.Invoke(itemId);
 
             }, (error) =>
 

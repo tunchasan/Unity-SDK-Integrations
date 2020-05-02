@@ -36,7 +36,7 @@ MonoBehaviour:
     - UnityNotificationAndroidUseCustomActivity
     - UnityNotificationAndroidCustomActivityString
     values:
-    - False
+    - True
     - False
     - com.unity3d.player.UnityPlayerActivity
   TrackedResourceAssets: []

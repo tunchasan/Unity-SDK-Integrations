@@ -13,10 +13,10 @@ namespace Library.Purchasing
         public Action OnIAPServicesInitialized;
 
         // This is automatically invoked automatically when purchase validation succeed
-        public Action OnPurchasesValidationSucceed;
+        public Action<string> OnPurchasesValidationSucceed;
 
         // This is automatically invoked automatically when purchase succeed
-        public Action OnPurchasesSucceed;
+        public Action<string> OnPurchasesSucceed;
 
         // This is automatically invoked automatically when IAP service failed to initialized
         public Action<string> OnIAPServicesInitializeFailed;
@@ -162,7 +162,7 @@ namespace Library.Purchasing
             // Production code should account for such case:
             // More: https://docs.unity3d.com/ScriptReference/Purchasing.PurchaseProcessingResult.Pending.html
 
-            OnPurchasesSucceed?.Invoke();
+            OnPurchasesSucceed?.Invoke(e.purchasedProduct.definition.id);
 
             if (!IsInitialized)
             {
@@ -206,7 +206,7 @@ namespace Library.Purchasing
 
                 Debug.Log("Validation successful!");
 
-                OnPurchasesValidationSucceed?.Invoke();
+                OnPurchasesValidationSucceed?.Invoke(e.purchasedProduct.definition.id);
             },
 
                error => {

@@ -28,7 +28,7 @@ public class PurchaseExample : MonoBehaviour
         Debug.LogError("OnPurchaseFailed! : " + error);
     }
 
-    private void OnPurchaseSucceed()
+    private void OnPurchaseSucceed(string id)
     {
         throw new NotImplementedException();
     }
@@ -38,7 +38,7 @@ public class PurchaseExample : MonoBehaviour
         Debug.LogError("OnValidationFailed! : " + error);
     }
 
-    private void OnValidationSucceed()
+    private void OnValidationSucceed(string id)
     {
         throw new NotImplementedException();
     }

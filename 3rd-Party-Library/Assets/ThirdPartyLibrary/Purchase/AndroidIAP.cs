@@ -13,19 +13,19 @@ namespace Library.Purchasing
         public Action OnIAPServicesInitialized;
 
         // This is automatically invoked automatically when purchase validation succeed
-        public Action<string> OnPurchasesValidationSucceed;
+        public Action<Product> OnPurchasesValidationSucceed;
 
         // This is automatically invoked automatically when purchase succeed
-        public Action<string> OnPurchasesSucceed;
+        public Action<Product> OnPurchasesSucceed;
 
         // This is automatically invoked automatically when IAP service failed to initialized
         public Action<string> OnIAPServicesInitializeFailed;
 
         // This is automatically invoked automatically when purchase failed
-        public Action<string> OnPurchasesFailed;
+        public Action<Product, string> OnPurchasesFailed;
 
         // This is automatically invoked automatically when purchase validation failed
-        public Action<string> OnPurchasesValidationFailed;
+        public Action<Product, string> OnPurchasesValidationFailed;
 
         public enum ItemType
         {
@@ -150,8 +150,8 @@ namespace Library.Purchasing
         {
             //Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
 
-            OnPurchasesFailed?.Invoke(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", 
-                product.definition.storeSpecificId, failureReason));
+            OnPurchasesFailed?.Invoke(product,
+                string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
         }
 
         // This is invoked automatically when successful purchase is ready to be processed
@@ -162,7 +162,7 @@ namespace Library.Purchasing
             // Production code should account for such case:
             // More: https://docs.unity3d.com/ScriptReference/Purchasing.PurchaseProcessingResult.Pending.html
 
-            OnPurchasesSucceed?.Invoke(e.purchasedProduct.definition.storeSpecificId);
+            OnPurchasesSucceed?.Invoke(e.purchasedProduct);
 
             if (!IsInitialized)
             {
@@ -200,20 +200,21 @@ namespace Library.Purchasing
                 // Pass in the receipt
                 ReceiptJson = googleReceipt.PayloadData.json,
                 // Pass in the signature
-                Signature = googleReceipt.PayloadData.signature
+                Signature = googleReceipt.PayloadData.signature,
 
             }, result => {
 
                 Debug.Log("Validation successful!");
 
-                OnPurchasesValidationSucceed?.Invoke(e.purchasedProduct.definition.storeSpecificId);
+                OnPurchasesValidationSucceed?.Invoke(e.purchasedProduct);
             },
 
                error => {
 
                    //Debug.Log("Validation failed: " + error.GenerateErrorReport());
 
-                   OnPurchasesValidationFailed?.Invoke("Validation failed: " + error.GenerateErrorReport());
+                   OnPurchasesValidationFailed?.Invoke(e.purchasedProduct,
+                       "Validation failed: " + error.GenerateErrorReport());
                } 
             );
 
@@ -226,7 +227,7 @@ namespace Library.Purchasing
             // If IAP service has not been initialized, fail hard
             if (!IsInitialized)
             {
-                OnPurchasesFailed?.Invoke("IAP Service is not initialized!");
+                OnPurchasesFailed?.Invoke(m_StoreController.products.WithID(productId), "IAP Service is not initialized!");
 
                 throw new Exception("IAP Service is not initialized!");
             }
@@ -253,14 +254,14 @@ namespace Library.Purchasing
             {
                 Debug.Log("Purchase succeed: " + result.Items);
 
-                OnPurchasesSucceed?.Invoke(itemId);
+                OnPurchasesSucceed?.Invoke(m_StoreController.products.WithID(itemId));
 
             }, (error) =>
 
             {
                 //Debug.LogError("Purchase failed: " + error.GenerateErrorReport());
 
-                OnPurchasesFailed?.Invoke("Purchase failed: " + error.GenerateErrorReport());
+                OnPurchasesFailed?.Invoke(m_StoreController.products.WithID(itemId), "Purchase failed: " + error.GenerateErrorReport());
 
             });
 

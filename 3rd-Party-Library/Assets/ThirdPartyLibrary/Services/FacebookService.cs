@@ -5,7 +5,6 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 using UnityEngine;
-using LoginResult = PlayFab.ClientModels.LoginResult;
 using System;
 using Library.Authentication;
 
@@ -101,24 +100,32 @@ namespace Library.FaceBook
         }
 
         //Login with Facebook
-        public void PlayFabFacebookLogin(string token)
+        private void PlayFabFacebookLogin(string token)
         {
             /* We proceed with making a call to PlayFab API. We pass in current Facebook AccessToken and let it create
             and account using CreateAccount flag set to true. We also pass the callback for Success and Failure results*/
 
-            PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { CreateAccount = true, AccessToken = token, InfoRequestParameters = InfoRequest() },
-                OnPlayfabFacebookAuthComplete, OnPlayfabFacebookAuthFailed);
-        }
+            GetPlayerCombinedInfoRequestParams requestParams = PlayfabCustomAuth.LoginPayloadRequestSetter();
 
-        // When processing both results, we just set the message, explaining what's going on.
-        private void OnPlayfabFacebookAuthComplete(LoginResult result)
-        {
-            DebugLogHandler("PlayFab Facebook Auth Complete. Session ticket: " + result.SessionTicket);
-        }
+            PlayFabClientAPI.LoginWithFacebook(new LoginWithFacebookRequest { 
+                
+                CreateAccount = true, 
+                
+                AccessToken = token, 
+                
+                InfoRequestParameters = requestParams },
 
-        private void OnPlayfabFacebookAuthFailed(PlayFabError error)
-        {
-            DebugLogHandler("PlayFab Facebook Auth Failed: " + error.GenerateErrorReport(), true);
+                (result) => 
+                {
+                    DebugLogHandler("PlayFab Facebook Auth Complete. Session ticket: " + result.SessionTicket);
+
+                    PlayfabCustomAuth.FetchAccountData(result);
+                },
+
+                (error) => 
+                {
+                    DebugLogHandler("PlayFab Facebook Auth Failed: " + error.GenerateErrorReport(), true);
+                });
         }
 
         //Fuction that handles the console display MESSAGE based on Auth Process's Action's Output.
@@ -134,16 +141,6 @@ namespace Library.FaceBook
             //If "error" flag is false, Print the error message in Console.
             else
                 Debug.Log(_debugMessage);
-        }
-
-        // Set-Up PayloadData
-        private GetPlayerCombinedInfoRequestParams InfoRequest()
-        {
-            GetPlayerCombinedInfoRequestParams request = new GetPlayerCombinedInfoRequestParams();
-
-            request.GetPlayerProfile = true;
-
-            return request;
         }
 
         #endregion
@@ -312,6 +309,8 @@ namespace Library.FaceBook
 
                 actionStatus(true, "Account Linked With Facebook Succeed.", false);
 
+                PlayfabCustomAuth.UpdateLinkWithFacebookStatus(true);
+
                 //Debug.Log("Account Linked With Facebook Succeed.");
             },
 
@@ -327,7 +326,7 @@ namespace Library.FaceBook
         private void OnPlayfabFacebookLinkFailed(PlayFabError error, Action<bool, string, bool> actionStatus)
         {
             // Specified Error Code for RECOVER
-            if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // Facebook Acc. is already used by another user.
+            if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed && PlayfabCustomAuth.RecoverActionStatus) // Facebook Acc. is already used by another user.
             {
                 Debug.LogWarning("The Facebook Account is already used by another user.");
 
@@ -389,6 +388,8 @@ namespace Library.FaceBook
 
                 // Reset Display Name for Facebook
                 this.ResetDisplayName();
+
+                PlayfabCustomAuth.UpdateLinkWithFacebookStatus(false);
 
                 actionStatus(true, "Account UnLinked With Facebook Succeed.");
 
@@ -499,11 +500,6 @@ namespace Library.FaceBook
             Debug.Log("Display Name Changed: " + result.DisplayName);
 
             PlayfabCustomAuth.UserDisplayName = result.DisplayName;
-        }
-
-        public static bool IsLinkedWithFacebook()
-        {
-            return PlayerPrefs.HasKey("DISPLAYNAME_FACEBOOK");
         }
 
         /**********************************************************************************************/

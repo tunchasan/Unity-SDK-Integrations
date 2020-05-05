@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
@@ -15,14 +13,44 @@ namespace Library.Authentication
 
         private string _userName;
 
+        public static bool RecoverActionStatus { get; set; }
+
         // Can be used after success login
         public static string UserDisplayName { get; set; }
 
         // Can be used after success login
-        public static string PlayFabID { get; set; }
+        public static string PlayFabID { get; private set; }
 
         // Can be used after success login
         public static bool IsFreshAccount { get; private set; }
+
+        // Can be used after success login
+        public static bool IsLinkedWithGoogle { get; private set; }
+
+        // Can be used after success login
+        public static bool IsLinkedWithFacebook { get; private set; }
+
+        // Can be used after success login
+        public static void UpdateLinkWithFacebookStatus(bool result)
+        {
+            IsLinkedWithFacebook = result;
+
+            IsFreshAccount = !(IsLinkedWithGoogle || IsLinkedWithFacebook);
+        }
+
+        // Can be used after success login
+        public static void UpdateLinkWithGoogleStatus(bool result)
+        {
+            IsLinkedWithGoogle = result;
+
+            IsFreshAccount = !(IsLinkedWithGoogle || IsLinkedWithFacebook);
+        }
+
+        // Can be used after success login
+        public static bool ISGuestAccount()
+        {
+            return IsFreshAccount;
+        }
 
         #region REGISTER
 
@@ -137,7 +165,6 @@ namespace Library.Authentication
 
         public void AnonymousLogin(bool linkAction, Action<bool, string> actionStatus)
         {
-
             if (linkAction) // is this Link Mobile ID action ?
             {
                 LinkWithMobileID(actionStatus); // Link with MobileID
@@ -165,16 +192,7 @@ namespace Library.Authentication
                     {
                         Debug.Log("Login with DeviceID request completed Succesfuly.");
 
-                        SetDisplayName(result.PlayFabId); // Set Display Name
-
-                        PlayFabID = result.PlayFabId; // Update PlayFabID
-
-                        IsFreshAccount = result.NewlyCreated;
-
-                        if (!IsFreshAccount)
-                        {
-                            UserDisplayName = result.InfoResultPayload.PlayerProfile.DisplayName;
-                        }
+                        FetchAccountData(result);
 
                         actionStatus(true, "Login with DeviceID request completed Succesfuly.");
                     },
@@ -200,10 +218,28 @@ namespace Library.Authentication
 
         }
 
+        public static void FetchAccountData(LoginResult result)
+        {
+            PlayFabID = result.PlayFabId; // Update PlayFabID
+
+            IsFreshAccount = result.NewlyCreated;
+
+            if (result.InfoResultPayload.AccountInfo.GoogleInfo != null)
+                IsLinkedWithGoogle = true;
+
+            if (result.InfoResultPayload.AccountInfo.FacebookInfo != null)
+                IsLinkedWithFacebook = true;
+
+            if (!IsFreshAccount)
+            {
+                UserDisplayName = result.InfoResultPayload.PlayerProfile.DisplayName;
+            }
+        }
+
         //Get Mobile Unique ID
         private static string ReturnMobileID()
         {
-            string deviceID = SystemInfo.deviceUniqueIdentifier;
+            string deviceID = SystemInfo.deviceUniqueIdentifier + "ffssaads";
 
             return deviceID;
         }
@@ -337,34 +373,33 @@ namespace Library.Authentication
 
         #region DISPLAY - NAME
 
-        //Set PlayFab Display Name
-        private void SetDisplayName(string PlayFabID)
+        public static void UpdateGuestUserDisplayName(string userName, Action actionSuccess, Action actionError)
         {
-            if (!PlayerPrefs.HasKey("DISPLAYNAME_GUEST"))
-            {
-                //Display Name Request
-                var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = "Guest " + PlayFabID };
+            //Display Name Request
+            var requestDisplayName = new UpdateUserTitleDisplayNameRequest { DisplayName = userName };
 
-                PlayFabClientAPI.UpdateUserTitleDisplayName(requestDisplayName, OnDisplayNameSuccess, OnDisplayNameFailure);
+            PlayFabClientAPI.UpdateUserTitleDisplayName(
+                
+                requestDisplayName,
 
-            }
+                (result) =>
+                {
+                    Debug.Log("Display Name Changed: " + result.DisplayName);
 
-        }
+                    PlayerPrefs.SetString("DISPLAYNAME_GUEST", result.DisplayName);
 
-        //Display Name Error Callback
-        private void OnDisplayNameFailure(PlayFabError error)
-        {
-            Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
-        }
+                    actionSuccess();
 
-        //Display Name Succeed Callback
-        private void OnDisplayNameSuccess(UpdateUserTitleDisplayNameResult result)
-        {
-            Debug.Log("Display Name Changed: " + result.DisplayName);
+                    UserDisplayName = result.DisplayName;
+                },
 
-            PlayerPrefs.SetString("DISPLAYNAME_GUEST", result.DisplayName);
+                (error) =>
+                {
+                    Debug.LogError("Display Name Change Error: " + error.GenerateErrorReport());
 
-            UserDisplayName = result.DisplayName;
+                    actionError();
+
+                });
         }
 
         #endregion
@@ -392,19 +427,13 @@ namespace Library.Authentication
             PlayerPrefs.DeleteKey("PASSWORD");
         }
 
-        public static bool ISGuestAccount()
-        {
-            if (UserDisplayName.Equals("Guest " + PlayFabID))
-                return true; // Guest Account
-
-            return false;
-        }
-
         public static GetPlayerCombinedInfoRequestParams LoginPayloadRequestSetter()
         {
             GetPlayerCombinedInfoRequestParams ınfoRequestParams = new GetPlayerCombinedInfoRequestParams();
 
             ınfoRequestParams.GetPlayerProfile = true;
+
+            ınfoRequestParams.GetUserAccountInfo = true;
 
             PlayerProfileViewConstraints viewConstraints = new PlayerProfileViewConstraints();
 

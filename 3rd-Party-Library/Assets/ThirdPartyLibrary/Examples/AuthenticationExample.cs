@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Library.FaceBook;
 using Library.GooglePlay;
 using Library.Authentication;
+using System;
 
 public class AuthenticationExample : MonoBehaviour
 {
@@ -29,6 +30,17 @@ public class AuthenticationExample : MonoBehaviour
     {
         if (Input.GetKey("w"))
             Debug.Log(PlayfabCustomAuth.ISGuestAccount());
+
+    }
+
+    private void WP()
+    {
+        
+    }
+
+    private void GG()
+    {
+        
     }
 
     /**************************************************************************************************/
@@ -163,7 +175,7 @@ public class AuthenticationExample : MonoBehaviour
     {
         ConnectFacebookButton.interactable = false;
 
-        if (FacebookService.IsLinkedWithFacebook()) // Loggedin with Facebook
+        if (PlayfabCustomAuth.IsLinkedWithFacebook) // Loggedin with Facebook
         {
             // UnLink Facebook Acc.
             facebookAuth.UnLinkWithFacebook(
@@ -306,7 +318,23 @@ public class AuthenticationExample : MonoBehaviour
 
     public void RecoverAccountWithGPGS() // Recover with Google Play -> YES
     {
-        gpgsAuth.RecoverAccount();
+        gpgsAuth.RecoverAccount(
+
+            (success, actionMessage, recover) =>
+            {
+                if (!success) // Recover Success
+                {
+                    // User succesfully recover account.
+
+                    // DO WHATEVER YOU WANNA DO HERE, AFTER RECOVERING
+                }
+
+                else // Recover Failed
+                {
+
+                }
+
+            });
 
         RecoverPopUpYesButton.onClick.RemoveListener(RecoverAccountWithGPGS);
 

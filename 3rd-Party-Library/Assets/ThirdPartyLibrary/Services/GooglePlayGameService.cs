@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using PlayFab;
+﻿using PlayFab;
 using PlayFab.ClientModels;
 using Library.Authentication;
 
@@ -61,7 +60,7 @@ namespace Library.GooglePlay
                     else
                     {
                         // Login in with PlayFab
-                        LoginWithGoogleAccout(serverAuthCode);
+                        LoginWithGoogleAccout(serverAuthCode, actionStatus);
                     }
 
                 }
@@ -77,7 +76,7 @@ namespace Library.GooglePlay
         }
 
         // GPGS login data with PlayFab Integration.
-        public void LoginWithGoogleAccout(string authCode)
+        public void LoginWithGoogleAccout(string authCode, Action<bool, string, bool> actionStatus)
         {
             GetPlayerCombinedInfoRequestParams requestParams = PlayfabCustomAuth.LoginPayloadRequestSetter();
 
@@ -95,34 +94,25 @@ namespace Library.GooglePlay
             }, (result) =>
 
             {   
-                string entityID = result.EntityToken.Entity.Id;
-
-                string entityType = result.EntityToken.Entity.Type;
-
                 Debug.Log("[6] Logged in as " + Social.localUser.userName);
 
                 LoggedIn = true; // Logged in user
 
-                PlayfabCustomAuth.PlayFabID = result.PlayFabId; // Update PlayFabID
-
-                PlayfabCustomAuth.UserDisplayName = result.InfoResultPayload.PlayerProfile.DisplayName; // Update DisplayName
+                PlayfabCustomAuth.FetchAccountData(result);
 
                 PlayerPrefs.SetString("GPGSAUTH", "success"); // PlayFab GPGS Auth succeed.
 
+                actionStatus(true, "Login with Google Play Succeed.", false);
             },
+            
+            (error) =>
+            {
+                actionStatus(false, "Login with Google Play Failed.", false);
 
-            OnPlayFabError); // Error Callback
+                PlayerPrefs.SetString("GPGSAUTH", "failed");
 
-        }
+            }); // Error Callback
 
-        //Error Callback
-        private void OnPlayFabError(PlayFabError error)
-        {
-            PlayerPrefs.SetString("GPGSAUTH", "failed"); // PlayFab GPGS Auth failed.
-
-            Debug.LogError(error.Error);
-
-            Debug.LogError("GPGS PlayFab - Error Report: " + error.GenerateErrorReport());
         }
 
         #endregion
@@ -174,6 +164,8 @@ namespace Library.GooglePlay
 
                 LoggedIn = true; // Logged in user
 
+                PlayfabCustomAuth.UpdateLinkWithGoogleStatus(true);
+
                 //Request PlayFab DisplayName
                 this.SetDisplayName(Social.localUser.userName);
 
@@ -190,7 +182,7 @@ namespace Library.GooglePlay
         private void OnPlayFabLinkError(PlayFabError error, Action<bool, string, bool> actionStatus)
         {
             // Specified Error Code
-            if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed) // GPGS Acc. is already used by another user.
+            if (error.Error == PlayFabErrorCode.LinkedAccountAlreadyClaimed && PlayfabCustomAuth.RecoverActionStatus) // GPGS Acc. is already used by another user.
             {
                 if (PlayfabCustomAuth.ISGuestAccount())
                 {
@@ -236,6 +228,9 @@ namespace Library.GooglePlay
                 PlayGamesPlatform.Instance.SignOut();
 
                 LoggedIn = false; // Logged in user -> false
+
+                PlayfabCustomAuth.UpdateLinkWithGoogleStatus(false);
+
 
                 //Reset Display Name
                 this.ResetDisplayName();
@@ -331,7 +326,7 @@ namespace Library.GooglePlay
         #region ACCOUNT RECOVER
 
         // User wants to recover account, Recover it.  *** Yes Click Event ***
-        public void RecoverAccount()
+        public void RecoverAccount(Action<bool, string, bool> actionStatus)
         {
             PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string serverAuthCode) =>
             {
@@ -341,7 +336,7 @@ namespace Library.GooglePlay
                 Debug.Log("New Server Auth Code: " + serverAuthCode);
 
                 //Login in with PlayFab
-                LoginWithGoogleAccout(serverAuthCode);
+                LoginWithGoogleAccout(serverAuthCode, actionStatus);
 
             });
         }

@@ -43,7 +43,7 @@ namespace Library.PushNotification
 
                 FireTime = System.DateTime.Now.AddHours(DelayTimeAsHours),
 
-                SmallIcon = iconId
+                LargeIcon = iconId
             };
 
             AndroidNotificationCenter.SendNotification(notification, channel.Id);

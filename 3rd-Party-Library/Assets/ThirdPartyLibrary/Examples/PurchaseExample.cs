@@ -1,6 +1,7 @@
 ﻿using Library.Purchasing;
 using System;
 using UnityEngine;
+using UnityEngine.Monetization;
 
 public class PurchaseExample : MonoBehaviour
 {
@@ -23,22 +24,22 @@ public class PurchaseExample : MonoBehaviour
         _androidIAP.OnPurchasesFailed += OnPurchaseFailed;
     }
 
-    private void OnPurchaseFailed(string error)
+    private void OnPurchaseFailed(UnityEngine.Purchasing.Product product, string error)
     {
         Debug.LogError("OnPurchaseFailed! : " + error);
     }
 
-    private void OnPurchaseSucceed(string id)
+    private void OnPurchaseSucceed(UnityEngine.Purchasing.Product product)
     {
         throw new NotImplementedException();
     }
 
-    private void OnValidationFailed(string error)
+    private void OnValidationFailed(UnityEngine.Purchasing.Product product, string error)
     {
         Debug.LogError("OnValidationFailed! : " + error);
     }
 
-    private void OnValidationSucceed(string id)
+    private void OnValidationSucceed(UnityEngine.Purchasing.Product product)
     {
         throw new NotImplementedException();
     }

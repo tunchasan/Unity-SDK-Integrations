@@ -127,7 +127,7 @@ namespace Library.Advertisement.Admob
                 _Rewarded_ID = _AndroidRewardedVideoAdID;   // This RewardedID is for Testing.
 
              #elif UNITY_IPHONE // IOS
-                _Rewarded_ID = _IOSInterstitialAdID;   // This RewardedID is for Testing.
+                _Rewarded_ID = _IOSRewardedVideoAdID;   // This RewardedID is for Testing.
 
              #else //Other
                 _Rewarded_ID = "unexpected_platform";

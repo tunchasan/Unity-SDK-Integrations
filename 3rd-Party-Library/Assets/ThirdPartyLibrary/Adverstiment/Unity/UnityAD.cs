@@ -82,9 +82,9 @@ namespace Library.Advertisement.UnityAd
             #if UNITY_ANDROID
                   _appID = _AndroidAppID;
             #elif UNITY_IPHONE
-                  appID = _IOSAppID;
+                  _appID = _IOSAppID;
             #else
-                  appID = "unexpected_platform";
+                  _appID = "unexpected_platform";
             #endif
         }
 

@@ -10,8 +10,6 @@ namespace Library.PlayerData.Inventory
 	{
 		public static List<ItemInstance> GetUserInventory()
 		{
-			int gold;
-
 			List<ItemInstance> UserInventory = new List<ItemInstance>();
 			
 			PlayFabClientAPI.GetUserInventory(new GetUserInventoryRequest(), (GetUserInventoryResult result) =>

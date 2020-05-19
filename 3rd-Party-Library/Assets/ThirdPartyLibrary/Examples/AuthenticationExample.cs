@@ -21,26 +21,13 @@ public class AuthenticationExample : MonoBehaviour
 
         gpgsAuth = new GooglePlayGameService();
 
+        #if UNITY_ANDROID
+
         ConnectGooglePlayButton.onClick.AddListener(ConnectGooglePlay);
 
+        #endif
+
         ConnectFacebookButton.onClick.AddListener(ConnectFacebook);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKey("w"))
-            Debug.Log(PlayfabCustomAuth.ISGuestAccount());
-
-    }
-
-    private void WP()
-    {
-        
-    }
-
-    private void GG()
-    {
-        
     }
 
     /**************************************************************************************************/
@@ -48,6 +35,8 @@ public class AuthenticationExample : MonoBehaviour
 
     private void Start()
     {
+        #if UNITY_ANDROID
+
         // LoggedIn before with GPGS
         if (gpgsAuth.LoggedInBefore())
         {
@@ -100,6 +89,33 @@ public class AuthenticationExample : MonoBehaviour
                 });
 
         }
+
+        #endif
+
+        #if UNITY_IOS
+
+        Debug.Log("IOS Device login automatically...");
+
+            /// Login as Guest with Unique DeviceID
+            customAuth.AnonymousLogin(
+
+                linkAction: false,
+
+                (actionResult, actionMessage) =>
+                {
+                    if (actionResult) // Request completed with no error ( Succeed )
+                    {
+
+                    }
+
+                    else // Request completed failure
+                    {
+
+                    }
+
+                });
+
+        #endif
     }
 
     /**************************************************************************************************/
@@ -109,6 +125,8 @@ public class AuthenticationExample : MonoBehaviour
     public Button ConnectGooglePlayButton;
 
     public Button ConnectFacebookButton;
+
+    #if UNITY_ANDROID
 
     public void ConnectGooglePlay() // Connect Google Play
     {
@@ -170,6 +188,8 @@ public class AuthenticationExample : MonoBehaviour
 
         }
     }
+
+    #endif
 
     public void ConnectFacebook() // Connect Facebook
     {
@@ -305,6 +325,8 @@ public class AuthenticationExample : MonoBehaviour
         RecoverPopUpMenu.SetActive(false);
     }
 
+    #if UNITY_ANDROID
+
     public void StartRecoverWithGooglePlay(string recoverText) // Start Recover
     {
         RecoverPopUpText.text = recoverText;
@@ -331,7 +353,12 @@ public class AuthenticationExample : MonoBehaviour
 
                 else // Recover Failed
                 {
+                    // Can be shown new pop up here
+                    RecoverResultText.text = actionMessage;
 
+                    RecoverResultPopUpMenu.SetActive(true);
+
+                    RecoverResultPopUpOKButton.onClick.AddListener(CloseRecoverResultPopUp);
                 }
 
             });
@@ -354,6 +381,8 @@ public class AuthenticationExample : MonoBehaviour
         RecoverPopUpMenu.SetActive(false);
     }
 
+    #endif
+
     public void CloseRecoverResultPopUp() // Close Recover Result Popup Menu
     {
         RecoverResultPopUpMenu.SetActive(false);
@@ -363,4 +392,17 @@ public class AuthenticationExample : MonoBehaviour
 
     /**************************************************************************************************/
 
+    public void LinkIOS()
+    {
+        PlayfabCustomAuth.LinkWithMobileID(
+            (result, message)=>
+            {
+                Debug.Log(message);
+            });
+    }
+
+    public void UnLinkIOS()
+    {
+        PlayfabCustomAuth.UnLinkWithMobileID();    
+    }
 }

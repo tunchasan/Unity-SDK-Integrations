@@ -140,10 +140,10 @@ namespace Library.Advertisement.Admob
                 _Banner_ID = _AndroidBannerID;   // This BannerID is for Testing.
 
             #elif UNITY_IPHONE // IOS
-                _BANNER_ID = _IOSBannerID;   // This BannerID is for Testing.
+                _Banner_ID = _IOSBannerID;   // This BannerID is for Testing.
 
             #else //Other
-                _BANNER_ID = "unexpected_platform";
+                _Banner_ID = "unexpected_platform";
 
             #endif
         }

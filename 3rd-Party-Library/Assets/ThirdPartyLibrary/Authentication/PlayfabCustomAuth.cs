@@ -208,10 +208,35 @@ namespace Library.Authentication
 
                 #if UNITY_IOS // On IOS
 
-                //Login Request with IOS Device
-                var requestIOS = new LoginWithIOSDeviceIDRequest { DeviceId = ReturnMobileID(), CreateAccount = true };
+                GetPlayerCombinedInfoRequestParams requestParams = LoginPayloadRequestSetter();
 
-                PlayFabClientAPI.LoginWithIOSDeviceID(requestIOS, OnLoginMobileSuccess, OnLoginMobileFailure);
+                //Login Request with IOS Device
+                var requestIOS = new LoginWithIOSDeviceIDRequest { 
+                    
+                    DeviceId = ReturnMobileID(), 
+                    
+                    CreateAccount = true,
+                
+                    InfoRequestParameters = requestParams
+                };
+
+                PlayFabClientAPI.LoginWithIOSDeviceID(requestIOS,
+                    
+                    (result) =>
+                    {
+                        Debug.Log("Login with IOS DeviceID request completed Succesfuly.");
+
+                        FetchAccountData(result);
+
+                        actionStatus(true, "Login with IOS DeviceID request completed Succesfuly.");
+                    },
+
+                    (error) =>
+                    {
+                        Debug.LogError("IOS Mobile Login Error Report: " + error.GenerateErrorReport());
+
+                        actionStatus(false, error.GenerateErrorReport());
+                    });
 
                 #endif
             }
@@ -311,18 +336,26 @@ namespace Library.Authentication
 
         #if UNITY_IOS // On IOS
 
-            //Link user account with IOS ID
+         //Link user account with IOS ID
             PlayFabClientAPI.LinkIOSDeviceID(new LinkIOSDeviceIDRequest()
             {
                 DeviceId = ReturnMobileID()
 
-            }, (result) =>
-
+            }, 
+            
+            (result) =>
             {
                 Debug.Log("Account Linked With IOS DeviceID Succeed.");
+
+                actionStatus(true, "Account Linked With Android DeviceID Succeed.");
             },
 
-                OnLoginMobileFailure); // Error Callback
+            (error) =>
+            {
+                Debug.LogError("Link with IOS DeviceID: " + error.GenerateErrorReport());
+
+                actionStatus(false, error.GenerateErrorReport());
+            });    
 
         #endif
         }
@@ -357,14 +390,18 @@ namespace Library.Authentication
             PlayFabClientAPI.UnlinkIOSDeviceID(new UnlinkIOSDeviceIDRequest()
             {
                 DeviceId = ReturnMobileID()
-
-            }, (result) =>
-
+            }, 
+            
+            (result) =>
             {
                 Debug.Log("Account UnLinked With IOS DeviceID Succeed.");
             },
 
-                OnLoginMobileFailure); // Error Callback
+            (error) =>
+            {
+                Debug.LogError("Unlink with IOS DeviceID: " + error.GenerateErrorReport());
+
+            }); // Error Callback
 
             #endif
         }

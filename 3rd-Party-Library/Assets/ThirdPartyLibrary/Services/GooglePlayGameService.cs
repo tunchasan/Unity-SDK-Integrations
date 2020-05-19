@@ -12,6 +12,7 @@ namespace Library.GooglePlay
 
     public class GooglePlayGameService
     {
+        #if UNITY_ANDROID
         public static bool LoggedIn { get; private set; }
 
         public GooglePlayGameService()
@@ -358,7 +359,8 @@ namespace Library.GooglePlay
             return PlayGamesPlatform.Instance.GetUserDisplayName();
         }
 
+        #endif
     }
-
+       
 }
 

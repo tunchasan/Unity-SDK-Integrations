@@ -347,7 +347,7 @@ namespace Library.Authentication
             {
                 Debug.Log("Account Linked With IOS DeviceID Succeed.");
 
-                actionStatus(true, "Account Linked With Android DeviceID Succeed.");
+                actionStatus(true, "Account Linked With IOS DeviceID Succeed.");
             },
 
             (error) =>

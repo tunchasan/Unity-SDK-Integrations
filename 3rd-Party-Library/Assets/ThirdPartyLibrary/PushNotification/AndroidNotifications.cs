@@ -1,4 +1,6 @@
-﻿using Unity.Notifications.Android;
+﻿#if UNITY_ANDROID
+
+using Unity.Notifications.Android;
 using UnityEngine;
 
 namespace Library.PushNotification
@@ -60,3 +62,5 @@ namespace Library.PushNotification
         }
     }
 }
+
+#endif

@@ -29,6 +29,8 @@ public class AdverstisementExample : MonoBehaviour
         _interstitialADs = new AdmobInterstitialAd();
 
         _videoAds = new UnityVideoAd();
+
+        _bannerAd = new UnityBannerAd();
     }
 
     private void Start()
@@ -75,6 +77,8 @@ public class AdverstisementExample : MonoBehaviour
     private void OnRewardAdLoaded()
     {
         Debug.Log("OnRewardAdLoaded!");
+
+        _rewardedADs.ShowRewardedVideoAd();
     }
 
     private void OnBannerAdLeavingApplication()
@@ -118,7 +122,7 @@ public class AdverstisementExample : MonoBehaviour
 
         else if (Input.GetKey("d"))
         {
-            _rewardedADs2.LoadRewardedVideoAd();
+            _bannerAd.LoadAndShowBannerAd();
         }
 
         else if (Input.GetKey("a"))

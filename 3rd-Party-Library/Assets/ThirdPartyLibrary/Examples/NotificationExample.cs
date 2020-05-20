@@ -1,4 +1,6 @@
-﻿using Library.PushNotification;
+﻿#if UNITY_ANDROID
+
+using Library.PushNotification;
 using UnityEngine;
 
 public class NotificationExample : MonoBehaviour
@@ -32,3 +34,5 @@ public class NotificationExample : MonoBehaviour
         _notifications.AddNotification(Notification_Title, Notification_Text, 24, Notification_SmallIconID);
     }
 }
+
+#endif

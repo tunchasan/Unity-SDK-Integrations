@@ -27,6 +27,8 @@ public class AdverstisementExample : MonoBehaviour
         _rewardedADs2 = new AdmobRewardedVideoAd("PowerUp_MAGNET", 2);
 
         _interstitialADs = new AdmobInterstitialAd();
+
+        _videoAds = new UnityVideoAd();
     }
 
     private void Start()
@@ -121,7 +123,7 @@ public class AdverstisementExample : MonoBehaviour
 
         else if (Input.GetKey("a"))
         {
-            _interstitialADs.LoadInterstitialAd();
+            _videoAds.LoadAndShowVideoAD();
         }
 
     }

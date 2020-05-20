@@ -15,7 +15,7 @@ MonoBehaviour:
   TitleId: 74F59
   DeveloperSecretKey: YPY1I6D8XRCWXTY5O7XKSIPO67AGYJZCXI1HRSRJNIMY4IODQ3
   ProductionEnvironmentUrl: 
-  RequestType: 2
+  RequestType: 0
   AdvertisingIdType: 
   AdvertisingIdValue: 
   DisableAdvertising: 0

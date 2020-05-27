@@ -5,7 +5,6 @@ using Library.Authentication;
 namespace Library.GooglePlay
 {
     using GooglePlayGames;
-
     using GooglePlayGames.BasicApi;
     using System;
     using UnityEngine;
@@ -349,6 +348,30 @@ namespace Library.GooglePlay
             PlayGamesPlatform.Instance.SignOut();
 
             LoggedIn = false; // Logged in user -> false
+        }
+
+        #endregion
+
+        #region LEADERBOARD
+
+        public static void PostToLeaderboard(long newScore)
+        {
+            Social.ReportScore(newScore, GPGSIds.leaderboard_leaderboard, (bool success) =>
+            {
+                if(success)
+                {
+                    Debug.Log("Posted new score to leaderboard");
+                }
+                else
+                {
+                    Debug.Log("Unable to post new score to leaderboard");
+                }
+            });
+        }
+
+        public static void ShowLeaderboardUI()
+        {
+            PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_leaderboard);
         }
 
         #endregion

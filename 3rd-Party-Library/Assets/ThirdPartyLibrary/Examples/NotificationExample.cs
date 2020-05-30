@@ -1,5 +1,4 @@
-﻿#if UNITY_ANDROID
-
+﻿
 using Library.PushNotification;
 using UnityEngine;
 
@@ -14,25 +13,36 @@ public class NotificationExample : MonoBehaviour
     // Notification Icon
     private const string Notification_SmallIconID = "icon_01";
 
-    private AndroidNotifications _notifications;
-
     void Start()
     {
-        _notifications = new AndroidNotifications();
+        #if UNITY_ANROID
 
-        _notifications.ResetAll();
+        AndroidNotifications.ResetAll();
 
-        _notifications.CreateNotificationChannel();
+        AndroidNotifications.CreateNotificationChannel();
 
         // Half minute notification FOR TEST
-        _notifications.AddNotification(Notification_Title, Notification_Text, 0.008, Notification_SmallIconID);
+        AndroidNotifications.AddNotification(Notification_Title, Notification_Text, 0.008, Notification_SmallIconID);
         // 1 HOUR
-        _notifications.AddNotification(Notification_Title, Notification_Text, 1, Notification_SmallIconID);
+        AndroidNotifications.AddNotification(Notification_Title, Notification_Text, 1, Notification_SmallIconID);
         // 7 HOUR
-        _notifications.AddNotification(Notification_Title, Notification_Text, 7, Notification_SmallIconID);
+        AndroidNotifications.AddNotification(Notification_Title, Notification_Text, 7, Notification_SmallIconID);
         // 1 DAY
-        _notifications.AddNotification(Notification_Title, Notification_Text, 24, Notification_SmallIconID);
+        AndroidNotifications.AddNotification(Notification_Title, Notification_Text, 24, Notification_SmallIconID);
+  
+        #endif
+
+        #if UNITY_IOS
+
+        // Remove all delivered notification from IOSNotificationCenter
+        IOSNotification.RemoveAllDeliveredNotifications();
+
+        // Remove all ScheduledNotifications
+        IOSNotification.RemoveAllScheduledNotifications();
+
+        IOSNotification.ScheduleNotification("Hey!", "Come and Play", "We missed you", new System.TimeSpan(0,1,0), "N_MINUTE");
+
+        #endif
     }
 }
 
-#endif

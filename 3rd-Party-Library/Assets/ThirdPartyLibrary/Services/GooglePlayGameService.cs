@@ -5,10 +5,10 @@ using Library.Authentication;
 namespace Library.GooglePlay
 {
     using GooglePlayGames;
-
     using GooglePlayGames.BasicApi;
     using System;
     using UnityEngine;
+    using UnityEngine.Monetization;
 
     public class GooglePlayGameService
     {
@@ -349,6 +349,56 @@ namespace Library.GooglePlay
             PlayGamesPlatform.Instance.SignOut();
 
             LoggedIn = false; // Logged in user -> false
+        }
+
+        #endregion
+
+        #region LEADERBOARD
+
+        // Post score to Google Play Leaderboard
+        public static void PostToLeaderboard(long newScore, Action<bool> actionStatus)
+        {
+            Social.ReportScore(newScore, GPGSIds.leaderboard_leaderboard, (bool success) =>
+            {
+                actionStatus(success);
+            });
+        }
+
+        // Show Google Play Leaderboard
+        public static void ShowLeaderboardUI()
+        {
+            if (LoggedIn)
+            {
+                PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_leaderboard);
+            }
+
+            else
+            {
+                Debug.Log("You must be logged into GooglePlay");
+            }
+                
+        }
+
+        #endregion
+
+        #region ACHIEVEMENTS
+
+        // Show Achievements
+        public static void ShowAchievementUI()
+        {
+            Social.ShowAchievementsUI();
+        }
+
+        // Update Incremental Achievements
+        public static void UpdateIncrementalAchievement(int steps, string achievementID, Action<bool> actionStatus)
+        {
+            PlayGamesPlatform.Instance.IncrementAchievement(achievementID, steps, actionStatus);
+        }
+
+        // Unlock Regular Achievements
+        public static void UnlockRegularAchievement(string achievementID, double progress, Action<bool> actionStatus)
+        {
+            Social.ReportProgress(achievementID, progress, actionStatus);
         }
 
         #endregion

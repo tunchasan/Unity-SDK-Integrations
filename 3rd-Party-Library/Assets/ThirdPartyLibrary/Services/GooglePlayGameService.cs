@@ -8,6 +8,7 @@ namespace Library.GooglePlay
     using GooglePlayGames.BasicApi;
     using System;
     using UnityEngine;
+    using UnityEngine.Monetization;
 
     public class GooglePlayGameService
     {
@@ -354,24 +355,50 @@ namespace Library.GooglePlay
 
         #region LEADERBOARD
 
-        public static void PostToLeaderboard(long newScore)
+        // Post score to Google Play Leaderboard
+        public static void PostToLeaderboard(long newScore, Action<bool> actionStatus)
         {
             Social.ReportScore(newScore, GPGSIds.leaderboard_leaderboard, (bool success) =>
             {
-                if(success)
-                {
-                    Debug.Log("Posted new score to leaderboard");
-                }
-                else
-                {
-                    Debug.Log("Unable to post new score to leaderboard");
-                }
+                actionStatus(success);
             });
         }
 
+        // Show Google Play Leaderboard
         public static void ShowLeaderboardUI()
         {
-            PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_leaderboard);
+            if (LoggedIn)
+            {
+                PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_leaderboard);
+            }
+
+            else
+            {
+                Debug.Log("You must be logged into GooglePlay");
+            }
+                
+        }
+
+        #endregion
+
+        #region ACHIEVEMENTS
+
+        // Show Achievements
+        public static void ShowAchievementUI()
+        {
+            Social.ShowAchievementsUI();
+        }
+
+        // Update Incremental Achievements
+        public static void UpdateIncrementalAchievement(int steps, string achievementID, Action<bool> actionStatus)
+        {
+            PlayGamesPlatform.Instance.IncrementAchievement(achievementID, steps, actionStatus);
+        }
+
+        // Unlock Regular Achievements
+        public static void UnlockRegularAchievement(string achievementID, double progress, Action<bool> actionStatus)
+        {
+            Social.ReportProgress(achievementID, progress, actionStatus);
         }
 
         #endregion

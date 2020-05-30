@@ -1,6 +1,8 @@
 ﻿using Library.GooglePlay;
 using UnityEngine;
 
+#if UNITY_ANDROID
+
 public class GPGSLeaderboardAndAchievementsExample : MonoBehaviour
 {
     static int score = 5;
@@ -45,3 +47,5 @@ public class GPGSLeaderboardAndAchievementsExample : MonoBehaviour
     }
 
 }
+
+#endif

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Notifications.iOS;
@@ -30,6 +30,10 @@ public class IOSNotification : MonoBehaviour
             ThreadIdentifier = "thread1",
             Trigger = timeTrigger,
         };
+notification.ShowInForeground = true;
+
+// In this case you need to specify its 'ForegroundPresentationOption'
+notification.ForegroundPresentationOption = (PresentationOption.Sound |                                                     PresentationOption.Alert);
 
         iOSNotificationCenter.ScheduleNotification(notification);
     }

@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 using Library.GameCenter;
+
+#if UNITY_IOS
 
 public class IOSLeaderboardExample : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class IOSLeaderboardExample : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Leaderboard.InitializeLeaderboard(leaderboardID,
+        GameCenterLeaderboard.InitializeLeaderboard(leaderboardID,
             (success) => {
 
                 if (success)
@@ -27,11 +27,13 @@ public class IOSLeaderboardExample : MonoBehaviour
 
     public void ReportScore()
     {
-        Leaderboard.ReportScore(25);
+        GameCenterLeaderboard.ReportScore(25);
     }
 
-    public void ShowLeaderboard()
+   public void ShowLeaderboard()
     {
-        Leaderboard.ShowLeaderboard();
+        GameCenterLeaderboard.ShowLeaderboard();
     }
 }
+
+#endif

@@ -4,24 +4,21 @@ using UnityEngine.Purchasing;
 
 namespace Library.Purchasing
 {
-    public class IAPurchase : MonoBehaviour, IStoreListener
+    public class IAPurchase : IStoreListener
     {
-        private static IStoreController m_StoreController;          // The Unity Purchasing system.
-        private static IExtensionProvider m_StoreExtensionProvider; // The store-specific Purchasing subsystems.
+        // The Unity Purchasing system.
+        private static IStoreController m_StoreController;
 
-        public static string NO_ADS = "remove_ad";
+        // The store-specific Purchasing subsystems.
+        private static IExtensionProvider m_StoreExtensionProvider; 
 
-        void Start()
-        {
-            // If we haven't set up the Unity Purchasing reference
-            if (m_StoreController == null)
-            {
-                // Begin to configure our connection to Purchasing
-                InitializePurchasing();
-            }
-        }
+        /*******************************************************************************/
+        // Define your products
+        public static string NO_ADS = "no_ad";
 
-        public void InitializePurchasing()
+        /*******************************************************************************/
+
+        public void InitializeServices ()
         {
             // If we have already connected to Purchasing ...
             if (IsInitialized())
@@ -48,15 +45,17 @@ namespace Library.Purchasing
             return m_StoreController != null && m_StoreExtensionProvider != null;
         }
 
-
-        public void BuyNonConsumable()
+        /************************************************************************************/
+        // Your methods
+        public void BuyNoAddProduct()
         {
             // Buy the non-consumable product using its general identifier. Expect a response either 
             // through ProcessPurchase or OnPurchaseFailed asynchronously.
             BuyProductID(NO_ADS);
         }
 
-        void BuyProductID(string productId)
+        /************************************************************************************/
+        private void BuyProductID(string productId)
         {
             // If Purchasing has been initialized ...
             if (IsInitialized())
@@ -100,13 +99,11 @@ namespace Library.Purchasing
             m_StoreExtensionProvider = extensions;
         }
 
-
         public void OnInitializeFailed(InitializationFailureReason error)
         {
             // Purchasing set-up has not succeeded. Check error for reason. Consider sharing this reason with the user.
             Debug.Log("OnInitializeFailed InitializationFailureReason:" + error);
         }
-
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
         {
@@ -127,7 +124,6 @@ namespace Library.Purchasing
             // saving purchased products to the cloud, and when that save is delayed. 
             return PurchaseProcessingResult.Complete;
         }
-
 
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {

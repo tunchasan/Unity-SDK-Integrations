@@ -167,7 +167,7 @@ PlayerSettings:
     Standalone: com.Company.ProductName
     iPhone: com.Ganover.3rd-Party-Library
   buildNumber: {}
-  AndroidBundleVersionCode: 60
+  AndroidBundleVersionCode: 66
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 28
   AndroidPreferredInstallLocation: 1
